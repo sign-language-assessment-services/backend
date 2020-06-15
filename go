@@ -13,7 +13,7 @@
 
 ##DOC build: build the application (i.e. install libraries)
 goal_build() {
-  pipenv install
+  pipenv install --dev
 }
 
 ##DOC test: execute all tests (i.e. running pytest)
