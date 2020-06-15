@@ -24,25 +24,39 @@ Run `./go` without any argument to see a list of all available tasks.
 **NOTE**: You need _bash_ to run the `./go` script (see _Prerequisites_).
 If you prefer to execute those tasks manually, you can use it as documentation.
 
-## Build
+### Build
 
 `./go build`
 
 Install all libraries used by the app via pipenv. To understand what pipenv is doing under the hood,
 please refer to the [pipenv documentation][3].
 
-## Test
+### Test
 
 `./go test`
 
 Launches all unit test files in `./test` folder via [pytest][8] which will be installed in the build step using `./go build`.
 
-## Run
+### Lint
+
+`./go lint`
+
+Checks if all python files are written according to coding guidelines. This is done by using [pylint][9].
+
+### Run
 
 `./go run`
 
 Runs the app in development mode, i.e. starting a uvicorn server which allows requests to `http://localhost:8000`.
 FastAPI also provides SwaggerUI which can be used interactively by pointing a browser to `http://127.0.0.1:8000/docs`.
+
+### Build, test, lint and run
+
+`./go all`
+
+Do every task defined in the build automation script, i.e. build the application, test and lint the code, and if no error occured,
+finally run the app.
+
 
 ## Learn more
 
@@ -59,3 +73,4 @@ FastAPI also provides SwaggerUI which can be used interactively by pointing a br
 [6]: https://docs.microsoft.com/windows/wsl/install-win10
 [7]: https://www.cygwin.com
 [8]: https://docs.pytest.org
+[9]: https://www.pylint.org
