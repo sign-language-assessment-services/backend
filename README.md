@@ -57,12 +57,17 @@ FastAPI also provides SwaggerUI which can be used interactively by pointing a br
 Do every task defined in the build automation script, i.e. build the application, test and lint the code, and if no error occured,
 finally run the app.
 
+## Debug the app
+
+For running the app in debug mode, you can best integrate it in an IDE and simply run `application.py` in debug mode.
+It requires that the libraries are installed, i. e. `pipenv` is working correctly.
+You can find out [more about debugging FastAPI in the tutorial][10].
 
 ## Learn more
 
 - [Python][1] is one of the most loved and wanted programming languages (see https://insights.stackoverflow.com/survey/2019).
   Python tries to be as simple as possible for programmers. You can really write wonderful, beautiful code with Python.
-- [FastAPI][2] has an excellent documentation and tries to keep things simple. It will also be a pleasure for you to work with FastAPI.
+- [FastAPI][2] has an excellent documentation and tries to keep things simple. It will also be a pleasure for you to work with FastAPI. It is also a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
 
 
 [1]: https://python.org
@@ -74,3 +79,4 @@ finally run the app.
 [7]: https://www.cygwin.com
 [8]: https://docs.pytest.org
 [9]: https://www.pylint.org
+[10]: https://fastapi.tiangolo.com/tutorial/debugging/
