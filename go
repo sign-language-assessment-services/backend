@@ -60,7 +60,7 @@ goal_run-compose() {
   docker-compose -f "$REPO_DIR/docker-compose.yml" up -d
 }
 
-##DOC run-compose: Get web api running through docker-compose.
+##DOC stop-compose: Stop running fastapi network and attached services
 goal_stop-compose() {
   # `docker-compose` will restart the app if possible, even after a
   # system reboot.  You have to explicitely stop the docker services.
