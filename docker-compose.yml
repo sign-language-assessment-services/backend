@@ -1,0 +1,8 @@
+version: "3.5"
+
+services:
+  fastapi:
+    build: .
+    ports:
+    - "80:80"
+    restart: always
