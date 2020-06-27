@@ -25,8 +25,32 @@ jobs:
         pip install pipenv
         ./go build
     - name: Lint with Pylint
-      run: |
-        ./go lint
+      run: ./go lint
     - name: Test with pytest
-      run: |
-        ./go test
+      run: ./go test
+    - name: Build Docker image
+      run: ./go image
+        
+  publish:
+    needs: build
+    env:
+      IMAGE_NAME: slportal_backend
+      IMAGE_VERSION: latest
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: ./go image
+        
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME          
+          docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_VERSION
+          docker push $IMAGE_ID:$IMAGE_VERSION
