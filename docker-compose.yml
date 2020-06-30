@@ -2,7 +2,8 @@ version: "3.5"
 
 services:
   fastapi:
+    image: slportal_backend:compose
     build: .
     ports:
-    - "80:80"
+    - "8000:8000"
     restart: always
