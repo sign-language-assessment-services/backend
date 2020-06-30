@@ -6,7 +6,7 @@ This app is written in [Python][1] version 3.7 and uses the [FastAPI][2] framewo
 
 The following software is required to use this app:
 
-- [Python3.7][1]
+- [Python3.8][1]
 - [pipenv][3] (package manager)
 - [bash][4] if you want to use the `./go` script for build automation
   - **Windows**: there are several options to use bash, e.g.

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-# This script interprets the command-line arguments and invokes the matching build task
-# If no matching build task can be found, a usage hint is printed instead
+# This script interprets the command line arguments and invokes the
+# matching build task.  If no matching build task can be found, a usage
+# hint is printed instead.
 
-TASK_NAME=${1:-} # First positional argument (e.g. "build" in "./go build")
+TASK_NAME=${1:-}  # First positional argument (e.g. "run" in "./go run")
 
 is_valid_task() {
   type -t "goal_$TASK_NAME" &>/dev/null
@@ -15,11 +16,13 @@ run_task() {
 
 print_usage_hint() {
   echo "usage: $0 <goal>"
-  grep -e "^##DOC" < "$(basename "$0")" | sed "s/^##DOC \(.*\)/  \1/"
+  grep -e "^##DOC" < "$0" | sed "s/^##DOC \(.*\)/  \1/"
 }
 
-if (is_valid_task) then 
+if (is_valid_task) then
+  cd "$(dirname $0)"
   run_task
+  cd - > /dev/null
 else
   print_usage_hint
   exit 1

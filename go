@@ -48,7 +48,7 @@ goal_image() {
 
 ##DOC run-container: Run the docker container build via `./go image`.
 goal_run-container() {
-  docker run --rm -ti -p 80:80 --name "$IMAGE_TAG" "$IMAGE_TAG"
+  docker run --rm -ti -p 8000:8000 --name "$IMAGE_TAG" "$IMAGE_TAG"
 }
 
 ##DOC run-compose: Get web api running through docker-compose.
@@ -57,14 +57,18 @@ goal_run-compose() {
   # `docker-compose.yml`.  They will also (re)build if necessary.  Note
   # that the services has to be stopped via `./go stop-compose` to avoid
   # service restarts, even after a system reboot.
-  docker-compose -f "$REPO_DIR/docker-compose.yml" up -d
+  docker-compose -f "docker-compose.yml" up -d
+  [ $? -eq 0 ] && docker-compose logs | \
+  grep -E "Listening at: https?://[0-9.:]+" | tail -1 &&
+  echo "Don't forget to stop the service via \`$0 stop-compose\` if" \
+  "you don't need it anymore."
 }
 
-##DOC stop-compose: Stop running fastapi network and attached services
+##DOC stop-compose: Stop running fastapi network and attached services.
 goal_stop-compose() {
   # `docker-compose` will restart the app if possible, even after a
   # system reboot.  You have to explicitely stop the docker services.
-  docker-compose -f "$REPO_DIR/docker-compose.yml" down
+  docker-compose -f "docker-compose.yml" down
 }
 
 ##DOC precommit: Build, test and lint code before committing/pushing it.
