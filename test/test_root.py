@@ -1,14 +1,9 @@
-"""Tests for root '/' endpoint"""
+from test.base import get_test_client
 
-from fastapi.testclient import TestClient
-
-from app.main import app
-
-client = TestClient(app)
+CLIENT = get_test_client()
 
 
-def test_read_root():
-    """Test Read access for endpoint '/'"""
-    response = client.get("/")
+def test_get_root():
+    response = CLIENT.get("/")
     assert response.status_code == 200
     assert response.json() == {"msg": "Hello World!"}
