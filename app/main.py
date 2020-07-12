@@ -2,9 +2,10 @@
 
 from fastapi import FastAPI
 
-from .routers import root
+from .routers import assessments, root
 
 
 app = FastAPI()
 
 app.include_router(root.router)
+app.include_router(assessments.router)
