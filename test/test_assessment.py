@@ -26,6 +26,28 @@ def test_get_assessment():
                             "is_correct": False
                         }
                     ]
+            },
+            {
+                "description": "Was trinken Elefanten?",
+                "choices":
+                    [
+                        {
+                            "label": "Mineralwasser",
+                            "is_correct": True
+                        },
+                        {
+                            "label": "Limonade",
+                            "is_correct": False
+                        },
+                        {
+                            "label": "Wasser",
+                            "is_correct": True
+                        },
+                        {
+                            "label": "Hühnersuppe",
+                            "is_correct": False
+                        }
+                    ]
             }
         ]
     }
