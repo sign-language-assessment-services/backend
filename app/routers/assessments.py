@@ -30,6 +30,27 @@ async def read_assessment(assessment_id: int):  # pylint: disable=W0613
                     )
                 )
             ),
+            MultipleChoice(
+                description="Was trinken Elefanten?",
+                choices=(
+                    Choice(
+                        label="Mineralwasser",
+                        is_correct=True
+                    ),
+                    Choice(
+                        label="Limonade",
+                        is_correct=False
+                    ),
+                    Choice(
+                        label="Wasser",
+                        is_correct=True
+                    ),
+                    Choice(
+                        label="Hühnersuppe",
+                        is_correct=False
+                    )
+                )
+            ),
         )
     )
     return assessment
