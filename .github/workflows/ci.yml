@@ -28,8 +28,6 @@ jobs:
       run: ./go lint
     - name: Test with pytest
       run: ./go test
-    - name: Build Docker image
-      run: ./go image
         
   publish:
     needs: build
