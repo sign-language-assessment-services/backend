@@ -1,11 +1,3 @@
-"""Main file for SLPortal FastAPI app"""
+from app.rest.main import create_app
 
-from fastapi import FastAPI
-
-from .routers import assessments, root
-
-
-app = FastAPI()
-
-app.include_router(root.router)
-app.include_router(assessments.router)
+app = create_app()

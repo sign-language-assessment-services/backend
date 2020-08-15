@@ -1,16 +1,10 @@
-from fastapi import APIRouter
-
-from app.models.assessment import Assessment
-from app.models.multiple_choice import MultipleChoice
-from app.models.choice import Choice
+from ..models.assessment import Assessment
+from ..models.choice import Choice
+from ..models.multiple_choice import MultipleChoice
 
 
-router = APIRouter()
-
-
-@router.get("/assessments/{assessment_id}", response_model=Assessment)
-async def read_assessment(assessment_id: int):  # pylint: disable=W0613
-    assessment = Assessment(
+def get_assessment() -> Assessment:
+    return Assessment(
         name="Elefantenprüfung",
         items=(
             MultipleChoice(
@@ -53,4 +47,3 @@ async def read_assessment(assessment_id: int):  # pylint: disable=W0613
             ),
         )
     )
-    return assessment
