@@ -1,4 +1,4 @@
-from test.base import get_test_client
+from .base import get_test_client
 
 CLIENT = get_test_client()
 

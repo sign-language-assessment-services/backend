@@ -1,4 +1,4 @@
-from test.base import get_test_client
+from .base import get_test_client
 
 CLIENT = get_test_client()
 
@@ -51,3 +51,14 @@ def test_get_assessment():
             }
         ]
     }
+
+
+def test_post_assessment():
+    data = {
+        0: [1],
+        1: [0, 2]
+    }
+
+    response = CLIENT.post("/assessments/1/submissions/", data=data)
+    assert response.status_code == 200
+    assert response.json() == {"score": 2}
