@@ -13,4 +13,4 @@ class Assessment:
         result = 0
         for item_id, answer in submission.items():
             result += self.items[item_id].score(answer)
-        return result
+        return {"score": result}
