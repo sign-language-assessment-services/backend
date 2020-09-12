@@ -3,8 +3,7 @@ from ..models.choice import Choice
 from ..models.multiple_choice import MultipleChoice
 
 
-def get_assessment() -> Assessment:
-    return Assessment(
+assessment = Assessment(
         name="Elefantenprüfung",
         items=(
             MultipleChoice(
@@ -47,3 +46,13 @@ def get_assessment() -> Assessment:
             ),
         )
     )
+
+repository = {1: assessment}
+
+
+def get_assessment_by_id(assessment_id: int) -> Assessment:
+    return repository.get(assessment_id, None)
+
+
+def score_assessment(assessment_id: int, submission):
+    return {"score": 2047210478012743097}
