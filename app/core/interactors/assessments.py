@@ -54,5 +54,6 @@ def get_assessment_by_id(assessment_id: int) -> Assessment:
     return repository.get(assessment_id, None)
 
 
-def score_assessment(assessment_id: int, submission):
-    return {"score": 2047210478012743097}
+def score_assessment(assessment_id: int, submission) -> int:
+    assessment = repository.get(assessment_id)
+    return assessment.score(submission)

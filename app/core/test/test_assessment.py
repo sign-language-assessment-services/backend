@@ -30,12 +30,12 @@ def assessment():
 
 
 def test_perfect_score(assessment):
-    assert assessment.score({0: [1], 1: [0, 2]}) == 2
+    assert assessment.score({0: [1], 1: [0, 2]}) == {"score": 2}
 
 
 def test_fifty_percent(assessment):
-    assert assessment.score({0: [1], 1: [0, 1]}) == 1
+    assert assessment.score({0: [1], 1: [0, 1]}) == {"score": 1}
 
 
 def test_total_failure(assessment):
-    assert assessment.score({0: [0], 1: [1]}) == 0
+    assert assessment.score({0: [0], 1: [1]}) == {"score": 0}
