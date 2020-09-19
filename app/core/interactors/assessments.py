@@ -1,9 +1,11 @@
+from dataclasses import asdict
+
 from ..models.assessment import Assessment
 from ..models.choice import Choice
 from ..models.multiple_choice import MultipleChoice
 
-
-assessment = Assessment(
+repository = {
+    1: Assessment(
         name="Elefantenprüfung",
         items=(
             MultipleChoice(
@@ -46,12 +48,11 @@ assessment = Assessment(
             ),
         )
     )
-
-repository = {1: assessment}
+}
 
 
 def get_assessment_by_id(assessment_id: int) -> Assessment:
-    return repository.get(assessment_id, None)
+    return asdict(repository.get(assessment_id))
 
 
 def score_assessment(assessment_id: int, submission) -> int:
