@@ -1,4 +1,4 @@
-import pytest
+from unittest.mock import Mock, patch
 
 from app.core.interactors.assessments import (
     get_assessment_by_id, score_assessment
@@ -7,84 +7,38 @@ from app.core.models.assessment import Assessment
 from app.core.models.choice import Choice
 from app.core.models.multiple_choice import MultipleChoice
 
-from unittest.mock import Mock, patch
 
-assessment_1 = Assessment(
-    name="Elefantenprüfung",
-    items=(
-        MultipleChoice(
-            description="Was essen Elefanten?",
-            choices=(
-                Choice(
-                    label="Spaghetti Bolognese",
-                    is_correct=False
-                ),
-                Choice(
-                    label="Nüsse",
-                    is_correct=True
-                ),
-                Choice(
-                    label="Menschen",
-                    is_correct=False
+@patch("app.core.interactors.assessments.repository")
+def test_assessment_by_id(repository_mock):
+    repository_mock.get.return_value = Assessment(
+        name="foo",
+        items=(
+            MultipleChoice(
+                description="bar",
+                choices=(
+                    Choice(label="choice 1", is_correct=False),
+                    Choice(label="choice 2", is_correct=True),
                 )
-            )
-        ),
-        MultipleChoice(
-            description="Was trinken Elefanten?",
-            choices=(
-                Choice(
-                    label="Mineralwasser",
-                    is_correct=True
-                ),
-                Choice(
-                    label="Limonade",
-                    is_correct=False
-                ),
-                Choice(
-                    label="Wasser",
-                    is_correct=True
-                ),
-                Choice(
-                    label="Hühnersuppe",
-                    is_correct=False
-                )
-            )
+            ),
         ),
     )
-)
-
-assessment_2 = Assessment(
-    name="foo",
-    items=(
-        MultipleChoice(
-            description="bar",
-            choices=(
-                Choice(label="foo", is_correct=False),
-                Choice(label="foo", is_correct=True),
-            )
-        ),
-        MultipleChoice(
-            description="bar",
-            choices=(
-                Choice(label="foo", is_correct=True),
-                Choice(label="foo", is_correct=False),
-                Choice(label="foo", is_correct=True),
-            )
-        )
-    )
-)
-
-repository = {
-    1: assessment_1,
-    2: assessment_2
-}
-
-
-def test_assessment_by_id():
     assessment_id = 1
-    assessment = get_assessment_by_id(assessment_id)
-    assert isinstance(assessment, Assessment)
-    assert assessment.name == "Elefantenprüfung"
+
+    result = get_assessment_by_id(assessment_id)
+
+    repository_mock.get.assert_called_once_with(assessment_id)
+    assert result == {
+        "items": (
+            {
+                "choices": (
+                    {"is_correct": False, "label": "choice 1"},
+                    {"is_correct": True, "label": "choice 2"},
+                ),
+                "description": "bar"
+            },
+        ),
+        "name": "foo"
+    }
 
 
 @patch("app.core.interactors.assessments.repository")
