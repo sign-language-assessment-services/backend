@@ -11,5 +11,5 @@ async def read_assessment(assessment_id: int):
 
 
 @router.post("/assessments/{assessment_id}/submissions/")
-async def process_submission(assessment_id: int):
+async def process_submission(assessment_id: int):  # pylint: disable=W0613
     return {"passed": True}
