@@ -1,6 +1,11 @@
+from typing import Dict, List
+
 from fastapi import APIRouter
 
-from app.core.interactors.assessments import get_assessment_by_id
+from app.core.interactors.assessments import (
+    get_assessment_by_id,
+    score_assessment
+)
 
 router = APIRouter()
 
@@ -11,5 +16,8 @@ async def read_assessment(assessment_id: int):
 
 
 @router.post("/assessments/{assessment_id}/submissions/")
-async def process_submission(assessment_id: int):  # pylint: disable=W0613
-    return {"passed": True}
+async def process_submission(
+        assessment_id: int,
+        submission: Dict[int, List[int]]
+):
+    return score_assessment(assessment_id, submission)
