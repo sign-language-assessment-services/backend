@@ -55,7 +55,7 @@ def test_get_assessment():
     }
 
 
-@patch("app.core.interactors.assessments.score_assessment")
+@patch("app.rest.routers.assessments.score_assessment")
 def test_post_assessment(score_asssessment_mock):
     assessment_id = 1
     score_asssessment_mock.return_value = {"score": 2}
@@ -65,7 +65,7 @@ def test_post_assessment(score_asssessment_mock):
     }
 
     response = CLIENT.post(
-        f"/assessments/{assessment_id}/submissions/", data=submission
+        f"/assessments/{assessment_id}/submissions/", json=submission
     )
 
     score_asssessment_mock.assert_called_once_with(assessment_id, submission)
