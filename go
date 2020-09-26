@@ -31,7 +31,7 @@ goal_test() {
 
 ##DOC lint: Lint all code files, i.e. running pylint.
 goal_lint() {
-  pipenv run pylint application.py app/ test/
+  pipenv run pylint application.py app
 }
 
 ##DOC run: Run the application, i.e. starting uvicorn.
