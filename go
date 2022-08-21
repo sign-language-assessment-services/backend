@@ -21,24 +21,24 @@ IMAGE_TAG="slportal_backend"  # Image tag used by docker build
 
 ##DOC build: Build the application, i.e. install libraries.
 goal_build() {
-  pipenv install --dev
+  poetry install
 }
 
 ##DOC test: Execute all tests, i.e. running pytest.
 goal_test() {
-  pipenv run pytest
+  poetry run pytest
 }
 
 ##DOC lint: Lint all code files, i.e. running pylint.
 goal_lint() {
-  pipenv run pylint application.py app
+  poetry run pylint application.py app
 }
 
 ##DOC run: Run the application, i.e. starting uvicorn.
 goal_run() {
   # This will run the application on a local machine via uvicorn server.
   # It requires that the app was built before, e.g. via `./go build`.
-  pipenv run uvicorn app.main:app --reload
+  poetry run uvicorn app.main:app --reload
 }
 
 ##DOC image: Build docker image using the provided Dockerfile.
@@ -73,7 +73,7 @@ goal_stop-compose() {
 
 ##DOC precommit: Build, test and lint code before committing/pushing it.
 goal_precommit() {
-  pipenv install && \
+  poetry install && \
   goal_test  && \
   goal_lint
 }
