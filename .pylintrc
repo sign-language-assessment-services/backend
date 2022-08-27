@@ -151,7 +151,16 @@ disable=raw-checker-failed,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
-        use-symbolic-message-instead
+        use-symbolic-message-instead,
+
+        # We do not want to force developers to write docstrings. These are not
+        # necessary if functions, modules and classes are named in such a way
+        # that this alone makes them very readable. For the other cases, there
+        # are review processes.
+        # ---------------------------------------------------------------------
+        missing-class-docstring,
+        missing-function-docstring,
+        missing-module-docstring,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
