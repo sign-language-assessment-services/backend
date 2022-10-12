@@ -8,64 +8,51 @@ provide a portal where sign languages can be learned.
 
 The following software is required to use this app:
 
-- [Python3.8][1]
-- [Pipenv][3] (This is the used package manager.)
-- [Bash][4] (If you want to use the `./go` script for automation.)
-  - **Windows**: There are several options to use bash, e.g.:
-    - [Git BASH](https://gitforwindows.org/)
-    - [Windows Subsystem for Linux][6]
-    - [Cygwin][7]
-  - **MacOS**: Bash is already pre-installed.
-  - **Linux**: In nearly all distributions, bash is already
-               pre-installed.
+- [Python3.10][1]
 
-## Build automation: `./go`
+## Build automation: `Makefile`
 
 All tasks related to building, testing, and running can be invoked with
-the `./go` script. Run `./go` without any argument to see a list of all
-available tasks.
+make commands. Run `make help` to see a list of all available tasks.
 
-**NOTE**: You need _bash_ to run the `./go` script (see 
-_Prerequisites_). If you prefer to perform these tasks manually, you can
-of course look into the file and execute the commands directly. This is
-necessary, for example, if you want to run the API on a port other than
-8000 (default).
+**NOTE**: If you prefer to perform certain tasks manually, the content of the
+file is probably interesting for you, e.g. if you want to run the server on
+a different port or name the docker container differently.
 
-### build: Install all libraries via Pipenv 
+### install: Install all libraries via Poetry 
 
-`./go build`
+`make install`
 
-Installs all libraries used by the app via Pipenv. To understand what
-Pipenv is doing under the hood, please refer to the
-[pipenv documentation][3].
+Installs all libraries used by the app via Poetry. To understand what
+Poetry is, please look into the [poetry documentation][3].
 
 ### test: Test the Fastapi web application (unit testing)
 
-`./go test`
+`make test`
 
-Launches all unit test files in `./test` folder via [Pytest][8] which
-will be installed in the build step using `./go build`. Pytest is
-configured via the file `pytest.ini`. 
+Launches all unit test files in `./test-*` folders via [Pytest][8] which
+will be installed in the install step using `make install`. Pytest is
+configured via the file `pytest.ini`.
 
 ### lint: Check how beautiful the code is written
 
-`./go lint`
+`make lint`
 
 Checks if all Python files are written according to coding guidelines.
 This is done by using [Pylint][9].
 
 ### run: Run the Fastapi web application in development mode 
 
-`./go run`
+`.make run`
 
 Runs the app in development mode, i.e. starting a uvicorn server which
 allows requests to `http://127.0.0.1:8000`. FastAPI also provides
 SwaggerUI which can be used interactively by pointing a browser to
 `http://127.0.0.1:8000/docs`.
 
-### image: Build a docker image
+### docker-build: Build a docker image
 
-`./go image`
+`make docker-build`
 
 This requires that [Docker][11] is installed on your machine. Then this
 command will build a docker image based on the given `Dockerfile` in the
@@ -73,9 +60,9 @@ root folder of the repository.
 
 ### run-container: Run the docker image
 
-`./go run-container`
+`make run-container`
 
-Use this command if you have build your docker image via `./go image`.
+Use this command if you have build your docker image via `make docker-build`.
 Then a container will be started using these additional command line
 arguments:
 
@@ -84,13 +71,12 @@ arguments:
            attached (then `CTRL`-`C` can be used to stop container)
   - `-p 8000:8000`: Publish container's port 8000 to the port 8000 of
                     the host machine
-  - `--name "$IMAGE_TAG"`: Name the container for better monitoring
-
-where `$IMAGE_TAG` refers to a name given in the `./go` script.
+  - `--name "$IMAGE_NAME"`: Name the container for better monitoring
+  - `"$IMAGE_TAG"`: Full qualified name of the docker image (`$IMAGE_NAME` + version information, e.g. "latest")
 
 ### run-compose: Start Fastapi app via `docker-compose`
 
-`./go run-compose`
+`make run-compose`
 
 If you want to start the whole network with all attached services
 encapsulated in Docker files, then you can run the provided
@@ -104,54 +90,41 @@ the [compatibility matrix in the Docker Compose documentation][13].
 Note, that you have to stop the services manually afterwards. If you do
 not shut down the started services, they will eventually be restarted
 for you again, even after a system reboot. You can use the provided
-command `./go stop-compose` for that.
+command `make stop-compose` for that.
 
 ### stop-compose: Shut down all docker-compose components
 
-`./go stop-compose`
+`.make stop-compose`
 
 Shut down all services and networks configured in `docker-compose.yml`.
 This is necessary to avoid unwanted restarts of services, even after the
 host machine was restarted. This is only necessary if the Docker Compose
 file was started via `docker-compose -f docker-compose.yml` or via
-`./go run-compose`, of course.  
-
-### Precommit
-
-`./go precommit`
-
-This is a helpful command if you have changed something in the code and
-want to check if your changes are okay for commiting and pushing them
-into the repository. Okay means that all tests will pass and the linter
-gives you a perfect score, at least an acceptable one. Note, that this
-command will not install the dev libraries. If you want to include
-these, you have to manually do `./go build && ./go test && ./go lint`
-to have similar results. If any error occured after running the command,
-you should consider not pushing your code changes into the repository,
-due to the fact that it is very likely to have less robust code, then.
+`make run-compose`, of course.  
 
 ## Debug the app
 
 For running the app in debug mode, you can best integrate it in an IDE
 and simply run `application.py` in debug mode. It requires that the
-libraries are installed, i. e. `pipenv` is working correctly. You can
+libraries are installed, i. e. `poetry` is working correctly. You can
 find out [more about debugging FastAPI in the tutorial][10].
 
 ## Learn more
 
 - [Python][1] is one of the most loved and wanted programming languages
-  (see https://insights.stackoverflow.com/survey/2019). Python tries to
-  be as simple as possible for programmers. You can really write
-  wonderful, beautiful code with Python.
+  since years (see https://insights.stackoverflow.com/survey). Python tries to
+  be as simple as possible for programmers. You can really write wonderful,
+  beautiful code with Python.
 - [FastAPI][2] has an excellent documentation and tries to keep things
   simple. It will also be a pleasure for you to work with FastAPI. It is
   also a modern, fast (high-performance), web framework for building
-  APIs with Python 3.6+ based on standard Python type hints.
+  APIs with Python 3.6+ based on standard Python type hints. It is also possible
+  to use FastAPI as a kind of interface, so that dependencies and risks are minimised.
 
 
 [1]: https://python.org
 [2]: https://fastapi.tiangolo.com
-[3]: https://github.com/pypa/pipenv
+[3]: https://python-poetry.org/
 [4]: https://www.gnu.org/software/bash
 [5]: https://gitforwindows.org
 [6]: https://docs.microsoft.com/windows/wsl/install-win10
