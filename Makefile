@@ -1,6 +1,9 @@
 SHELL = /bin/sh
 
-IMAGE_TAG := slportal-backend
+IMAGE_NAME:= slportal_backend
+IMAGE_VERSION:= latest
+IMAGE_TAG := ${IMAGE_NAME}:${IMAGE_VERSION}
+
 REPOSITORY_FOLDER := ./
 SERVER_PORT := 8000
 
@@ -33,7 +36,7 @@ run-compose:	## Boot up all docker services defined in docker-compose.yml
 
 .PHONY: run-container
 run-container:	## Start a dockerized development server
-	docker run --rm -ti -p "${SERVER_PORT}":8000 --name "${IMAGE_TAG}" "${IMAGE_TAG}"
+	docker run --rm -ti -p "${SERVER_PORT}":8000 --name "${IMAGE_NAME}" "${IMAGE_TAG}"
 
 .PHONY: stop-compose
 stop-compose:	## Stop the docker services gracefully
