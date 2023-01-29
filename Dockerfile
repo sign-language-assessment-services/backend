@@ -3,6 +3,7 @@ MAINTAINER "Danny Rehl"
 
 COPY ./pyproject.toml /app/pyproject.toml
 COPY ./poetry.lock /app/poetry.lock
+COPY ./.env /app/.env
 COPY ./app /app/app
 
 WORKDIR /app
