@@ -17,6 +17,9 @@ def verify_authorization_header(headers: Headers) -> tuple[list[str], Optional[B
             ["slas-frontend-user", "test-taker"],
             FastAPIUser(first_name="", last_name="", user_id="")
         )
+    if not "authorization" in headers:
+        return [], None
+
     bearer_token = headers["authorization"].removeprefix("Bearer ")
     decoded_access_token = token_verifier.verify(bearer_token)
     scopes = decoded_access_token["realm_access"]["roles"]
