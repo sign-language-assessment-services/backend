@@ -4,5 +4,6 @@ router = APIRouter()
 
 
 @router.get("/")
+@router.get("/health")
 async def read_root():
-    return {"msg": "Hello World!"}
+    return {"status": "ok"}
