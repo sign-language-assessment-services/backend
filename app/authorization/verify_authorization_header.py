@@ -1,5 +1,5 @@
 import os
-from distutils.util import strtobool
+from distutils.util import strtobool  # pylint: disable=deprecated-module
 from typing import Optional
 
 from fastapi_auth_middleware import FastAPIUser
@@ -13,7 +13,10 @@ token_verifier = TokenVerifier()
 
 def verify_authorization_header(headers: Headers) -> tuple[list[str], Optional[BaseUser]]:
     if not strtobool(os.getenv("AUTH_ENABLED")):
-        return ["slas-frontend-user", "test-taker"], FastAPIUser(first_name="", last_name="", user_id="")
+        return (
+            ["slas-frontend-user", "test-taker"],
+            FastAPIUser(first_name="", last_name="", user_id="")
+        )
     bearer_token = headers["authorization"].removeprefix("Bearer ")
     decoded_access_token = token_verifier.verify(bearer_token)
     scopes = decoded_access_token["realm_access"]["roles"]
