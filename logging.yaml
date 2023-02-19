@@ -1,0 +1,18 @@
+version: 1
+formatters:
+  simple:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+filters:
+  healthcheck_filter:
+    "()": app.log.filters.HealthCheckFilter
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+    filters:
+      - healthcheck_filter
+root:
+  level: DEBUG
+  handlers: [console]
