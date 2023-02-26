@@ -7,10 +7,10 @@ license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = {version = "^0.85.0", extras = ["all"]}
+fastapi = {version = "^0.92.0", extras = ["all"]}
 pyjwt = "^2.6.0"
 fastapi-auth-middleware = "^1.0.2"
-python-dotenv = "^0.21.1"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
