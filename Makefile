@@ -7,6 +7,9 @@ IMAGE_TAG := ${IMAGE_NAME}:${IMAGE_VERSION}
 REPOSITORY_FOLDER := ./
 SERVER_PORT := 8000
 
+.PHONY: default
+default: help
+
 .PHONY: all
 all: install update lint test docker-build  ## install, update, lint, test and build docker image
 
