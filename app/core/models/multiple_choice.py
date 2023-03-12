@@ -2,12 +2,13 @@ from dataclasses import dataclass
 from typing import Sequence
 
 from .choice import Choice
+from .video_choice import VideoChoice
 
 
 @dataclass(frozen=True)
 class MultipleChoice:
     description: str
-    choices: Sequence[Choice]
+    choices: Sequence[Choice|VideoChoice]
 
     def score(self, selected_answers: Sequence[int]):
         self.__validate_input(selected_answers)

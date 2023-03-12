@@ -16,15 +16,15 @@ def test_get_assessment():
                 "choices":
                     [
                         {
-                            "label": "Spaghetti Bolognese",
+                            "url": "https://tinyurl.com/4bvyka5u",
                             "is_correct": False
                         },
                         {
-                            "label": "Nüsse",
+                            "url": "https://tinyurl.com/4bvyka5u",
                             "is_correct": True
                         },
                         {
-                            "label": "Menschen",
+                            "url": "https://tinyurl.com/4bvyka5u",
                             "is_correct": False
                         }
                     ]

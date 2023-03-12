@@ -3,6 +3,7 @@ from dataclasses import asdict
 from ..models.assessment import Assessment
 from ..models.choice import Choice
 from ..models.multiple_choice import MultipleChoice
+from ..models.video_choice import VideoChoice
 
 repository = {
     1: Assessment(
@@ -11,16 +12,16 @@ repository = {
             MultipleChoice(
                 description="Was essen Elefanten?",
                 choices=(
-                    Choice(
-                        label="Spaghetti Bolognese",
+                    VideoChoice(
+                        url="https://tinyurl.com/4bvyka5u",
                         is_correct=False
                     ),
-                    Choice(
-                        label="Nüsse",
+                    VideoChoice(
+                        url="https://tinyurl.com/4bvyka5u",
                         is_correct=True
                     ),
-                    Choice(
-                        label="Menschen",
+                    VideoChoice(
+                        url="https://tinyurl.com/4bvyka5u",
                         is_correct=False
                     )
                 )
