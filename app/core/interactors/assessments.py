@@ -1,7 +1,7 @@
 from dataclasses import asdict
 
 from ..models.assessment import Assessment
-from ..models.choice import Choice
+from ..models.text_choice import TextChoice
 from ..models.multiple_choice import MultipleChoice
 from ..models.video_choice import VideoChoice
 
@@ -14,36 +14,43 @@ repository = {
                 choices=(
                     VideoChoice(
                         url="https://tinyurl.com/4bvyka5u",
-                        is_correct=False
+                        is_correct=False,
+                        type="video",
                     ),
                     VideoChoice(
                         url="https://tinyurl.com/4bvyka5u",
-                        is_correct=True
+                        is_correct=True,
+                        type="video",
                     ),
                     VideoChoice(
                         url="https://tinyurl.com/4bvyka5u",
-                        is_correct=False
+                        is_correct=False,
+                        type="video",
                     )
                 )
             ),
             MultipleChoice(
                 description="Was trinken Elefanten?",
                 choices=(
-                    Choice(
+                    TextChoice(
                         label="Mineralwasser",
-                        is_correct=True
+                        is_correct=True,
+                        type="text",
                     ),
-                    Choice(
+                    TextChoice(
                         label="Limonade",
-                        is_correct=False
+                        is_correct=False,
+                        type="text",
                     ),
-                    Choice(
+                    TextChoice(
                         label="Wasser",
-                        is_correct=True
+                        is_correct=True,
+                        type="text",
                     ),
-                    Choice(
+                    TextChoice(
                         label="Hühnersuppe",
-                        is_correct=False
+                        is_correct=False,
+                        type="text",
                     )
                 )
             ),

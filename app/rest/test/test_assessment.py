@@ -17,15 +17,18 @@ def test_get_assessment():
                     [
                         {
                             "url": "https://tinyurl.com/4bvyka5u",
-                            "is_correct": False
+                            "is_correct": False,
+                            "type": "video"
                         },
                         {
                             "url": "https://tinyurl.com/4bvyka5u",
-                            "is_correct": True
+                            "is_correct": True,
+                            "type": "video"
                         },
                         {
                             "url": "https://tinyurl.com/4bvyka5u",
-                            "is_correct": False
+                            "is_correct": False,
+                            "type": "video"
                         }
                     ]
             },
@@ -35,19 +38,23 @@ def test_get_assessment():
                     [
                         {
                             "label": "Mineralwasser",
-                            "is_correct": True
+                            "is_correct": True,
+                            "type": "text"
                         },
                         {
                             "label": "Limonade",
-                            "is_correct": False
+                            "is_correct": False,
+                            "type": "text"
                         },
                         {
                             "label": "Wasser",
-                            "is_correct": True
+                            "is_correct": True,
+                            "type": "text"
                         },
                         {
                             "label": "Hühnersuppe",
-                            "is_correct": False
+                            "is_correct": False,
+                            "type": "text"
                         }
                     ]
             }

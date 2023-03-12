@@ -1,7 +1,7 @@
 import pytest
 
 from app.core.models.assessment import Assessment
-from app.core.models.choice import Choice
+from app.core.models.text_choice import TextChoice
 from app.core.models.multiple_choice import MultipleChoice
 
 
@@ -13,16 +13,16 @@ def assessment():
             MultipleChoice(
                 description="description 1",
                 choices=(
-                    Choice(label="choice 1-A", is_correct=False),
-                    Choice(label="choice 1-B", is_correct=True),
+                    TextChoice(label="choice 1-A", is_correct=False),
+                    TextChoice(label="choice 1-B", is_correct=True),
                 )
             ),
             MultipleChoice(
                 description="description 2",
                 choices=(
-                    Choice(label="choice 2-A", is_correct=True),
-                    Choice(label="choice 2-B", is_correct=False),
-                    Choice(label="choice 2-C", is_correct=True),
+                    TextChoice(label="choice 2-A", is_correct=True),
+                    TextChoice(label="choice 2-B", is_correct=False),
+                    TextChoice(label="choice 2-C", is_correct=True),
                 )
             )
         )

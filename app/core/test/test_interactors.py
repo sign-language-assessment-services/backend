@@ -4,7 +4,7 @@ from app.core.interactors.assessments import (
     get_assessment_by_id, score_assessment
 )
 from app.core.models.assessment import Assessment
-from app.core.models.choice import Choice
+from app.core.models.text_choice import TextChoice
 from app.core.models.multiple_choice import MultipleChoice
 
 
@@ -16,8 +16,8 @@ def test_assessment_by_id(repository_mock):
             MultipleChoice(
                 description="bar",
                 choices=(
-                    Choice(label="choice 1", is_correct=False),
-                    Choice(label="choice 2", is_correct=True),
+                    TextChoice(label="choice 1", is_correct=False),
+                    TextChoice(label="choice 2", is_correct=True),
                 )
             ),
         ),
@@ -31,8 +31,8 @@ def test_assessment_by_id(repository_mock):
         "items": (
             {
                 "choices": (
-                    {"is_correct": False, "label": "choice 1"},
-                    {"is_correct": True, "label": "choice 2"},
+                    {"is_correct": False, "label": "choice 1", "type": "text"},
+                    {"is_correct": True, "label": "choice 2", "type": "text"},
                 ),
                 "description": "bar"
             },

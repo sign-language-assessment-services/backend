@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.models.choice import Choice
+from app.core.models.text_choice import TextChoice
 from app.core.models.multiple_choice import MultipleChoice
 
 
@@ -9,8 +9,8 @@ def multiple_choice():
     return MultipleChoice(
         description="bar",
         choices=(
-            Choice(label="foo", is_correct=False),
-            Choice(label="foo", is_correct=True),
+            TextChoice(label="foo", is_correct=False),
+            TextChoice(label="foo", is_correct=True),
         )
     )
 
