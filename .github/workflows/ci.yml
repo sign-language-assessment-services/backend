@@ -24,11 +24,11 @@ jobs:
       run: |
         pip install poetry
         make install
-    - name: Lint with Pylint
+    - name: Linting
       run: make lint
-    - name: Test with pytest
+    - name: Testing
       run: make test
-        
+
   publish:
     needs: build
     env:
