@@ -1,11 +1,11 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from .base import get_test_client
 
 CLIENT = get_test_client()
 
 
-def test_get_assessment():
+def test_get_assessment() -> None:
     response = CLIENT.get("/assessments/1")
     assert response.status_code == 200
     assert response.json() == {
@@ -63,7 +63,7 @@ def test_get_assessment():
 
 
 @patch("app.rest.routers.assessments.score_assessment")
-def test_post_assessment(score_asssessment_mock):
+def test_post_assessment(score_asssessment_mock: Mock) -> None:
     assessment_id = 1
     score_asssessment_mock.return_value = {"score": 2}
     submission = {

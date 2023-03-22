@@ -12,7 +12,10 @@ token_verifier = TokenVerifier()
 
 
 def verify_authorization_header(headers: Headers) -> tuple[list[str], Optional[BaseUser]]:
-    if not strtobool(os.getenv("AUTH_ENABLED")):
+    auth_enabled = os.getenv("AUTH_ENABLED")
+    if not auth_enabled:
+        raise EnvironmentError("Missing env variable AUTH_ENABLED.")
+    if not strtobool(auth_enabled):
         return (
             ["slas-frontend-user", "test-taker"],
             FastAPIUser(first_name="", last_name="", user_id="")

@@ -1,8 +1,9 @@
 from dataclasses import asdict
+from typing import Any
 
 from ..models.assessment import Assessment
-from ..models.text_choice import TextChoice
 from ..models.multiple_choice import MultipleChoice
+from ..models.text_choice import TextChoice
 from ..models.video_choice import VideoChoice
 
 repository = {
@@ -59,10 +60,10 @@ repository = {
 }
 
 
-def get_assessment_by_id(assessment_id: int) -> Assessment:
-    return asdict(repository.get(assessment_id))
+def get_assessment_by_id(assessment_id: int) -> dict[str, Any]:
+    return asdict(repository[assessment_id])
 
 
-def score_assessment(assessment_id: int, submission) -> int:
-    assessment = repository.get(assessment_id)
+def score_assessment(assessment_id: int, submission: dict[int, list[int]]) -> dict[str, int]:
+    assessment = repository[assessment_id]
     return assessment.score(submission)

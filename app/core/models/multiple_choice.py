@@ -10,7 +10,7 @@ class MultipleChoice:
     description: str
     choices: Sequence[TextChoice | VideoChoice]
 
-    def score(self, selected_answers: Sequence[int]):
+    def score(self, selected_answers: Sequence[int]) -> int:
         self.__validate_input(selected_answers)
         correct_answers = {
             index for index, choice in enumerate(self.choices)
@@ -20,7 +20,7 @@ class MultipleChoice:
             return 1
         return 0
 
-    def __validate_input(self, selected_answers):
+    def __validate_input(self, selected_answers: Sequence[int]) -> None:
         if selected_answers:
             if max(selected_answers) >= len(self.choices) or min(
                     selected_answers) < 0:
