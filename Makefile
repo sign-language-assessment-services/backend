@@ -59,7 +59,7 @@ stop-compose:	## Stop the docker services gracefully
 
 .PHONY: test
 test:	## Run tests
-	poetry run pytest
+	poetry run python -m pytest
 
 .PHONY: update
 update:	## Update application dependencies
