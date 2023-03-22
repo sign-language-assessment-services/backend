@@ -18,6 +18,30 @@ pylint = "^2.15.0"
 isort = "^5.12.0"
 mypy = "^1.1.1"
 
+[tool.isort]
+line_length = 100
+
+[[tool.mypy.overrides]]
+module = "fastapi_auth_middleware"
+ignore_missing_imports = true
+
+[tool.pylint."MESSAGES CONTROL"]
+disable= """
+   missing-class-docstring,
+   missing-function-docstring,
+   missing-module-docstring,
+"""
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+    "-rA",
+    "--tb=long",
+    "--junitxml=./pytest-results.xml"
+]
+console_output_style = "count"
+junit_family = "xunit2"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
