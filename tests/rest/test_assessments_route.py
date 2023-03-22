@@ -1,12 +1,10 @@
 from unittest.mock import Mock, patch
 
-from .base import get_test_client
-
-CLIENT = get_test_client()
+from fastapi.testclient import TestClient
 
 
-def test_get_assessment() -> None:
-    response = CLIENT.get("/assessments/1")
+def test_get_assessment(test_client: TestClient) -> None:
+    response = test_client.get("/assessments/1")
     assert response.status_code == 200
     assert response.json() == {
         "name": "Elefantenprüfung",
@@ -63,7 +61,7 @@ def test_get_assessment() -> None:
 
 
 @patch("app.rest.routers.assessments.score_assessment")
-def test_post_assessment(score_asssessment_mock: Mock) -> None:
+def test_post_assessment(score_asssessment_mock: Mock, test_client: TestClient) -> None:
     assessment_id = 1
     score_asssessment_mock.return_value = {"score": 2}
     submission = {
@@ -71,7 +69,7 @@ def test_post_assessment(score_asssessment_mock: Mock) -> None:
         1: [0, 2]
     }
 
-    response = CLIENT.post(
+    response = test_client.post(
         f"/assessments/{assessment_id}/submissions/", json=submission
     )
 

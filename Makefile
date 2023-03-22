@@ -38,8 +38,8 @@ isort:	## Check if imports are in the right order
 .PHONY: lint
 lint:	## Run linter
 	poetry run isort . --check --diff
-	poetry run pylint application.py app
-	poetry run mypy --strict application.py app
+	poetry run pylint application.py app tests
+	poetry run mypy --strict application.py app tests
 
 .PHONY: run
 run:	## Start a development server
@@ -59,7 +59,7 @@ stop-compose:	## Stop the docker services gracefully
 
 .PHONY: test
 test:	## Run tests
-	poetry run python -m pytest
+	poetry run python -m pytest tests
 
 .PHONY: update
 update:	## Update application dependencies
