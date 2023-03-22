@@ -18,6 +18,11 @@ clean:	## delete caches, builds etc.
 	rm -rf .mypy_cache
 	rm -rf .pytest_cache pytest-results.xml
 
+.PHONY: coverage
+MIN_COVERAGE ?= 75
+coverage:	## Run test coverage
+	poetry run coverage report --fail-under=${MIN_COVERAGE}
+
 .PHONY: docker-build
 docker-build:	## Build a docker image of this application
 	docker build --rm -t ${IMAGE_TAG} ${REPOSITORY_FOLDER}
@@ -45,6 +50,10 @@ mypy:	## Run mypy in strict mode
 pylint:	## Run pylint
 	poetry run pylint application.py app tests
 
+.PHONY: pytest
+pytest:	## Run tests
+	poetry run python -m pytest tests
+
 .PHONY: run
 run:	## Start a development server
 	poetry run uvicorn app.main:app --port "${SERVER_PORT}" --reload
@@ -62,8 +71,7 @@ stop-compose:	## Stop the docker services gracefully
 	docker-compose -f docker-compose.yml down
 
 .PHONY: test
-test:	## Run tests
-	poetry run python -m pytest tests
+test: pytest coverage	## Run all tests, including coverage
 
 .PHONY: update
 update:	## Update application dependencies
