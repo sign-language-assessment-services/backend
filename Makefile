@@ -13,7 +13,6 @@ default: help
 .PHONY: all
 all: install update lint test docker-build  ## install, update, lint, test and build docker image
 
-
 .PHONY: clean
 clean:	## delete caches, builds etc.
 	rm -rf .mypy_cache
@@ -36,10 +35,15 @@ isort:	## Check if imports are in the right order
 	poetry run isort . --check --diff
 
 .PHONY: lint
-lint:	## Run linter
-	poetry run isort . --check --diff
-	poetry run pylint application.py app tests
+lint: isort pylint mypy	## Run all linters
+
+.PHONY: mypy
+mypy:	## Run mypy in strict mode
 	poetry run mypy --strict application.py app tests
+
+.PHONY: pylint
+pylint:	## Run pylint
+	poetry run pylint application.py app tests
 
 .PHONY: run
 run:	## Start a development server
