@@ -13,6 +13,12 @@ default: help
 .PHONY: all
 all: install update lint test docker-build  ## install, update, lint, test and build docker image
 
+
+.PHONY: clean
+clean:	## delete caches, builds etc.
+	rm -rf .mypy_cache
+	rm -rf .pytest_cache pytest-results.xml
+
 .PHONY: docker-build
 docker-build:	## Build a docker image of this application
 	docker build --rm -t ${IMAGE_TAG} ${REPOSITORY_FOLDER}
@@ -25,9 +31,15 @@ help:	## List targets and description
 install:	## Install dependencies as configured in pyproject.toml
 	poetry install
 
+.PHONY: isort
+isort:	## Check if imports are in the right order
+	poetry run isort . --check --diff
+
 .PHONY: lint
 lint:	## Run linter
-	poetry run pylint --rcfile .pylintrc application.py app
+	poetry run isort . --check --diff
+	poetry run pylint application.py app
+	poetry run mypy --strict application.py app
 
 .PHONY: run
 run:	## Start a development server
