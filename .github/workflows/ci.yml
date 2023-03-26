@@ -28,6 +28,8 @@ jobs:
       run: make lint
     - name: Testing
       run: make test
+    - name: Security checks
+      run: make security
 
   publish:
     needs: build
