@@ -21,6 +21,7 @@ clean:	## delete caches, builds etc.
 	rm -rf .mypy_cache
 	rm -rf .pytest_cache pytest-results.xml
 	poetry run coverage erase || rm -rf .coverage
+	find . -path ./.venv -prune -o -type d -name "__pycache__" -print | xargs rm -rf
 
 .PHONY: coverage
 MIN_COVERAGE ?= 90
