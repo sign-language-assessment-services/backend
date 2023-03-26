@@ -1,10 +1,10 @@
 from dataclasses import asdict
 from typing import Any
 
-from ..models.assessment import Assessment
-from ..models.multiple_choice import MultipleChoice
-from ..models.text_choice import TextChoice
-from ..models.video_choice import VideoChoice
+from app.core.models.assessment import Assessment
+from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.text_choice import TextChoice
+from app.core.models.video_choice import VideoChoice
 
 repository = {
     1: Assessment(

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Sequence
 
-from .multiple_choice import MultipleChoice
+from app.core.models.multiple_choice import MultipleChoice
 
 
 @dataclass(frozen=True)

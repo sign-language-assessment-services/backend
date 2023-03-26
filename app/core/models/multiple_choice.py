@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Sequence
 
-from .text_choice import TextChoice
-from .video_choice import VideoChoice
+from app.core.models.text_choice import TextChoice
+from app.core.models.video_choice import VideoChoice
 
 
 @dataclass(frozen=True)
