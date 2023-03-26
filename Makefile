@@ -11,7 +11,10 @@ SERVER_PORT := 8000
 default: help
 
 .PHONY: all
-all: install update lint test docker-build  ## install, update, lint, test and build docker image
+all: install update check docker-build	## install, update, lint, test and build docker image
+
+.PHONY: check
+check: lint test security	## Run all checks (linting, testing, security)
 
 .PHONY: clean
 clean:	## delete caches, builds etc.
@@ -67,6 +70,10 @@ run-compose:	## Boot up all docker services defined in docker-compose.yml
 .PHONY: run-container
 run-container:	## Start a dockerized development server
 	docker run --rm -ti -p "${SERVER_PORT}":8000 --name "${IMAGE_NAME}" "${IMAGE_TAG}"
+
+.PHONY: security
+security:	## Run security checks
+	poetry run bandit -c pyproject.toml -r .
 
 .PHONY: stop-compose
 stop-compose:	## Stop the docker services gracefully
