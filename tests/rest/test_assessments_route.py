@@ -3,7 +3,10 @@ from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 
 
-def test_get_assessment(test_client: TestClient) -> None:
+@patch("app.core.interactors.assessments.get_presigned_url")
+def test_get_assessment(get_presigned_url_mock: Mock, test_client: TestClient) -> None:
+    get_presigned_url_mock.return_value = "http://data.localhost/slportal/witch.mp4"
+
     response = test_client.get("/assessments/1")
     assert response.status_code == 200
     assert response.json() == {
@@ -14,19 +17,31 @@ def test_get_assessment(test_client: TestClient) -> None:
                 "choices":
                     [
                         {
-                            "url": "https://tinyurl.com/4bvyka5u",
+                            "location": {
+                                'bucket': "slportal",
+                                'key': "hexen_algorithmus.mp4",
+                            },
                             "is_correct": False,
-                            "type": "video"
+                            "type": "video",
+                            "url": "http://data.localhost/slportal/witch.mp4",
                         },
                         {
-                            "url": "https://tinyurl.com/4bvyka5u",
+                            "location": {
+                                'bucket': "slportal",
+                                'key': "hexen_algorithmus.mp4",
+                            },
                             "is_correct": True,
-                            "type": "video"
+                            "type": "video",
+                            "url": "http://data.localhost/slportal/witch.mp4",
                         },
                         {
-                            "url": "https://tinyurl.com/4bvyka5u",
+                            "location": {
+                                'bucket': "slportal",
+                                'key': "hexen_algorithmus.mp4",
+                            },
                             "is_correct": False,
-                            "type": "video"
+                            "type": "video",
+                            "url": "http://data.localhost/slportal/witch.mp4",
                         }
                     ]
             },

@@ -12,6 +12,7 @@ fastapi-auth-middleware = "^1.0.2"
 pyjwt = "^2.6.0"
 python-dotenv = "^1.0.0"
 minio = "^7.1.13"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.5"
