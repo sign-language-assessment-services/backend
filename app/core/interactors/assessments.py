@@ -14,10 +14,10 @@ from app.core.models.text_choice import TextChoice
 from app.core.models.video_choice import VideoChoice
 
 client = Minio(
-    "data.localhost:9000",
+    endpoint=os.getenv("MINIO_ENDPOINT"),
     access_key=os.getenv("MINIO_ACCESS_KEY"),
     secret_key=os.getenv("MINIO_SECRET_KEY"),
-    secure=strtobool(os.getenv("MINIO_SECURE", True)),
+    secure=False,
 )
 
 def get_presigned_url(location: MinioLocation) -> str:
@@ -27,8 +27,10 @@ def get_presigned_url(location: MinioLocation) -> str:
             bucket_name=location.bucket,
             object_name=location.key
         )
-    except Exception:
-        raise HTTPException(status_code=503, detail="Minio not reachable.")
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503, detail=f"Minio not reachable. {exc}"
+        )
 
 repository = {
     1: Assessment(
