@@ -1,7 +1,7 @@
 import dataclasses
 import os
 from dataclasses import asdict
-from typing import Any
+from typing import Any, cast
 
 from fastapi import HTTPException
 from minio import Minio
@@ -22,15 +22,16 @@ client = Minio(
 
 def get_presigned_url(location: MinioLocation) -> str:
     try:
-        return client.get_presigned_url(
+        presigned_url = client.get_presigned_url(
             method="GET",
             bucket_name=location.bucket,
             object_name=location.key
         )
+        return cast(str, presigned_url)
     except Exception as exc:
         raise HTTPException(
             status_code=503, detail=f"Minio not reachable. {exc}"
-        )
+        ) from exc
 
 repository = {
     1: Assessment(

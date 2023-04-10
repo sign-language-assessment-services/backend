@@ -24,6 +24,6 @@ def verify_mandatory_env_variables() -> None:
         "DATA_BUCKET_NAME", "DATA_ENDPOINT", "DATA_ROOT_USER",
         "DATA_ROOT_PASSWORD",
     )
-    for v in mandatory:
-        if not os.getenv(v):
-            raise EnvironmentError(f"Mandatory env variable {v} is not set.")
+    for val in mandatory:
+        if not os.getenv(val):
+            raise EnvironmentError(f"Mandatory env variable {val} is not set.")

@@ -1,4 +1,4 @@
-def strtobool(val: str, default: bool = False) -> bool:
+def strtobool(val: str|None, default: bool = False) -> bool:
     """Convert a string representation of a boolean to a boolean
 
     Accepted values for True: yes, y, true, t, on, 1.
@@ -8,9 +8,10 @@ def strtobool(val: str, default: bool = False) -> bool:
     'Yes', 'N', 'ON', and so on. If nothing matches, a default will
     be returned, which is False if not changed.
     """
-    val = val.lower()
-    if val in {'y', 'yes', 't', 'true', 'on', '1'}:
-        return True
-    elif val in {'n', 'no', 'f', 'false', 'off', '0'}:
-        return False
+    if isinstance(val, str):
+        val = val.lower()
+        if val in {'y', 'yes', 't', 'true', 'on', '1'}:
+            return True
+        if val in {'n', 'no', 'f', 'false', 'off', '0'}:
+            return False
     return default

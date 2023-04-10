@@ -32,6 +32,10 @@ line_length = 100
 module = "fastapi_auth_middleware"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "minio"
+ignore_missing_imports = true
+
 [tool.pylint."MESSAGES CONTROL"]
 disable= """
    missing-class-docstring,
