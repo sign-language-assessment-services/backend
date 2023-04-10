@@ -7,6 +7,17 @@ IMAGE_TAG := ${IMAGE_NAME}:${IMAGE_VERSION}
 REPOSITORY_FOLDER := ./
 SERVER_PORT := 8000
 
+export ALGORITHMS ?= RS256
+export API_AUDIENCE ?= backend
+export AUTH_ENABLED ?= false
+export ISSUER ?= http://localhost:8080/realms/slas
+export JWKS_URL ?= http://localhost:8080/realms/slas/protocol/openid-connect/certs
+export DATA_ENDPOINT ?= data.localhost:9000
+export DATA_BUCKET_NAME ?= slportal
+export DATA_ROOT_USER ?= minioadmin
+export DATA_ROOT_PASSWORD ?= minioadmin
+
+
 .PHONY: default
 default: help
 
@@ -26,6 +37,7 @@ clean:	## delete caches, builds etc.
 .PHONY: coverage
 MIN_COVERAGE ?= 90
 coverage:	## Run test coverage
+	echo ${DATA_ROOT_USER}
 	poetry run coverage run -m pytest tests
 	poetry run coverage report -m --fail-under=${MIN_COVERAGE}
 
