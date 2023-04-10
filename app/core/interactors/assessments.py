@@ -1,7 +1,6 @@
 import dataclasses
 import os
 from dataclasses import asdict
-from distutils.util import strtobool  # pylint: disable=deprecated-module
 from typing import Any
 
 from fastapi import HTTPException
@@ -12,12 +11,13 @@ from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
 from app.core.models.video_choice import VideoChoice
+from app.utils import strtobool
 
 client = Minio(
-    endpoint=os.getenv("MINIO_ENDPOINT"),
-    access_key=os.getenv("MINIO_ACCESS_KEY"),
-    secret_key=os.getenv("MINIO_SECRET_KEY"),
-    secure=False,
+    endpoint=os.getenv("DATA_ENDPOINT"),
+    access_key=os.getenv("DATA_ROOT_USER"),
+    secret_key=os.getenv("DATA_ROOT_PASSWORD"),
+    secure=strtobool(os.getenv("DATA_SECURE"), default=True),
 )
 
 def get_presigned_url(location: MinioLocation) -> str:

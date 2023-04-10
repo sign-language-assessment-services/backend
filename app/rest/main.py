@@ -21,7 +21,8 @@ def verify_mandatory_env_variables() -> None:
         # Keycloak
         "ALGORITHMS", "API_AUDIENCE", "AUTH_ENABLED", "ISSUER", "JWKS_URL",
         # Minio
-        "MINIO_BUCKET_NAME", "MINIO_ACCESS_KEY", "MINIO_SECRET_KEY"
+        "DATA_BUCKET_NAME", "DATA_ENDPOINT", "DATA_ROOT_USER",
+        "DATA_ROOT_PASSWORD",
     )
     for v in mandatory:
         if not os.getenv(v):

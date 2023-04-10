@@ -131,3 +131,4 @@ dmypy.json
 .idea/
 diagram.bpmn
 pytest-results.xml
+.env
