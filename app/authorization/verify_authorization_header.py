@@ -1,21 +1,17 @@
-import os
-from distutils.util import strtobool  # pylint: disable=deprecated-module
 from typing import Optional
 
 from fastapi_auth_middleware import FastAPIUser
 from starlette.authentication import BaseUser
 from starlette.datastructures import Headers
 
+from app import settings
 from app.authorization.token_verifier import TokenVerifier
 
 token_verifier = TokenVerifier()
 
 
 def verify_authorization_header(headers: Headers) -> tuple[list[str], Optional[BaseUser]]:
-    auth_enabled = os.getenv("AUTH_ENABLED")
-    if not auth_enabled:
-        raise EnvironmentError("Missing env variable AUTH_ENABLED.")
-    if not strtobool(auth_enabled):
+    if not settings.AUTH_ENABLED:
         return (
             ["slas-frontend-user", "test-taker"],
             FastAPIUser(first_name="", last_name="", user_id="")

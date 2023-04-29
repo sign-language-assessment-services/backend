@@ -37,6 +37,10 @@ ignore_missing_imports = true
 module = "minio"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "decouple"
+ignore_missing_imports = true
+
 [tool.pylint."MESSAGES CONTROL"]
 disable= """
    missing-class-docstring,

@@ -1,23 +1,22 @@
 import dataclasses
-import os
 from dataclasses import asdict
 from typing import Any, cast
 
 from fastapi import HTTPException
 from minio import Minio
 
+from app import settings
 from app.core.models.assessment import Assessment
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
 from app.core.models.video_choice import VideoChoice
-from app.utils import strtobool
 
 client = Minio(
-    endpoint=os.getenv("DATA_ENDPOINT"),
-    access_key=os.getenv("DATA_ROOT_USER"),
-    secret_key=os.getenv("DATA_ROOT_PASSWORD"),
-    secure=strtobool(os.getenv("DATA_SECURE"), default=True),
+    endpoint=settings.DATA_ENDPOINT,
+    access_key=settings.DATA_ROOT_USER,
+    secret_key=settings.DATA_ROOT_PASSWORD,
+    secure=settings.DATA_SECURE,
 )
 
 def get_presigned_url(location: MinioLocation) -> str:
@@ -42,7 +41,7 @@ repository = {
                 choices=(
                     VideoChoice(
                         location=MinioLocation(
-                            bucket="slportal",
+                            bucket=settings.DATA_BUCKET_NAME,
                             key="hexen_algorithmus.mp4"
                         ),
                         is_correct=False,
@@ -50,7 +49,7 @@ repository = {
                     ),
                     VideoChoice(
                         location=MinioLocation(
-                            bucket="slportal",
+                            bucket=settings.DATA_BUCKET_NAME,
                             key="hexen_algorithmus.mp4"
                         ),
                         is_correct=True,
@@ -58,7 +57,7 @@ repository = {
                     ),
                     VideoChoice(
                         location=MinioLocation(
-                            bucket="slportal",
+                            bucket=settings.DATA_BUCKET_NAME,
                             key="hexen_algorithmus.mp4"
                         ),
                         is_correct=False,

@@ -1,5 +1,3 @@
-import os
-
 from fastapi import FastAPI
 from fastapi_auth_middleware import AuthMiddleware
 
@@ -8,22 +6,8 @@ from app.rest.routers import assessments, root
 
 
 def create_app() -> FastAPI:
-    verify_mandatory_env_variables()
     app = FastAPI()
     app.include_router(root.router)
     app.include_router(assessments.router)
     app.add_middleware(AuthMiddleware, verify_header=verify_authorization_header)
     return app
-
-
-def verify_mandatory_env_variables() -> None:
-    mandatory = (
-        # Keycloak
-        "ALGORITHMS", "API_AUDIENCE", "AUTH_ENABLED", "ISSUER", "JWKS_URL",
-        # Minio
-        "DATA_BUCKET_NAME", "DATA_ENDPOINT", "DATA_ROOT_USER",
-        "DATA_ROOT_PASSWORD",
-    )
-    for val in mandatory:
-        if not os.getenv(val):
-            raise EnvironmentError(f"Mandatory env variable {val} is not set.")
