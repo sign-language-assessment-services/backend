@@ -14,8 +14,8 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
             MultipleChoice(
                 description="bar",
                 choices=(
-                    TextChoice(label="choice 1", is_correct=False),
-                    TextChoice(label="choice 2", is_correct=True),
+                    TextChoice(text="choice 1", is_correct=False),
+                    TextChoice(text="choice 2", is_correct=True),
                 )
             ),
         ),
@@ -29,8 +29,8 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
         "items": (
             {
                 "choices": (
-                    {"is_correct": False, "label": "choice 1", "type": "text"},
-                    {"is_correct": True, "label": "choice 2", "type": "text"},
+                    {"is_correct": False, "text": "choice 1", "type": "text"},
+                    {"is_correct": True, "text": "choice 2", "type": "text"},
                 ),
                 "description": "bar"
             },

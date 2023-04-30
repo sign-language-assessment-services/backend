@@ -50,22 +50,22 @@ def test_get_assessment(get_presigned_url_mock: Mock, test_client: TestClient) -
                 "choices":
                     [
                         {
-                            "label": "Mineralwasser",
+                            "text": "Mineralwasser",
                             "is_correct": True,
                             "type": "text"
                         },
                         {
-                            "label": "Limonade",
+                            "text": "Limonade",
                             "is_correct": False,
                             "type": "text"
                         },
                         {
-                            "label": "Wasser",
+                            "text": "Wasser",
                             "is_correct": True,
                             "type": "text"
                         },
                         {
-                            "label": "Hühnersuppe",
+                            "text": "Hühnersuppe",
                             "is_correct": False,
                             "type": "text"
                         }

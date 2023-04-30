@@ -11,8 +11,8 @@ def multiple_choice() -> MultipleChoice:
     return MultipleChoice(
         description="bar",
         choices=(
-            TextChoice(label="foo", is_correct=False),
-            TextChoice(label="foo", is_correct=True),
+            TextChoice(text="foo", is_correct=False),
+            TextChoice(text="foo", is_correct=True),
         )
     )
 
