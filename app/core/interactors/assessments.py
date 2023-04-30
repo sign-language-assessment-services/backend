@@ -10,6 +10,7 @@ from app.core.models.assessment import Assessment
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
+from app.core.models.text_question import TextQuestion
 from app.core.models.video_choice import VideoChoice
 from app.core.models.video_question import VideoQuestion
 
@@ -19,6 +20,7 @@ client = Minio(
     secret_key=settings.DATA_ROOT_PASSWORD,
     secure=settings.DATA_SECURE,
 )
+
 
 def get_presigned_url(location: MinioLocation) -> str:
     try:
@@ -32,6 +34,7 @@ def get_presigned_url(location: MinioLocation) -> str:
         raise HTTPException(
             status_code=503, detail=f"Minio not reachable. {exc}"
         ) from exc
+
 
 repository = {
     1: Assessment(
@@ -280,18 +283,28 @@ repository = {
 }
 
 
-def resolve_choice(choice: VideoChoice|TextChoice) -> VideoChoice|TextChoice:
+def resolve_item(item: MultipleChoice) -> MultipleChoice:
+    return dataclasses.replace(
+        item,
+        question=resolve_question(item.question),
+        choices=tuple(resolve_choice(choice) for choice in item.choices)
+    )
+
+
+def resolve_question(question: VideoQuestion | TextQuestion) -> VideoQuestion | TextQuestion:
+    if isinstance(question, VideoQuestion):
+        return dataclasses.replace(
+            question, url=get_presigned_url(question.location)
+        )
+    return question
+
+
+def resolve_choice(choice: VideoChoice | TextChoice) -> VideoChoice | TextChoice:
     if isinstance(choice, VideoChoice):
         return dataclasses.replace(
             choice, url=get_presigned_url(choice.location)
         )
     return choice
-
-
-def resolve_item(item: MultipleChoice) -> MultipleChoice:
-    return dataclasses.replace(
-        item, choices=tuple(resolve_choice(choice) for choice in item.choices)
-    )
 
 
 def resolve_assessment(assessment: Assessment) -> Assessment:
