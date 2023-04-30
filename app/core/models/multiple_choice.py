@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from typing import Sequence
 
 from app.core.models.text_choice import TextChoice
+from app.core.models.text_question import TextQuestion
 from app.core.models.video_choice import VideoChoice
+from app.core.models.video_question import VideoQuestion
 
 
 @dataclass(frozen=True)
 class MultipleChoice:
-    description: str
+    question: TextQuestion | VideoQuestion
     choices: Sequence[TextChoice | VideoChoice]
 
     def score(self, selected_answers: Sequence[int]) -> int:

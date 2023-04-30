@@ -13,14 +13,14 @@ def assessment() -> Assessment:
         name="foo",
         items=(
             MultipleChoice(
-                description="description 1",
+                question="question 1",
                 choices=(
                     TextChoice(text="choice 1-A", is_correct=False),
                     TextChoice(text="choice 1-B", is_correct=True),
                 )
             ),
             MultipleChoice(
-                description="description 2",
+                question="question 2",
                 choices=(
                     TextChoice(text="choice 2-A", is_correct=True),
                     TextChoice(text="choice 2-B", is_correct=False),

@@ -9,7 +9,7 @@ from app.core.models.text_choice import TextChoice
 @pytest.fixture(name="mocked_multiple_choice")
 def multiple_choice() -> MultipleChoice:
     return MultipleChoice(
-        description="bar",
+        question="bar",
         choices=(
             TextChoice(text="foo", is_correct=False),
             TextChoice(text="foo", is_correct=True),

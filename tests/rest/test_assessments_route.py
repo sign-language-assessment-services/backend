@@ -13,7 +13,7 @@ def test_get_assessment(get_presigned_url_mock: Mock, test_client: TestClient) -
         "name": "Elefantenprüfung",
         "items": [
             {
-                "description": "Was essen Elefanten?",
+                "question": "Was essen Elefanten?",
                 "choices":
                     [
                         {
@@ -46,7 +46,7 @@ def test_get_assessment(get_presigned_url_mock: Mock, test_client: TestClient) -
                     ]
             },
             {
-                "description": "Was trinken Elefanten?",
+                "question": "Was trinken Elefanten?",
                 "choices":
                     [
                         {

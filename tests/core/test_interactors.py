@@ -12,7 +12,7 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
         name="foo",
         items=(
             MultipleChoice(
-                description="bar",
+                question="bar",
                 choices=(
                     TextChoice(text="choice 1", is_correct=False),
                     TextChoice(text="choice 2", is_correct=True),
@@ -32,7 +32,7 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
                     {"is_correct": False, "text": "choice 1", "type": "text"},
                     {"is_correct": True, "text": "choice 2", "type": "text"},
                 ),
-                "description": "bar"
+                "question": "bar"
             },
         ),
         "name": "foo"
