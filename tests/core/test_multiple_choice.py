@@ -4,12 +4,13 @@ import pytest
 
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
+from app.core.models.text_question import TextQuestion
 
 
 @pytest.fixture(name="mocked_multiple_choice")
 def multiple_choice() -> MultipleChoice:
     return MultipleChoice(
-        question="bar",
+        question=TextQuestion(text="bar"),
         choices=(
             TextChoice(text="foo", is_correct=False),
             TextChoice(text="foo", is_correct=True),

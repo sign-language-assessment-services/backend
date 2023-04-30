@@ -4,6 +4,7 @@ from app.core.interactors.assessments import get_assessment_by_id, score_assessm
 from app.core.models.assessment import Assessment
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
+from app.core.models.text_question import TextQuestion
 
 
 @patch("app.core.interactors.assessments.repository")
@@ -12,7 +13,7 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
         name="foo",
         items=(
             MultipleChoice(
-                question="bar",
+                question=TextQuestion(text="bar"),
                 choices=(
                     TextChoice(text="choice 1", is_correct=False),
                     TextChoice(text="choice 2", is_correct=True),
@@ -32,7 +33,7 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
                     {"is_correct": False, "text": "choice 1", "type": "text"},
                     {"is_correct": True, "text": "choice 2", "type": "text"},
                 ),
-                "question": "bar"
+                "question": {'text': 'bar', 'type': 'text'}
             },
         ),
         "name": "foo"

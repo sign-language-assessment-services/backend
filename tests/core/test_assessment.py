@@ -5,6 +5,7 @@ import pytest
 from app.core.models.assessment import Assessment
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
+from app.core.models.text_question import TextQuestion
 
 
 @pytest.fixture(name="mocked_assessment")
@@ -13,14 +14,14 @@ def assessment() -> Assessment:
         name="foo",
         items=(
             MultipleChoice(
-                question="question 1",
+                question=TextQuestion(text="question 1"),
                 choices=(
                     TextChoice(text="choice 1-A", is_correct=False),
                     TextChoice(text="choice 1-B", is_correct=True),
                 )
             ),
             MultipleChoice(
-                question="question 2",
+                question=TextQuestion(text="question 2"),
                 choices=(
                     TextChoice(text="choice 2-A", is_correct=True),
                     TextChoice(text="choice 2-B", is_correct=False),
