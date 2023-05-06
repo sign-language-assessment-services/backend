@@ -27,7 +27,7 @@ jobs:
     - name: Linting
       run: make lint
     - name: Testing
-      run: make test
+      run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
     - name: Security checks
       run: make security
 
