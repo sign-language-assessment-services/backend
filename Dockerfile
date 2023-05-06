@@ -12,7 +12,6 @@ COPY ./poetry.lock /app/poetry.lock
 RUN poetry install --no-interaction && yes | poetry cache clear --all .
 
 COPY ./app /app/app
-COPY ./.env /app/.env
 COPY ./logging.yaml /app/logging.yaml
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "logging.yaml"]
