@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: "Sign Language Portal API"
 
 on:
   push:
@@ -11,15 +11,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
+        cache: "poetry"
     - name: Install dependencies
       run: |
         pip install poetry
@@ -30,25 +29,19 @@ jobs:
       run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
     - name: Security checks
       run: make security
-
   publish:
     needs: build
     env:
       IMAGE_NAME: slportal_backend
       IMAGE_VERSION: latest
-
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: Build Docker image
         run: make docker-build
-        
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
       - name: Push image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME          
