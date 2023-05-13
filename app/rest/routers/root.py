@@ -1,4 +1,9 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+
+from app.config import Settings
+from app.rest.settings2 import get_settings
 
 router = APIRouter()
 
@@ -7,3 +12,9 @@ router = APIRouter()
 @router.get("/health")
 async def read_root() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@router.get("/settings")
+async def settings(settings: Annotated[Settings, Depends(get_settings)]) -> Settings:
+    return settings
+

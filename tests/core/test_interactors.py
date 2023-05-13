@@ -7,7 +7,7 @@ from app.core.models.text_choice import TextChoice
 from app.core.models.text_question import TextQuestion
 
 
-@patch("app.core.interactors.assessments.repository")
+@patch("app.core.interactors.assessments.repository.py")
 def test_assessment_by_id(repository_mock: Mock) -> None:
     repository_mock.__getitem__.return_value = Assessment(
         name="foo",
@@ -40,7 +40,7 @@ def test_assessment_by_id(repository_mock: Mock) -> None:
     }
 
 
-@patch("app.core.interactors.assessments.repository")
+@patch("app.core.interactors.assessments.repository.py")
 def test_score_assessment_returns_correct_score(repository_mock: Mock) -> None:
     assessment_mock = mocked_assessment_with_score(42)
     repository_mock.__getitem__.return_value = assessment_mock
