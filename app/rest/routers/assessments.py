@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/assessments/{assessment_id}")
-@requires("slas-frontend-user")
+# @requires("slas-frontend-user")
 async def read_assessment(
         assessment_id: int,
         request: Request,
@@ -23,12 +23,11 @@ async def read_assessment(
 
 
 @router.post("/assessments/{assessment_id}/submissions/")
-@requires("test-taker")
+# @requires("test-taker")
 async def process_submission(
         assessment_id: int,
         submission: Dict[int, List[int]],
         request: Request,
         assessment_service: Annotated[AssessmentService, Depends()]
 ) -> dict[str, int]:
-    assessment = assessment_service.get_assessment_by_id(assessment_id)
-    return assessment.score(submission)
+    return assessment_service.score_assessment(assessment_id, submission)

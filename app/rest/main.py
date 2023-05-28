@@ -15,7 +15,8 @@ async def verify_token(authorization: Annotated[str, Header()], token_verifier: 
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(dependencies=[Depends(verify_token)])
+    # app = FastAPI(dependencies=[Depends(verify_token)])
+    app = FastAPI()
 
     # @app.middleware("http")
     # async def add_process_time_header(request: Request, call_next, token_verifier: Annotated[TokenVerifier, Depends()]):

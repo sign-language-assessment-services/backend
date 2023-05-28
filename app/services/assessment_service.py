@@ -12,17 +12,27 @@ from app.core.models.text_question import TextQuestion
 from app.core.models.video_choice import VideoChoice
 from app.core.models.video_question import VideoQuestion
 from app.rest.settings2 import get_settings
+from app.services.assessment_repository import AssessmentRepository
 from app.services.object_storage_client import ObjectStorageClient
 
 
 class AssessmentService:
-    def __init__(self, object_storage_client: Annotated[ObjectStorageClient, Depends()],
-                 settings: Annotated[Settings, Depends(get_settings)]):
-        self.settings = settings
+    def __init__(
+            self,
+            object_storage_client: Annotated[ObjectStorageClient, Depends()],
+            repository: Annotated[AssessmentRepository, Depends()],
+            settings: Annotated[Settings, Depends(get_settings)]
+    ):
         self.object_storage_client = object_storage_client
+        self.repository = repository
+        self.settings = settings
 
     def get_assessment_by_id(self, assessment_id: int) -> Assessment:
-        return self.resolve_assessment(self.all_assessments()[assessment_id])
+        return self.resolve_assessment(self.repository.get_assessment_by_id(assessment_id))
+
+    def score_assessment(self, assessment_id: int, submission: dict[int, list[int]]) -> dict:
+        assessment = self.get_assessment_by_id(assessment_id)
+        return assessment.score(submission)
 
     def resolve_question(self, question: VideoQuestion | TextQuestion) -> VideoQuestion | TextQuestion:
         if isinstance(question, VideoQuestion):
