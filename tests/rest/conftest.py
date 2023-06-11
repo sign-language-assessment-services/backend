@@ -10,7 +10,7 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.video_choice import VideoChoice
 from app.core.models.video_question import VideoQuestion
 from app.main import app
-from app.rest.settings2 import get_settings
+from app.rest.settings import get_settings
 from app.services.assessment_service import AssessmentService
 
 

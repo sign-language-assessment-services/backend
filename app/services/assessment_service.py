@@ -11,7 +11,7 @@ from app.core.models.text_choice import TextChoice
 from app.core.models.text_question import TextQuestion
 from app.core.models.video_choice import VideoChoice
 from app.core.models.video_question import VideoQuestion
-from app.rest.settings2 import get_settings
+from app.rest.settings import get_settings
 from app.services.assessment_repository import AssessmentRepository
 from app.services.object_storage_client import ObjectStorageClient
 

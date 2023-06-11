@@ -10,8 +10,11 @@ class Settings(BaseSettings):
     jwks_url: str = "http://localhost:9000/auth/realms/slas/protocol/openid-connect/certs"
 
     # MinIO
-    data_endpoint: str = "data.localhost:9000"
+    # data_endpoint: str = "data.localhost:9000"
+    data_endpoint: str = "127.0.0.1:9030"
     data_bucket_name: str = "slportal"
-    data_root_user: str = "DATA_ROOT_USER"
-    data_root_password: str = "DATA_ROOT_PASSWORD"
+    # data_root_user: str = "DATA_ROOT_USER"
+    data_root_user: str = "minioadmin"
+    # data_root_password: str = "DATA_ROOT_PASSWORD"
+    data_root_password: str = "minioadmin"
     data_secure: bool = "false"

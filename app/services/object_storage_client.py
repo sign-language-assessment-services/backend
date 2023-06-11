@@ -5,7 +5,7 @@ from minio import Minio
 
 from app.config import Settings
 from app.core.models.minio_location import MinioLocation
-from app.rest.settings2 import get_settings
+from app.rest.settings import get_settings
 
 
 class ObjectStorageClient:

@@ -6,7 +6,7 @@ from fastapi_auth_middleware import FastAPIUser
 from starlette.authentication import BaseUser
 
 from app.config import Settings
-from app.rest.settings2 import get_settings
+from app.rest.settings import get_settings
 
 
 class TokenVerifier:  # pylint: disable=too-few-public-methods

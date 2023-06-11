@@ -6,18 +6,21 @@ from fastapi import APIRouter, Depends
 from starlette.authentication import requires
 from starlette.requests import Request
 
+from app.authorization.auth_bearer import JWTBearer
+from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.services.assessment_service import AssessmentService
 
 router = APIRouter()
 
 
-@router.get("/assessments/{assessment_id}")
+@router.get("/assessments/{assessment_id}", dependencies=[Depends(JWTBearer())])
 # @requires("slas-frontend-user")
 async def read_assessment(
         assessment_id: int,
         request: Request,
-        assessment_service: Annotated[AssessmentService, Depends()]
+        assessment_service: Annotated[AssessmentService, Depends()],
+        # jwt_bearer: Annotated[JWTBearer, Depends()]
 ) -> Assessment:
     return assessment_service.get_assessment_by_id(assessment_id)
 
