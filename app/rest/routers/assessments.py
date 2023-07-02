@@ -1,26 +1,25 @@
 # pylint: disable=unused-argument
 
-from typing import Dict, List, Annotated
+from typing import Annotated, Dict, List
 
 from fastapi import APIRouter, Depends
-from starlette.authentication import requires
-from starlette.requests import Request
 
 from app.authorization.auth_bearer import JWTBearer
-from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.services.assessment_service import AssessmentService
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(JWTBearer())])
+
+# TODO: Rollen/User decorator wieder möglich machen
+# TODO: https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/
+# TODO: Allgemeines Code-Refactoring
 
 
-@router.get("/assessments/{assessment_id}", dependencies=[Depends(JWTBearer())])
+@router.get("/assessments/{assessment_id}")
 # @requires("slas-frontend-user")
 async def read_assessment(
         assessment_id: int,
-        request: Request,
         assessment_service: Annotated[AssessmentService, Depends()],
-        # jwt_bearer: Annotated[JWTBearer, Depends()]
 ) -> Assessment:
     return assessment_service.get_assessment_by_id(assessment_id)
 
@@ -30,7 +29,6 @@ async def read_assessment(
 async def process_submission(
         assessment_id: int,
         submission: Dict[int, List[int]],
-        request: Request,
         assessment_service: Annotated[AssessmentService, Depends()]
 ) -> dict[str, int]:
     return assessment_service.score_assessment(assessment_id, submission)
