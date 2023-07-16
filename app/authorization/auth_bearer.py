@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.config import Settings
+from app.core.models.user import User
 from app.rest.settings import get_settings
 
 
@@ -29,7 +30,7 @@ class JWTBearer:
         self.settings = settings
 
         if not self.settings.auth_enabled:
-            return True
+            return User(roles=["slas-frontend-user", "test-taker"])
 
         credentials: HTTPAuthorizationCredentials = await self.http_bearer(request)
         if credentials:
@@ -38,27 +39,25 @@ class JWTBearer:
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid authentication scheme."
                 )
-            if not self.verify_jwt(credentials.credentials):
+
+            payload = self.verify_jwt(credentials.credentials)
+            if not payload:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid token or expired token."
                 )
-
-            return credentials.credentials
+            return User(roles=payload["realm_access"]["roles"])
 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authorization code."
         )
 
-    def verify_jwt(self, jwtoken: str) -> bool:
+    def verify_jwt(self, jwtoken: str) -> dict:
         try:
-            payload = decode_jwt(jwtoken, self.settings)
+            return decode_jwt(jwtoken, self.settings)
         except Exception as exc:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=str(exc)
             ) from exc
-        if payload:
-            return True
-        return False
