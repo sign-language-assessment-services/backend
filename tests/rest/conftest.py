@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 from fastapi.testclient import TestClient
 
+from app.authorization.auth_bearer import JWTBearer
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.minio_location import MinioLocation
@@ -56,5 +57,4 @@ async def override_settings():
 def test_client(mocked_assessment_service) -> TestClient:
     app.dependency_overrides[AssessmentService] = lambda: mocked_assessment_service
     app.dependency_overrides[get_settings] = override_settings
-
     return TestClient(app)

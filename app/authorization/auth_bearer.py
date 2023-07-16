@@ -28,6 +28,9 @@ class JWTBearer:
     async def __call__(self, settings: Annotated[Settings, Depends(get_settings)], request: Request):
         self.settings = settings
 
+        if not self.settings.auth_enabled:
+            return True
+
         credentials: HTTPAuthorizationCredentials = await self.http_bearer(request)
         if credentials:
             if not credentials.scheme == "Bearer":
