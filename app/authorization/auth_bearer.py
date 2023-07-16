@@ -1,8 +1,11 @@
+from typing import Annotated
+
 import jwt
-from fastapi import HTTPException, Request, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.config import Settings
+from app.rest.settings import get_settings
 
 
 def decode_jwt(token: str, settings) -> dict:
@@ -18,30 +21,32 @@ def decode_jwt(token: str, settings) -> dict:
     return decoded_token
 
 
-class JWTBearer(HTTPBearer):
-    def __init__(self, auto_error: bool = True):
-        super(JWTBearer, self).__init__(auto_error=auto_error)
-        self.settings = Settings()
+class JWTBearer:
+    def __init__(self):
+        self.http_bearer = HTTPBearer(auto_error=True)
 
-    async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+    async def __call__(self, settings: Annotated[Settings, Depends(get_settings)], request: Request):
+        self.settings = settings
+
+        credentials: HTTPAuthorizationCredentials = await self.http_bearer(request)
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid authentication scheme."
                 )
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid token or expired token."
                 )
+
             return credentials.credentials
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid authorization code."
-            )
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization code."
+        )
 
     def verify_jwt(self, jwtoken: str) -> bool:
         try:
