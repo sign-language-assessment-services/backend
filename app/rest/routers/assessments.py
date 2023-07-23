@@ -1,27 +1,41 @@
 # pylint: disable=unused-argument
 
-from typing import Any, Dict, List
+from typing import Annotated, Dict, List
 
-from fastapi import APIRouter
-from starlette.authentication import requires
-from starlette.requests import Request
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.core.interactors.assessments import get_assessment_by_id, score_assessment
+from app.authorization.auth_bearer import JWTBearer
+from app.core.models.assessment import Assessment
+from app.core.models.user import User
+from app.services.assessment_service import AssessmentService
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(JWTBearer())])
+
+
+async def get_current_user(user: Annotated[User, Depends(JWTBearer())]) -> User:
+    return user
 
 
 @router.get("/assessments/{assessment_id}")
-@requires("slas-frontend-user")
-async def read_assessment(assessment_id: int, request: Request) -> dict[str, Any]:
-    return get_assessment_by_id(assessment_id)
+async def read_assessment(
+        assessment_id: int,
+        assessment_service: Annotated[AssessmentService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)]
+) -> Assessment:
+    if not "slas-frontend-user" in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    return assessment_service.get_assessment_by_id(assessment_id)
 
 
 @router.post("/assessments/{assessment_id}/submissions/")
-@requires("test-taker")
 async def process_submission(
         assessment_id: int,
         submission: Dict[int, List[int]],
-        request: Request
+        assessment_service: Annotated[AssessmentService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)]
 ) -> dict[str, int]:
-    return score_assessment(assessment_id, submission)
+    if not "test-taker" in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    return assessment_service.score_assessment(assessment_id, submission)

@@ -8,8 +8,7 @@ license = "GPLv3"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {version = "^0.95.0", extras = ["all"]}
-fastapi-auth-middleware = "^1.0.2"
-pyjwt = "^2.6.0"
+pyjwt = {version = "^2.6.0", extras = ["crypto"]}
 python-dotenv = "^1.0.0"
 minio = "^7.1.13"
 python-multipart = "^0.0.6"
@@ -46,7 +45,14 @@ disable= """
    missing-class-docstring,
    missing-function-docstring,
    missing-module-docstring,
+   too-few-public-methods,
 """
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.master]
+extension-pkg-whitelist = "pydantic"
 
 [tool.pytest.ini_options]
 addopts = [
