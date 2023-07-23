@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.authorization.auth_bearer import JWTBearer
 from app.core.models.assessment import Assessment
+from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.user import User
 from app.services.assessment_service import AssessmentService
 
@@ -26,6 +27,17 @@ async def read_assessment(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     return assessment_service.get_assessment_by_id(assessment_id)
+
+
+@router.get("/assessments/")
+async def list_assessments(
+        assessment_service: Annotated[AssessmentService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)]
+) -> list[AssessmentSummary]:
+    if not "slas-frontend-user" in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    return assessment_service.list_assessments()
 
 
 @router.post("/assessments/{assessment_id}/submissions/")

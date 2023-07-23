@@ -5,6 +5,7 @@ from fastapi import Depends
 
 from app.config import Settings
 from app.core.models.assessment import Assessment
+from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
 from app.core.models.text_question import TextQuestion
@@ -28,6 +29,9 @@ class AssessmentService:
 
     def get_assessment_by_id(self, assessment_id: int) -> Assessment:
         return self.resolve_assessment(self.repository.get_assessment_by_id(assessment_id))
+
+    def list_assessments(self) -> list[AssessmentSummary]:
+        return self.repository.list_assessments()
 
     def score_assessment(self, assessment_id: int, submission: dict[int, list[int]]) -> dict[str, int]:
         assessment = self.get_assessment_by_id(assessment_id)

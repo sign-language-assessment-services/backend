@@ -1,4 +1,5 @@
 from app.core.models.assessment import Assessment
+from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.video_choice import VideoChoice
@@ -8,6 +9,12 @@ from app.core.models.video_question import VideoQuestion
 class AssessmentRepository:
     def get_assessment_by_id(self, assessment_id: int) -> Assessment:
         return ASSESSMENTS[assessment_id]
+
+    def list_assessments(self) -> list[AssessmentSummary]:
+        return [
+            AssessmentSummary(id=_id, name=assessment.name)
+            for _id, assessment in ASSESSMENTS.items()
+        ]
 
 
 ASSESSMENTS = {
@@ -246,6 +253,45 @@ ASSESSMENTS = {
                         location=MinioLocation(
                             bucket="slportal",
                             key="slas_sgs_gv/exercises/10/10c_Antwort.mp4"
+                        ),
+                        is_correct=False,
+                        type="video",
+                    ),
+                )
+            ),
+        )
+    ),
+    2: Assessment(
+        name="Witchraft",
+        items=(
+            MultipleChoice(
+                question=VideoQuestion(
+                    location=MinioLocation(
+                        bucket="slportal",
+                        key="hexen_algorithmus.mp4",
+                    ),
+                ),
+                choices=(
+                    VideoChoice(
+                        location=MinioLocation(
+                            bucket="slportal",
+                            key="hexen_algorithmus.mp4"
+                        ),
+                        is_correct=False,
+                        type="video",
+                    ),
+                    VideoChoice(
+                        location=MinioLocation(
+                            bucket="slportal",
+                            key="hexen_algorithmus.mp4"
+                        ),
+                        is_correct=True,
+                        type="video",
+                    ),
+                    VideoChoice(
+                        location=MinioLocation(
+                            bucket="slportal",
+                            key="hexen_algorithmus.mp4"
                         ),
                         is_correct=False,
                         type="video",

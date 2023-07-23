@@ -40,12 +40,18 @@ ignore_missing_imports = true
 module = "decouple"
 ignore_missing_imports = true
 
+[tool.pylint.basic]
+good-names= """
+    id,
+    _,
+"""
+
 [tool.pylint."MESSAGES CONTROL"]
 disable= """
-   missing-class-docstring,
-   missing-function-docstring,
-   missing-module-docstring,
-   too-few-public-methods,
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
 """
 
 [tool.pylint.format]
