@@ -12,7 +12,7 @@ from app.services.assessment_service import AssessmentService
 router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
-async def get_current_user(user: Annotated[User, Depends(JWTBearer())]):
+async def get_current_user(user: Annotated[User, Depends(JWTBearer())]) -> User:
     return user
 
 

@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     # Keycloak
-    algorithms: list = ["RS256"]
+    algorithms: list[str] = ["RS256"]
     api_audience: str = "backend"
     auth_enabled: bool = True
     issuer: str = "http://localhost:9000/auth/realms/slas"
@@ -17,4 +17,4 @@ class Settings(BaseSettings):
     data_root_user: str = "minioadmin"
     # data_root_password: str = "DATA_ROOT_PASSWORD"
     data_root_password: str = "minioadmin"
-    data_secure: bool = "false"
+    data_secure: bool = False

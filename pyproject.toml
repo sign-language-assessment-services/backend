@@ -46,7 +46,14 @@ disable= """
    missing-class-docstring,
    missing-function-docstring,
    missing-module-docstring,
+   too-few-public-methods,
 """
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.master]
+extension-pkg-whitelist = "pydantic"
 
 [tool.pytest.ini_options]
 addopts = [
