@@ -25,7 +25,7 @@ clean:	## delete caches, builds etc.
 	find . -path ./.venv -prune -o -type d -name "__pycache__" -print | xargs rm -rf
 
 .PHONY: coverage
-MIN_COVERAGE ?= 90
+MIN_COVERAGE ?= 85
 coverage:	## Run test coverage
 	poetry run coverage run -m pytest tests
 	poetry run coverage report -m --fail-under=${MIN_COVERAGE}

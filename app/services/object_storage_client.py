@@ -29,3 +29,20 @@ class ObjectStorageClient:
             raise HTTPException(
                 status_code=503, detail=f"Minio not reachable. {exc}"
             ) from exc
+
+    def list_folders(self, bucket_name: str, folder: str|None = None) -> list[str]:
+        if folder:
+            folder += "/"
+        return [
+            item.object_name.rstrip("/")
+            for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder)
+            if item.is_dir
+        ]
+
+    def list_files(self, bucket_name: str, folder: str) -> list[str]:
+        if folder:
+            folder += "/"
+        return [
+            item.object_name for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder)
+            if not item.is_dir
+        ]

@@ -43,13 +43,6 @@ def object_storage_client() -> Mock:
 
 
 @pytest.fixture
-def repository(mocked_assessment: Assessment) -> Mock:
-    repository = Mock()
-    repository.get_assessment_by_id.return_value = mocked_assessment
-    return repository
-
-
-@pytest.fixture
 def settings() -> Mock:
     settings = Mock()
     settings.data_bucket_name = "testbucket"

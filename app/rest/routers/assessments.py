@@ -19,7 +19,7 @@ async def get_current_user(user: Annotated[User, Depends(JWTBearer())]) -> User:
 
 @router.get("/assessments/{assessment_id}")
 async def read_assessment(
-        assessment_id: int,
+        assessment_id: str,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)]
 ) -> Assessment:
@@ -42,7 +42,7 @@ async def list_assessments(
 
 @router.post("/assessments/{assessment_id}/submissions/")
 async def process_submission(
-        assessment_id: int,
+        assessment_id: str,
         submission: Dict[int, List[int]],
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)]

@@ -6,13 +6,13 @@ from fastapi import Depends
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
+from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.text_choice import TextChoice
 from app.core.models.text_question import TextQuestion
 from app.core.models.video_choice import VideoChoice
 from app.core.models.video_question import VideoQuestion
 from app.rest.settings import get_settings
-from app.services.assessment_repository import AssessmentRepository
 from app.services.object_storage_client import ObjectStorageClient
 
 
@@ -20,20 +20,57 @@ class AssessmentService:
     def __init__(
             self,
             object_storage_client: Annotated[ObjectStorageClient, Depends()],
-            repository: Annotated[AssessmentRepository, Depends()],
             settings: Annotated[Settings, Depends(get_settings)]
     ):
         self.object_storage_client = object_storage_client
-        self.repository = repository
         self.settings = settings
 
-    def get_assessment_by_id(self, assessment_id: int) -> Assessment:
-        return self.resolve_assessment(self.repository.get_assessment_by_id(assessment_id))
+    def get_assessment_by_id(self, assessment_id: str) -> Assessment:
+        folders = self.object_storage_client.list_folders(
+            bucket_name=self.settings.data_bucket_name,
+            folder=assessment_id
+        )
+
+        items = []
+        for folder in folders:
+            files = self.object_storage_client.list_files(
+                bucket_name=self.settings.data_bucket_name,
+                folder=folder
+            )
+            choices = []
+            question = None
+            for filename in files:
+                if "frage" in filename.lower():
+                    question = VideoQuestion(
+                        location=MinioLocation(
+                            bucket=self.settings.data_bucket_name,
+                            key=filename
+                        )
+                    )
+                elif "antwort" in filename.lower():
+                    choices.append(
+                        VideoChoice(
+                            location=MinioLocation(
+                                bucket=self.settings.data_bucket_name,
+                                key=filename
+                            ),
+                            is_correct="richtig" in filename,
+                            type="video"
+                        )
+                    )
+            if question:
+                items.append(MultipleChoice(question=question, choices=choices))
+
+        assessment = Assessment(name=assessment_id, items=items)
+        return self.resolve_assessment(assessment)
 
     def list_assessments(self) -> list[AssessmentSummary]:
-        return self.repository.list_assessments()
+        return [
+            AssessmentSummary(id=assessment, name=assessment)
+            for assessment in self.object_storage_client.list_folders(bucket_name=self.settings.data_bucket_name)
+        ]
 
-    def score_assessment(self, assessment_id: int, submission: dict[int, list[int]]) -> dict[str, int]:
+    def score_assessment(self, assessment_id: str, submission: dict[int, list[int]]) -> dict[str, int]:
         assessment = self.get_assessment_by_id(assessment_id)
         return assessment.score(submission)
 
