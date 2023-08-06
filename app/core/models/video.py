@@ -4,7 +4,7 @@ from app.core.models.minio_location import MinioLocation
 
 
 @dataclass(frozen=True)
-class VideoQuestion:
+class Video:
     location: MinioLocation
     url: str = field(default="")
     type: str = field(default="video")

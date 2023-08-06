@@ -8,10 +8,10 @@ from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.static_item import StaticItem
 from app.core.models.text_choice import TextChoice
-from app.core.models.text_question import TextQuestion
+from app.core.models.video import Video
 from app.core.models.video_choice import VideoChoice
-from app.core.models.video_question import VideoQuestion
 from app.rest.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
 
@@ -31,7 +31,7 @@ class AssessmentService:
             folder=assessment_id
         )
 
-        items = []
+        items: list[MultipleChoice | StaticItem] = []
         for folder in folders:
             files = self.object_storage_client.list_files(
                 bucket_name=self.settings.data_bucket_name,
@@ -41,7 +41,7 @@ class AssessmentService:
             question = None
             for filename in files:
                 if "frage" in filename.lower():
-                    question = VideoQuestion(
+                    question = Video(
                         location=MinioLocation(
                             bucket=self.settings.data_bucket_name,
                             key=filename
@@ -60,6 +60,12 @@ class AssessmentService:
                     )
             if question:
                 items.append(MultipleChoice(question=question, choices=choices))
+            else:
+                items.append(
+                    StaticItem(
+                        Video(location=MinioLocation(bucket=self.settings.data_bucket_name, key=files[0]))
+                    )
+                )
 
         assessment = Assessment(name=assessment_id, items=items)
         return self.resolve_assessment(assessment)
@@ -74,12 +80,10 @@ class AssessmentService:
         assessment = self.get_assessment_by_id(assessment_id)
         return assessment.score(submission)
 
-    def resolve_question(self, question: VideoQuestion | TextQuestion) -> VideoQuestion | TextQuestion:
-        if isinstance(question, VideoQuestion):
-            return dataclasses.replace(
-                question, url=self.object_storage_client.get_presigned_url(question.location)
-            )
-        return question
+    def resolve_video(self, video: Video) -> Video:
+        return dataclasses.replace(
+            video, url=self.object_storage_client.get_presigned_url(video.location)
+        )
 
     def resolve_choice(self, choice: VideoChoice | TextChoice) -> VideoChoice | TextChoice:
         if isinstance(choice, VideoChoice):
@@ -88,12 +92,14 @@ class AssessmentService:
             )
         return choice
 
-    def resolve_item(self, item: MultipleChoice) -> MultipleChoice:
-        return dataclasses.replace(
-            item,
-            question=self.resolve_question(item.question),
-            choices=tuple(self.resolve_choice(choice) for choice in item.choices)
-        )
+    def resolve_item(self, item: MultipleChoice | StaticItem) -> MultipleChoice | StaticItem:
+        if isinstance(item, MultipleChoice):
+            return dataclasses.replace(
+                item,
+                question=self.resolve_video(item.question),
+                choices=tuple(self.resolve_choice(choice) for choice in item.choices)
+            )
+        return dataclasses.replace(item, content=self.resolve_video(item.content))
 
     def resolve_assessment(self, assessment: Assessment) -> Assessment:
         return dataclasses.replace(

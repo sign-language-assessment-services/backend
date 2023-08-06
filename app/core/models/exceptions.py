@@ -1,0 +1,2 @@
+class UnexpectedItemType(Exception):
+    pass
