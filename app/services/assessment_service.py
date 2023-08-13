@@ -6,12 +6,13 @@ from fastapi import Depends
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
+from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia import Multimedia
+from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
 from app.core.models.text_choice import TextChoice
-from app.core.models.video import Video
-from app.core.models.video_choice import VideoChoice
 from app.rest.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
 
@@ -33,29 +34,30 @@ class AssessmentService:
 
         items: list[MultipleChoice | StaticItem] = []
         for position, folder in enumerate(folders):
-            files = self.object_storage_client.list_files(
+            bucket_objects = self.object_storage_client.list_files(
                 bucket_name=self.settings.data_bucket_name,
                 folder=folder
             )
             choices = []
             question = None
-            for filename in files:
-                if "frage" in filename.lower():
-                    question = Video(
+            for bucket_object in bucket_objects:
+                if "frage" in bucket_object.name.lower():
+                    question = Multimedia(
                         location=MinioLocation(
                             bucket=self.settings.data_bucket_name,
-                            key=filename
-                        )
+                            key=bucket_object.name
+                        ),
+                        type=MediaType.from_content_type(bucket_object.content_type)
                     )
-                elif "antwort" in filename.lower():
+                elif "antwort" in bucket_object.name.lower():
                     choices.append(
-                        VideoChoice(
+                        MultimediaChoice(
                             location=MinioLocation(
                                 bucket=self.settings.data_bucket_name,
-                                key=filename
+                                key=bucket_object.name
                             ),
-                            is_correct="richtig" in filename,
-                            type="video"
+                            is_correct="richtig" in bucket_object.name,
+                            type=MediaType.from_content_type(bucket_object.content_type)
                         )
                     )
             if question:
@@ -69,7 +71,13 @@ class AssessmentService:
             else:
                 items.append(
                     StaticItem(
-                        content=Video(location=MinioLocation(bucket=self.settings.data_bucket_name, key=files[0])),
+                        content=Multimedia(
+                            location=MinioLocation(
+                                bucket=self.settings.data_bucket_name,
+                                key=bucket_objects[0].name
+                            ),
+                            type=MediaType.from_content_type(bucket_objects[0].content_type)
+                        ),
                         position=position
                     )
 
@@ -88,13 +96,13 @@ class AssessmentService:
         assessment = self.get_assessment_by_id(assessment_id)
         return assessment.score(submission)
 
-    def resolve_video(self, video: Video) -> Video:
+    def resolve_video(self, video: Multimedia) -> Multimedia:
         return dataclasses.replace(
             video, url=self.object_storage_client.get_presigned_url(video.location)
         )
 
-    def resolve_choice(self, choice: VideoChoice | TextChoice) -> VideoChoice | TextChoice:
-        if isinstance(choice, VideoChoice):
+    def resolve_choice(self, choice: MultimediaChoice | TextChoice) -> MultimediaChoice | TextChoice:
+        if isinstance(choice, MultimediaChoice):
             return dataclasses.replace(
                 choice, url=self.object_storage_client.get_presigned_url(choice.location)
             )

@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 from typing import Sequence
 
+from app.core.models.multimedia import Multimedia
+from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.text_choice import TextChoice
-from app.core.models.video import Video
-from app.core.models.video_choice import VideoChoice
 
 
 @dataclass(frozen=True)
 class MultipleChoice:
-    question: Video
-    choices: Sequence[TextChoice | VideoChoice]
+    question: Multimedia
+    choices: Sequence[TextChoice | MultimediaChoice]
     position: int
 
     def score(self, selected_answers: Sequence[int]) -> int:

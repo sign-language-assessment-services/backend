@@ -5,20 +5,32 @@ from unittest.mock import Mock
 import pytest
 
 from app.core.models.assessment import Assessment
+from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia import Multimedia
+from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
-from app.core.models.video import Video
-from app.core.models.video_choice import VideoChoice
 
 
 @pytest.fixture
 def multiple_choice_question1() -> MultipleChoice:
     return MultipleChoice(
-        question=Video(location=MinioLocation(bucket="testbucket", key="question1.mp4")),
+        question=Multimedia(
+            location=MinioLocation(bucket="testbucket", key="question1.mp4"),
+            type=MediaType.VIDEO
+        ),
         choices=(
-            VideoChoice(location=MinioLocation(bucket="testbucket", key="1-A.mp4"), is_correct=False),
-            VideoChoice(location=MinioLocation(bucket="testbucket", key="1-B.mp4"), is_correct=True),
+            MultimediaChoice(
+                location=MinioLocation(bucket="testbucket", key="1-A.mp4"),
+                is_correct=False,
+                type=MediaType.VIDEO
+            ),
+            MultimediaChoice(
+                location=MinioLocation(bucket="testbucket", key="1-B.mp4"),
+                is_correct=True,
+                type=MediaType.VIDEO
+            ),
         ),
         position=0
     )
@@ -27,11 +39,26 @@ def multiple_choice_question1() -> MultipleChoice:
 @pytest.fixture
 def multiple_choice_question2() -> MultipleChoice:
     return MultipleChoice(
-        question=Video(location=MinioLocation(bucket="testbucket", key="question2.mp4")),
+        question=Multimedia(
+            location=MinioLocation(bucket="testbucket", key="question2.mp4"),
+            type=MediaType.VIDEO
+        ),
         choices=(
-            VideoChoice(location=MinioLocation(bucket="testbucket", key="2-A.mp4"), is_correct=True),
-            VideoChoice(location=MinioLocation(bucket="testbucket", key="2-B.mp4"), is_correct=False),
-            VideoChoice(location=MinioLocation(bucket="testbucket", key="2-C.mp4"), is_correct=False),
+            MultimediaChoice(
+                location=MinioLocation(bucket="testbucket", key="2-A.mp4"),
+                is_correct=True,
+                type=MediaType.VIDEO
+            ),
+            MultimediaChoice(
+                location=MinioLocation(bucket="testbucket", key="2-B.mp4"),
+                is_correct=False,
+                type=MediaType.VIDEO
+            ),
+            MultimediaChoice(
+                location=MinioLocation(bucket="testbucket", key="2-C.mp4"),
+                is_correct=False,
+                type=MediaType.VIDEO
+            ),
         ),
         position=1
     )
@@ -41,7 +68,10 @@ def multiple_choice_question2() -> MultipleChoice:
 def static_item() -> StaticItem:
     return StaticItem(
         position=0,
-        content=Video(location=MinioLocation(bucket="testbucket", key="introduction.mp4"))
+        content=Multimedia(
+            location=MinioLocation(bucket="testbucket", key="introduction.mp4"),
+            type=MediaType.VIDEO
+        )
     )
 
 

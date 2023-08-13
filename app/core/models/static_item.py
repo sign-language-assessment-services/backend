@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from app.core.models.video import Video
+from app.core.models.multimedia import Multimedia
 
 
 @dataclass(frozen=True)
 class StaticItem:
-    content: Video
+    content: Multimedia
     position: int

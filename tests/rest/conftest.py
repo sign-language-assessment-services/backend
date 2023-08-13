@@ -7,10 +7,11 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings
 from app.core.models.assessment import Assessment
+from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia import Multimedia
+from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
-from app.core.models.video import Video
-from app.core.models.video_choice import VideoChoice
 from app.main import app
 from app.rest.settings import get_settings
 from app.services.assessment_service import AssessmentService
@@ -23,19 +24,52 @@ def mocked_assessment() -> Assessment:
         items=(
             MultipleChoice(
                 position=0,
-                question=Video(url="http://question1.mp4", location=MinioLocation(bucket="", key="")),
+                question=Multimedia(
+                    url="http://question1.mp4",
+                    location=MinioLocation(bucket="", key=""),
+                    type=MediaType.VIDEO
+                ),
                 choices=(
-                    VideoChoice(url="http://1-A.mp4", is_correct=False, location=MinioLocation(bucket="", key="")),
-                    VideoChoice(url="http://1-B.mp4", is_correct=True, location=MinioLocation(bucket="", key="")),
+                    MultimediaChoice(
+                        url="http://1-A.mp4",
+                        is_correct=False,
+                        location=MinioLocation(bucket="", key=""),
+                        type=MediaType.VIDEO
+                    ),
+                    MultimediaChoice(
+                        url="http://1-B.mp4",
+                        is_correct=True,
+                        location=MinioLocation(bucket="", key=""),
+                        type=MediaType.VIDEO
+                    ),
                 )
             ),
             MultipleChoice(
                 position=1,
-                question=Video(url="http://question2.mp4", location=MinioLocation(bucket="", key="")),
+                question=Multimedia(
+                    url="http://question2.mp4",
+                    location=MinioLocation(bucket="", key=""),
+                    type=MediaType.VIDEO
+                ),
                 choices=(
-                    VideoChoice(url="http://2-A.mp4", is_correct=True, location=MinioLocation(bucket="", key="")),
-                    VideoChoice(url="http://2-B.mp4", is_correct=False, location=MinioLocation(bucket="", key="")),
-                    VideoChoice(url="http://2-C.mp4", is_correct=False, location=MinioLocation(bucket="", key="")),
+                    MultimediaChoice(
+                        url="http://2-A.mp4",
+                        is_correct=True,
+                        location=MinioLocation(bucket="", key=""),
+                        type=MediaType.VIDEO
+                    ),
+                    MultimediaChoice(
+                        url="http://2-B.mp4",
+                        is_correct=False,
+                        location=MinioLocation(bucket="", key=""),
+                        type=MediaType.VIDEO
+                    ),
+                    MultimediaChoice(
+                        url="http://2-C.mp4",
+                        is_correct=False,
+                        location=MinioLocation(bucket="", key=""),
+                        type=MediaType.VIDEO
+                    ),
                 )
             )
         )
