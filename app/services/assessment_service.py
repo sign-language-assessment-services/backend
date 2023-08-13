@@ -32,7 +32,7 @@ class AssessmentService:
         )
 
         items: list[MultipleChoice | StaticItem] = []
-        for folder in folders:
+        for position, folder in enumerate(folders):
             files = self.object_storage_client.list_files(
                 bucket_name=self.settings.data_bucket_name,
                 folder=folder
@@ -59,12 +59,20 @@ class AssessmentService:
                         )
                     )
             if question:
-                items.append(MultipleChoice(question=question, choices=choices))
+                items.append(
+                    MultipleChoice(
+                        question=question,
+                        choices=choices,
+                        position=position
+                    )
+                )
             else:
                 items.append(
                     StaticItem(
-                        Video(location=MinioLocation(bucket=self.settings.data_bucket_name, key=files[0]))
+                        content=Video(location=MinioLocation(bucket=self.settings.data_bucket_name, key=files[0])),
+                        position=position
                     )
+
                 )
 
         assessment = Assessment(name=assessment_id, items=items)

@@ -22,6 +22,7 @@ def mocked_assessment() -> Assessment:
         name="Test Assessment",
         items=(
             MultipleChoice(
+                position=0,
                 question=Video(url="http://question1.mp4", location=MinioLocation(bucket="", key="")),
                 choices=(
                     VideoChoice(url="http://1-A.mp4", is_correct=False, location=MinioLocation(bucket="", key="")),
@@ -29,6 +30,7 @@ def mocked_assessment() -> Assessment:
                 )
             ),
             MultipleChoice(
+                position=1,
                 question=Video(url="http://question2.mp4", location=MinioLocation(bucket="", key="")),
                 choices=(
                     VideoChoice(url="http://2-A.mp4", is_correct=True, location=MinioLocation(bucket="", key="")),

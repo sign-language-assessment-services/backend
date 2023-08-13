@@ -23,6 +23,7 @@ def test_get_assessment_by_id(
     assert assessment.name == "Test Assessment"
 
     assert assessment.items[0] == MultipleChoice(
+        position=0,
         question=Video(
             location=MinioLocation(
                 bucket='testbucket',
@@ -45,7 +46,8 @@ def test_get_assessment_by_id(
     )
 
     assert assessment.items[1] == StaticItem(
-        Video(
+        position=1,
+        content=Video(
             location=MinioLocation(
                 bucket='testbucket',
                 key='video'

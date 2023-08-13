@@ -19,7 +19,8 @@ def multiple_choice_question1() -> MultipleChoice:
         choices=(
             VideoChoice(location=MinioLocation(bucket="testbucket", key="1-A.mp4"), is_correct=False),
             VideoChoice(location=MinioLocation(bucket="testbucket", key="1-B.mp4"), is_correct=True),
-        )
+        ),
+        position=0
     )
 
 
@@ -31,14 +32,16 @@ def multiple_choice_question2() -> MultipleChoice:
             VideoChoice(location=MinioLocation(bucket="testbucket", key="2-A.mp4"), is_correct=True),
             VideoChoice(location=MinioLocation(bucket="testbucket", key="2-B.mp4"), is_correct=False),
             VideoChoice(location=MinioLocation(bucket="testbucket", key="2-C.mp4"), is_correct=False),
-        )
+        ),
+        position=1
     )
 
 
 @pytest.fixture
 def static_item() -> StaticItem:
     return StaticItem(
-        Video(location=MinioLocation(bucket="testbucket", key="introduction.mp4"))
+        position=0,
+        content=Video(location=MinioLocation(bucket="testbucket", key="introduction.mp4"))
     )
 
 

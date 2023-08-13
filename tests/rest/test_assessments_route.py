@@ -9,6 +9,7 @@ def test_get_assessment(test_client: TestClient) -> None:
     assert json_response["name"] == "Test Assessment"
     assert len(json_response["items"]) == 2
     assert json_response["items"][0] == {
+        "position": 0,
         "choices": [
             {
                 "is_correct": False,

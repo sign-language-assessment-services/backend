@@ -10,6 +10,7 @@ from app.core.models.video_choice import VideoChoice
 class MultipleChoice:
     question: Video
     choices: Sequence[TextChoice | VideoChoice]
+    position: int
 
     def score(self, selected_answers: Sequence[int]) -> int:
         self.__validate_input(selected_answers)
