@@ -1,16 +1,26 @@
-# pylint: disable=redefined-outer-name
-
 from unittest.mock import Mock
 
 import pytest
 
 from app.core.models.assessment import Assessment
+from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
+
+
+@pytest.fixture
+def settings() -> Mock:
+    settings = Mock()
+    settings.data_endpoint = "127.0.0.1:4242"
+    settings.data_bucket_name = "testbucket"
+    settings.data_root_user = "testuser"
+    settings.data_root_password = "testpassword"
+    settings.data_secure = False
+    return settings
 
 
 @pytest.fixture
@@ -75,7 +85,7 @@ def static_item() -> StaticItem:
     )
 
 
-@pytest.fixture(name="mocked_assessment")
+@pytest.fixture
 def assessment(
         multiple_choice_question1: MultipleChoice,
         multiple_choice_question2: MultipleChoice,
@@ -92,14 +102,10 @@ def assessment(
 
 
 @pytest.fixture
-def object_storage_client() -> Mock:
-    object_storage_client = Mock()
-    object_storage_client.get_presigned_url.return_value = "http://some-url"
-    return object_storage_client
-
-
-@pytest.fixture
-def settings() -> Mock:
-    settings = Mock()
-    settings.data_bucket_name = "testbucket"
-    return settings
+def assessments() -> list[AssessmentSummary]:
+    return [
+        AssessmentSummary(
+            id = "Test Assessment",
+            name= "Test Assessment"
+        )
+    ]

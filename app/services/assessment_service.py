@@ -106,7 +106,7 @@ class AssessmentService:
             return dataclasses.replace(
                 choice, url=self.object_storage_client.get_presigned_url(choice.location)
             )
-        return choice
+        return choice  # pragma: no cover (TextChoice yet not implemented)
 
     def resolve_item(self, item: MultipleChoice | StaticItem) -> MultipleChoice | StaticItem:
         if isinstance(item, MultipleChoice):

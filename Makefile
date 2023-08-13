@@ -55,7 +55,8 @@ mypy:	## Run mypy in strict mode
 
 .PHONY: pylint
 pylint:	## Run pylint
-	poetry run pylint application.py app tests
+	poetry run pylint application.py app
+	poetry run pylint --disable=redefined-outer-name tests
 
 .PHONY: pytest
 pytest:	## Run tests
