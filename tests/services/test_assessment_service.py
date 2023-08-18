@@ -1,10 +1,6 @@
-from unittest.mock import Mock
-
 import pytest
 
-from app.config import Settings
 from app.core.models.assessment_summary import AssessmentSummary
-from app.core.models.bucket_object import BucketObject
 from app.core.models.exceptions import UnexpectedItemType
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
@@ -15,13 +11,12 @@ from app.core.models.static_item import StaticItem
 from app.services.assessment_service import AssessmentService
 
 
-def test_get_assessment_by_id(object_storage_client: Mock, settings: Settings) -> None:
-    assessment_service = AssessmentService(object_storage_client, settings)
+def test_get_assessment_by_id(assessment_service: AssessmentService) -> None:
     assessment_id = "Test Assessment"
 
     assessment = assessment_service.get_assessment_by_id(assessment_id)
 
-    assert assessment.name == "Test Assessment"
+    assert assessment.name == assessment_id
     assert assessment.items == (
         MultipleChoice(
             position=0,
@@ -68,9 +63,7 @@ def test_get_assessment_by_id(object_storage_client: Mock, settings: Settings) -
     )
 
 
-def test_list_assessments(object_storage_client: Mock, settings: Settings) -> None:
-    assessment_service = AssessmentService(object_storage_client, settings)
-
+def test_list_assessments(assessment_service: AssessmentService) -> None:
     assessments = assessment_service.list_assessments()
 
     assert assessments == [
@@ -79,21 +72,12 @@ def test_list_assessments(object_storage_client: Mock, settings: Settings) -> No
     ]
 
 
-def test_score_assessment(
-        object_storage_client: Mock,
-        object_storage_files: list[list[BucketObject]],
-        settings: Settings
-) -> None:
-    object_storage_client.list_files.side_effect = object_storage_files[:1] * 2
-    assessment_service = AssessmentService(object_storage_client, settings)
-
-    score = assessment_service.score_assessment("1", {0: [0], 1: [1]})
+def test_score_assessment(assessment_service_multiple_choice_only: AssessmentService) -> None:
+    score = assessment_service_multiple_choice_only.score_assessment("1", {0: [0], 1: [1]})
 
     assert score == {"score": 1}
 
 
-def test_score_assessment_raises_exception_on_static_item(object_storage_client: Mock, settings: Settings) -> None:
-    assessment_service = AssessmentService(object_storage_client, settings)
-
+def test_score_assessment_raises_exception_on_static_item(assessment_service: AssessmentService) -> None:
     with pytest.raises(UnexpectedItemType):
         assessment_service.score_assessment("1", {0: [0], 1: [1]})

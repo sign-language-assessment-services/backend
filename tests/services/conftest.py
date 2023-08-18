@@ -4,15 +4,19 @@ import pytest
 from minio.datatypes import Object as MinioObject
 
 from app.core.models.bucket_object import BucketObject
+from app.services.assessment_service import AssessmentService
+from app.services.object_storage_client import ObjectStorageClient
+
+StorageFiles = list[list[BucketObject]]
 
 
 @pytest.fixture
-def object_storage_folders() -> list[str]:
+def storage_folders() -> list[str]:
     return ["00", "01"]
 
 
 @pytest.fixture
-def object_storage_files() -> list[list[BucketObject]]:
+def storage_files() -> StorageFiles:
     return [
         [
             BucketObject(
@@ -38,12 +42,36 @@ def object_storage_files() -> list[list[BucketObject]]:
 
 
 @pytest.fixture
-def object_storage_client(object_storage_files: list[list[BucketObject]], object_storage_folders: list[str]) -> Mock:
+def storage_client(storage_files: StorageFiles, storage_folders: list[str]) -> Mock:
     object_storage_client = Mock()
     object_storage_client.get_presigned_url.return_value = "http://some-url"
-    object_storage_client.list_files.side_effect = object_storage_files
-    object_storage_client.list_folders.return_value = object_storage_folders
+    object_storage_client.list_files.side_effect = storage_files
+    object_storage_client.list_folders.return_value = storage_folders
     return object_storage_client
+
+
+@pytest.fixture
+def storage_client_minio(settings: Mock) -> ObjectStorageClient:
+    object_storage_client = ObjectStorageClient(settings)
+    object_storage_client.minio = Mock()
+    return object_storage_client
+
+
+@pytest.fixture
+def assessment_service(storage_client: Mock, settings: Mock) -> AssessmentService:
+    assessment_service = AssessmentService(storage_client, settings)
+    return assessment_service
+
+
+@pytest.fixture
+def assessment_service_multiple_choice_only(
+        storage_client: Mock,
+        settings: Mock,
+        storage_files: StorageFiles
+) -> AssessmentService:
+    storage_client.list_files.side_effect = storage_files[:1] * 2
+    assessment_service = AssessmentService(storage_client, settings)
+    return assessment_service
 
 
 @pytest.fixture

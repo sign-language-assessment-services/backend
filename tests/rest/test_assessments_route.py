@@ -1,14 +1,13 @@
 import pytest
+from fastapi import status
 from fastapi.testclient import TestClient
 
 
 def test_get_assessment(test_client: TestClient) -> None:
     response = test_client.get("/assessments/1")
-    json_response = response.json()
 
-    assert response.status_code == 200
-    assert json_response["name"] == "Test Assessment"
-    assert json_response["items"] == [
+    assert response.json()["name"] == "Test Assessment"
+    assert response.json()["items"] == [
         {
             "choices": [
                 {
@@ -102,19 +101,17 @@ def test_post_assessment(test_client: TestClient) -> None:
     }
 
     response = test_client.post(
-        f"/assessments/{assessment_id}/submissions/", json=submission
+        f"/assessments/{assessment_id}/submissions/",
+        json=submission
     )
 
-    assert response.status_code == 200
     assert response.json() == {"score": 42}
 
 
 def test_list_assessment(test_client: TestClient) -> None:
     response = test_client.get("/assessments/")
-    json_response = response.json()
 
-    assert response.status_code == 200
-    assert json_response == [
+    assert response.json() == [
         {
             "id": "Test Assessment",
             "name": "Test Assessment"
@@ -125,22 +122,26 @@ def test_list_assessment(test_client: TestClient) -> None:
 @pytest.mark.parametrize("endpoint", ["/assessments/", "/assessments/1"])
 def test_get_allowed(test_client_allowed_roles: TestClient, endpoint: str) -> None:
     response = test_client_allowed_roles.get(endpoint)
-    assert response.status_code == 200
+
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize("endpoint", ["/assessments/", "/assessments/1"])
 def test_get_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
     response = test_client_no_roles.get(endpoint)
-    assert response.status_code == 403
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.parametrize("endpoint", ["/assessments/1/submissions/"])
 def test_post_allowed(test_client_allowed_roles: TestClient, endpoint: str) -> None:
     response = test_client_allowed_roles.post(endpoint, json={0: [0, 1]})
-    assert response.status_code == 200
+
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize("endpoint", ["/assessments/1/submissions/"])
 def test_post_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
     response = test_client_no_roles.post(endpoint, json={0: [0, 1]})
-    assert response.status_code == 403
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
