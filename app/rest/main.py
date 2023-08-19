@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
@@ -18,7 +19,8 @@ def create_app() -> FastAPI:
         contact={
             "name": "Sign Language Assessment Services GmbH",
             "email": "tbd@not-yet-available.zzz"
-        }
+        },
+        default_response_class=ORJSONResponse
     )
     app.include_router(root.router)
     app.include_router(assessments.router)
