@@ -1,10 +1,25 @@
 from fastapi import FastAPI
 
+from app.docs.openapi_description import DESCRIPTION
+from app.docs.openapi_summary import SUMMARY
 from app.rest.routers import assessments, root
 
 
 def create_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(
+        title="Sign Language Portal API",
+        description=DESCRIPTION,
+        summary=SUMMARY,
+        terms_of_service="tba",
+        license_info={
+            "name": "GPLv3",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+        },
+        contact={
+            "name": "Sign Language Assessment Services GmbH",
+            "email": "tbd@not-yet-available.zzz"
+        }
+    )
     app.include_router(root.router)
     app.include_router(assessments.router)
     return app
