@@ -1,3 +1,6 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/eb0c22856be54da29d31f373e39dfa8a)](https://app.codacy.com/gh/sign-language-assessment-services/backend/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/eb0c22856be54da29d31f373e39dfa8a)](https://app.codacy.com/gh/sign-language-assessment-services/backend/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 # Sign Language Assessment Services - Backend
 
 This is a web application realized as REST-API using [Python][1] and the
