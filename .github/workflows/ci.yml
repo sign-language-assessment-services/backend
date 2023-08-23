@@ -27,7 +27,7 @@ jobs:
     - name: Testing
       run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
     - name: Coverage
-      with:
+      env:
         CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
       run: |
         make coverage
