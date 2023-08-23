@@ -29,7 +29,7 @@ jobs:
     - name: Coverage
       run: |
         make coverage
-	make coverage-codacy
+        make coverage-codacy
     - name: Security checks
       run: make security
   publish:
