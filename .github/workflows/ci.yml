@@ -26,6 +26,10 @@ jobs:
       run: make lint
     - name: Testing
       run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
+    - name: Coverage
+      run: |
+        make coverage
+	make coverage-codacy
     - name: Security checks
       run: make security
   publish:

@@ -30,6 +30,10 @@ coverage:	## Run test coverage
 	poetry run coverage run -m pytest tests
 	poetry run coverage report -m --fail-under=${MIN_COVERAGE}
 
+coverage-codacy:	## Send coverage report to codacy
+	poetry run coverage xml -o cobertura.xml
+	bash <(curl -Ls https://coverage.codacy.com/get.sh) 
+
 .PHONY: docker-build
 docker-build:	## Build a docker image of this application
 	docker build --rm -t ${IMAGE_TAG} ${REPOSITORY_FOLDER}
