@@ -11,7 +11,7 @@ a portal where sign languages can be learned.
 
 The following software is required to use this app:
 
-- [Python3.10][1] or a higher version
+  - [Python3.10][1] or a higher version
 
 ## Build automation: `Makefile`
 
@@ -118,16 +118,16 @@ installed, i.e. `poetry` is working correctly. You can find out
 
 ## Learn more
 
-- [Python][1] is one of the most loved and wanted programming languages since
-  years (see https://insights.stackoverflow.com/survey). Python tries to be as
-  simple as possible for programmers. You can write really beautiful code with
-  Python.
-- [FastAPI][2] has an excellent documentation and tries to keep things simple.
-  It will also be a pleasure for you to work with FastAPI. It is a modern, fast
-  (high-performance), web framework for building APIs with Python 3.6+ based on
-  standard Python type hints. It is also possible to use FastAPI as a kind of
-  interface, so that dependencies and risks are minimised (dependency
-  injection).
+  - [Python][1] is one of the most loved and wanted programming languages since
+    years (see https://insights.stackoverflow.com/survey). Python tries to be as
+    simple as possible for programmers. You can write really beautiful code with
+    Python.
+  - [FastAPI][2] has an excellent documentation and tries to keep things simple.
+    It will also be a pleasure for you to work with FastAPI. It is a modern, fast
+    (high-performance), web framework for building APIs with Python 3.6+ based on
+    standard Python type hints. It is also possible to use FastAPI as a kind of
+    interface, so that dependencies and risks are minimised (dependency
+    injection).
 
 
 [1]: https://python.org
