@@ -34,7 +34,7 @@ async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)]
 ) -> list[AssessmentSummary]:
-    if not "slas-frontend-user" in current_user.roles:
+    if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     return assessment_service.list_assessments()

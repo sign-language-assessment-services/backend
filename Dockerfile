@@ -1,11 +1,9 @@
 FROM python:3.10-slim
 
-MAINTAINER "Danny Rehl <commit-connoisseur@posteo.de>"
-
 WORKDIR /app
 
 RUN apt update && apt install -y curl
-RUN pip install poetry && poetry config virtualenvs.create false
+RUN pip install poetry==1.6 && poetry config virtualenvs.create false
 
 COPY ./pyproject.toml /app/pyproject.toml
 COPY ./poetry.lock /app/poetry.lock

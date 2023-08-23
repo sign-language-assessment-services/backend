@@ -36,7 +36,7 @@ class JWTBearer:
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:
-            if not credentials.scheme == "Bearer":
+            if credentials.scheme != "Bearer":
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid authentication scheme."
