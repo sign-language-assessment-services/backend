@@ -30,12 +30,15 @@ def test_decode_jwt(jwt: Mock, jwk_client: Mock, settings: Mock) -> None:
 @pytest.mark.asyncio
 async def test_jwt_bearer_returns_user(settings: Mock, bearer_credentials: JWTBearer) -> None:
     bearer_credentials.verify_jwt = Mock(  # type: ignore[method-assign]
-        return_value={"realm_access": {"roles": ["slas-frontend-user", "test-taker"]}}
+        return_value={
+            "realm_access": {"roles": ["slas-frontend-user", "test-taker"]},
+            "sub": "testuser_id"
+        }
     )
 
     result = await bearer_credentials(settings=settings, request=mock.ANY)
 
-    assert result == User(roles=["slas-frontend-user", "test-taker"])
+    assert result == User(id="testuser_id", roles=["slas-frontend-user", "test-taker"])
 
 
 @pytest.mark.asyncio
@@ -45,7 +48,7 @@ async def test_jwt_bearer_auth_disabled_returns_user(settings: Mock) -> None:
 
     result = await bearer(settings=settings, request=mock.ANY)
 
-    assert result == User(roles=["slas-frontend-user", "test-taker"])
+    assert result == User(id="anonymous", roles=["slas-frontend-user", "test-taker"])
 
 
 @pytest.mark.asyncio

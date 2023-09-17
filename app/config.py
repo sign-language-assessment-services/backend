@@ -15,3 +15,8 @@ class Settings(BaseSettings):
     data_root_user: str = "minioadmin"
     data_root_password: str = "minioadmin"
     data_secure: bool = False
+
+    # Database
+    db_user: str
+    db_password: str
+    db_host: str

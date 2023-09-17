@@ -32,7 +32,7 @@ class JWTBearer:
         self.settings = settings
 
         if not self.settings.auth_enabled:
-            return User(roles=["slas-frontend-user", "test-taker"])
+            return User(id="anonymous", roles=["slas-frontend-user", "test-taker"])
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:
@@ -48,7 +48,7 @@ class JWTBearer:
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid token or expired token."
                 )
-            return User(roles=payload["realm_access"]["roles"])
+            return User(id=payload["sub"], roles=payload["realm_access"]["roles"])
 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
