@@ -11,9 +11,9 @@ class Assessment:
     name: str
     items: Sequence[MultipleChoice | StaticItem]
 
-    def score(self, submission: dict[int, list[int]]) -> dict[str, int]:
+    def score(self, answers: dict[int, list[int]]) -> dict[str, int]:
         result = 0
-        for item_id, answer in submission.items():
+        for item_id, answer in answers.items():
             item = self.items[item_id]
             if not isinstance(item, MultipleChoice):
                 raise UnexpectedItemType(

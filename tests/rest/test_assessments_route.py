@@ -95,14 +95,14 @@ def test_get_assessment(test_client: TestClient) -> None:
 
 def test_post_assessment(test_client: TestClient) -> None:
     assessment_id = 1
-    submission = {
+    answers = {
         0: [1],
         1: [0, 2]
     }
 
     response = test_client.post(
         f"/assessments/{assessment_id}/submissions/",
-        json=submission
+        json=answers
     )
 
     assert response.json() == {"score": 42}

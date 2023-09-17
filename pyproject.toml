@@ -7,11 +7,13 @@ license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = {version = "^0.101.1", extras = ["all"]}
+fastapi = {version = "^0.103.1", extras = ["all"]}
 pyjwt = {version = "^2.8.0", extras = ["crypto"]}
 minio = "^7.1.15"
 python-multipart = "^0.0.6"
 pydantic-settings = "^2.0.3"
+sqlalchemy = "^2.0.20"
+psycopg2-binary = "^2.9.7"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.5"
