@@ -1,5 +1,4 @@
 import dataclasses
-import datetime
 import uuid
 from typing import Annotated
 
@@ -17,6 +16,7 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
+from app.repositories.submissions import add, list_by_user_id
 from app.rest.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
 
@@ -100,7 +100,8 @@ class AssessmentService:
             self,
             assessment_id: str,
             answers: dict[str|int, list[str|int]],
-            user_id: str, db: Session
+            user_id: str,
+            session: Session
     ) -> dict[str, int]:
         assessment = self.get_assessment_by_id(assessment_id)
         score = assessment.score(answers)
@@ -111,9 +112,11 @@ class AssessmentService:
             answers=answers,
             score=score["score"]
         )
-        db.add(submission)
-        db.commit()
+        add(session=session, submission=submission)
         return score
+
+    def list_submissions(self, user_id: str, session: Session):
+        return list_by_user_id(session=session, user_id=user_id)
 
     def resolve_video(self, video: Multimedia) -> Multimedia:
         return dataclasses.replace(
