@@ -6,7 +6,6 @@ from app.core.models.submission import Submission
 def add(session: Session, submission: Submission) -> None:
     session.add(submission)
     session.commit()
-    return None
 
 
 def list_by_user_id(session: Session, user_id: str) -> list[Submission]:

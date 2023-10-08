@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, JSON, String, Table
+from sqlalchemy import JSON, Column, Integer, String, Table
 
 from app.database.metadata import metadata_obj
 
