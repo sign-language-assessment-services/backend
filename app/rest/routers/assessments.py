@@ -66,7 +66,7 @@ async def process_submission(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> dict[str, int]:
+) -> dict[str, int|float]:
     if "test-taker" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
