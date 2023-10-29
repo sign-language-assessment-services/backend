@@ -2,6 +2,7 @@ from unittest import mock
 from unittest.mock import Mock
 
 import pytest
+from freezegun import freeze_time
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment_summary import AssessmentSummary
@@ -77,6 +78,7 @@ def test_list_assessments(assessment_service: AssessmentService) -> None:
     ]
 
 
+@freeze_time("2000-01-01")
 @mock.patch("uuid.uuid4", return_value="uuid4-value")
 def test_score_assessment(_, assessment_service_multiple_choice_only: AssessmentService) -> None:
     session_spy = Mock(Session)
@@ -87,14 +89,20 @@ def test_score_assessment(_, assessment_service_multiple_choice_only: Assessment
         session=session_spy
     )
 
-    assert score == {"score": 1}
+    assert score == {
+        "points": 1,
+        "maximum_points": 2,
+        "percentage": 0.5,
+    }
     session_spy.add.assert_called_once_with(
         Submission(
             id="uuid4-value",
             user_id='testuser_id',
             assessment_id='1',
             answers={0: [0], 1: [1]},
-            score=1
+            points=1,
+            maximum_points=2,
+            percentage=0.5
         )
     )
 

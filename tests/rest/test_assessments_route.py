@@ -105,7 +105,7 @@ def test_post_assessment(test_client: TestClient) -> None:
         json=answers
     )
 
-    assert response.json() == {"score": 42}
+    assert response.json() == {"points": 42, "maximum_points": 42, "percentage": 1}
 
 
 def test_list_assessment(test_client: TestClient) -> None:

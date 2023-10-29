@@ -110,7 +110,9 @@ class AssessmentService:
             user_id=user_id,
             assessment_id=assessment_id,
             answers=answers,
-            score=score["score"]
+            points=score["points"],
+            maximum_points=score["maximum_points"],
+            percentage=score["percentage"]
         )
         add(session=session, submission=submission)
         return score
