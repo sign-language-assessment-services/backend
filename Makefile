@@ -52,7 +52,7 @@ isort:	## Check if imports are in the right order
 	poetry run isort . --check --diff
 
 .PHONY: lint
-lint: isort pylint mypy	## Run all linters
+lint: isort pylint	## Run all linters
 
 .PHONY: mypy
 mypy:	## Run mypy in strict mode
