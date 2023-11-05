@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Annotated, Iterator
+from urllib.parse import quote
 
 from fastapi import Depends
 from sqlalchemy import create_engine as sqlalchemy_create_engine
@@ -14,7 +15,9 @@ from app.rest.settings import get_settings
 
 @lru_cache
 def get_db_session_factory(db_host: str, db_user: str, db_password: str) -> sessionmaker:
-    engine = sqlalchemy_create_engine(f"postgresql+psycopg2://{db_user}:{db_password}@{db_host}/backend")
+    engine = sqlalchemy_create_engine(
+        f"postgresql+psycopg2://{db_user}:{quote(db_password)}@{db_host}/backend"
+    )
     metadata_obj.create_all(bind=engine, checkfirst=True)
     mapper_registry = registry()
     mapper_registry.map_imperatively(Submission, submissions)
