@@ -1,7 +1,7 @@
 version: 1
 formatters:
   simple:
-    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format: '%(asctime)s :: %(name)-30s :: %(levelname)-8s :: %(message)s'
 filters:
   healthcheck_filter:
     "()": app.log.filters.HealthCheckFilter
@@ -13,6 +13,11 @@ handlers:
     stream: ext://sys.stdout
     filters:
       - healthcheck_filter
+loggers:
+  uvicorn.error:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
 root:
   level: DEBUG
   handlers: [console]
