@@ -93,11 +93,11 @@ def assessment(
 ) -> Assessment:
     return Assessment(
         name="Test Assessment",
-        items=(
+        items=[
             multiple_choice_question1,
             static_item,
             multiple_choice_question2
-        )
+        ]
     )
 
 

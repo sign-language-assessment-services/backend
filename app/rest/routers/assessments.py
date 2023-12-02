@@ -1,6 +1,5 @@
 # pylint: disable=unused-argument
-
-from typing import Annotated, Dict, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -62,12 +61,17 @@ async def list_submissions(
 @router.post("/assessments/{assessment_id}/submissions/")
 async def process_submission(
         assessment_id: str,
-        answers: Dict[int, List[int]],
+        answers: dict[int, list[int]],
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> dict[str, int|float]:
+) -> dict[str, float | int]:
     if "test-taker" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    return assessment_service.score_assessment(assessment_id, answers, current_user.id, db_session)
+    score = assessment_service.score_assessment(assessment_id, answers, current_user.id, db_session)
+    return {
+        "points": score.points,
+        "maximum_points": score.maximum_points,
+        "percentage": score.percentage
+    }

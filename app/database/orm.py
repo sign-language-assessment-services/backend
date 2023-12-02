@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import lru_cache
 from typing import Annotated, Iterator
 from urllib.parse import quote
@@ -14,7 +16,7 @@ from app.rest.settings import get_settings
 
 
 @lru_cache
-def get_db_session_factory(db_host: str, db_user: str, db_password: str) -> sessionmaker:
+def get_db_session_factory(db_host: str, db_user: str, db_password: str) -> sessionmaker[Session]:
     engine = sqlalchemy_create_engine(
         f"postgresql+psycopg2://{db_user}:{quote(db_password)}@{db_host}/backend"
     )

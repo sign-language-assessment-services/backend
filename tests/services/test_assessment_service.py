@@ -12,6 +12,7 @@ from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.services.assessment_service import AssessmentService
@@ -23,7 +24,7 @@ def test_get_assessment_by_id(assessment_service: AssessmentService) -> None:
     assessment = assessment_service.get_assessment_by_id(assessment_id)
 
     assert assessment.name == assessment_id
-    assert assessment.items == (
+    assert assessment.items == [
         MultipleChoice(
             position=0,
             question=Multimedia(
@@ -66,7 +67,7 @@ def test_get_assessment_by_id(assessment_service: AssessmentService) -> None:
                 type=MediaType.VIDEO
             ),
         )
-    )
+    ]
 
 
 def test_list_assessments(assessment_service: AssessmentService) -> None:
@@ -80,7 +81,7 @@ def test_list_assessments(assessment_service: AssessmentService) -> None:
 
 @freeze_time("2000-01-01")
 @mock.patch("uuid.uuid4", return_value="uuid4-value")
-def test_score_assessment(_, assessment_service_multiple_choice_only: AssessmentService) -> None:
+def test_score_assessment(_: str, assessment_service_multiple_choice_only: AssessmentService) -> None:
     session_spy = Mock(Session)
 
     score = assessment_service_multiple_choice_only.score_assessment(
@@ -89,11 +90,7 @@ def test_score_assessment(_, assessment_service_multiple_choice_only: Assessment
         session=session_spy
     )
 
-    assert score == {
-        "points": 1,
-        "maximum_points": 2,
-        "percentage": 0.5,
-    }
+    assert score == Score(points=1, maximum_points=2)
     session_spy.add.assert_called_once_with(
         Submission(
             id="uuid4-value",

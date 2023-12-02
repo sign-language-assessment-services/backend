@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
+from app.core.models.score import Score
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.main import app
@@ -19,7 +20,8 @@ def assessment_service(assessment: Assessment, assessments: list[AssessmentSumma
     assessment_service = Mock()
     assessment_service.get_assessment_by_id.return_value = assessment
     assessment_service.list_assessments.return_value = assessments
-    assessment_service.score_assessment.return_value = {"points": 42, "maximum_points": 42, "percentage": 1.0}
+    score = Score(points=42, maximum_points=42)
+    assessment_service.score_assessment.return_value = score
     return assessment_service
 
 

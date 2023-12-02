@@ -12,7 +12,7 @@ from app.core.models.user import User
 @patch("app.authorization.auth_bearer.jwt")
 def test_decode_jwt(jwt: Mock, jwk_client: Mock, settings: Mock) -> None:
     jwt.PyJWKClient.return_value = jwk_client
-    jwt.decode.return_value = "decoded_token"
+    jwt.decode.return_value = {"token": "decoded_token"}
 
     result = decode_jwt(token="encoded_token", settings=settings)
 
@@ -24,7 +24,7 @@ def test_decode_jwt(jwt: Mock, jwk_client: Mock, settings: Mock) -> None:
         audience=mock.ANY,
         issuer=mock.ANY
     )
-    assert result == "decoded_token"
+    assert result == {"token": "decoded_token"}
 
 
 @pytest.mark.asyncio
@@ -88,11 +88,11 @@ def test_verify_jwt_no_settings_raises_settings_not_available() -> None:
 def test_verify_jwt_returns_decoded_token(decoder: Mock, settings: Mock) -> None:
     bearer = JWTBearer()
     bearer.settings = settings
-    decoder.return_value = "decoded_token"
+    decoder.return_value = {"token": "decoded_token"}
 
     result = bearer.verify_jwt("test_token")
 
-    assert result == "decoded_token"
+    assert result == {"token": "decoded_token"}
 
 
 @patch("app.authorization.auth_bearer.decode_jwt")

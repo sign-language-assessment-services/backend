@@ -7,7 +7,7 @@ class Submission:
     id: str
     user_id: str
     assessment_id: str
-    answers: dict
+    answers: dict[int, list[int]]
     points: int
     maximum_points: int
     percentage: float

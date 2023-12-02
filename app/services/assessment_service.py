@@ -13,6 +13,7 @@ from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
@@ -99,10 +100,10 @@ class AssessmentService:
     def score_assessment(
             self,
             assessment_id: str,
-            answers: dict[str|int, list[str|int]],
+            answers: dict[int, list[int]],
             user_id: str,
             session: Session
-    ) -> dict[str, int]:
+    ) -> Score:
         assessment = self.get_assessment_by_id(assessment_id)
         score = assessment.score(answers)
         submission = Submission(
@@ -110,14 +111,15 @@ class AssessmentService:
             user_id=user_id,
             assessment_id=assessment_id,
             answers=answers,
-            points=score["points"],
-            maximum_points=score["maximum_points"],
-            percentage=score["percentage"]
+            points=score.points,
+            maximum_points=score.maximum_points,
+            percentage=score.percentage
         )
         add(session=session, submission=submission)
         return score
 
-    def list_submissions(self, user_id: str, session: Session):
+    @staticmethod
+    def list_submissions(user_id: str, session: Session) -> list[Submission]:
         return list_by_user_id(session=session, user_id=user_id)
 
     def resolve_video(self, video: Multimedia) -> Multimedia:
@@ -143,5 +145,5 @@ class AssessmentService:
 
     def resolve_assessment(self, assessment: Assessment) -> Assessment:
         return dataclasses.replace(
-            assessment, items=tuple(self.resolve_item(item) for item in assessment.items)
+            assessment, items=list(self.resolve_item(item) for item in assessment.items)
         )
