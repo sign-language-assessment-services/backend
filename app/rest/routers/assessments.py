@@ -1,4 +1,6 @@
 # pylint: disable=unused-argument
+
+from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -70,8 +72,4 @@ async def process_submission(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     score = assessment_service.score_assessment(assessment_id, answers, current_user.id, db_session)
-    return {
-        "points": score.points,
-        "maximum_points": score.maximum_points,
-        "percentage": score.percentage
-    }
+    return asdict(score)
