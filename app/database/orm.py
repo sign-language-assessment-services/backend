@@ -9,8 +9,10 @@ from sqlalchemy import create_engine as sqlalchemy_create_engine
 from sqlalchemy.orm import Session, registry, sessionmaker
 
 from app.config import Settings
+from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.submission import Submission
 from app.database.metadata import metadata_obj
+from app.database.tables.multimedia_files import multimedia_files
 from app.database.tables.submissions import submissions
 from app.rest.settings import get_settings
 
@@ -23,6 +25,8 @@ def get_db_session_factory(db_host: str, db_user: str, db_password: str) -> sess
     metadata_obj.create_all(bind=engine, checkfirst=True)
     mapper_registry = registry()
     mapper_registry.map_imperatively(Submission, submissions)
+    mapper_registry.map_imperatively(MultimediaFile, multimedia_files)
+
     return sessionmaker(bind=engine)
 
 
