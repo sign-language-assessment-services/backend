@@ -1,12 +1,25 @@
-from sqlalchemy import Column, String, TIMESTAMP, Table, Unicode
+from datetime import datetime
 
-from app.database.metadata import metadata_obj
+from sqlalchemy import String, TIMESTAMP, Unicode
+from sqlalchemy.orm import Mapped, mapped_column
 
-assessments = Table(
-    "assessments",
-    metadata_obj,
-    Column("id", String(length=36), primary_key=True),
-    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+from app.database.tables.base import Base
 
-    Column("name", Unicode(length=100), nullable=False, unique=True),
-)
+
+class Assessment(Base):
+    __tablename__ = "assessments"
+
+    id: Mapped[str] = mapped_column(
+        String(length=36),
+        primary_key=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        nullable=False
+    )
+
+    name: Mapped[str] = mapped_column(
+        Unicode(length=100),
+        nullable=False,
+        unique=True
+    )

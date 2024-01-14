@@ -1,23 +1,49 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, TIMESTAMP, Table
+from datetime import datetime
 
-from app.database.metadata import metadata_obj
+from sqlalchemy import Float, ForeignKey, Integer, String, TIMESTAMP
+from sqlalchemy.orm import Mapped, mapped_column
 
-submissions = Table(
-    "submissions",
-    metadata_obj,
-    Column("id", String(length=36), primary_key=True),
-    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+from app.database.tables.base import Base
 
-    Column("user_id", String(length=36), nullable=False),
-    Column("points", Integer, nullable=False),
-    Column("maximum_points", Integer, nullable=False),
-    Column("percentage", Float, nullable=False),
 
-    Column("assessment_id", ForeignKey("assessments.id"), nullable=False),
-)
 # TODO: 1. new database creation
 #       2. alembic / make database migration possible (after other todos listed here)
 #
 # TODO: code changes to reflect db changes
 #       1. Use submissions_choices n:m table instead of answers column JSON
 #       2. Create mappings Domain models <-> Database models
+
+
+class Submission(Base):
+    __tablename__ = "submissions"
+
+    id: Mapped[str] = mapped_column(
+        String(length=36),
+        primary_key=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        nullable=False
+    )
+
+    user_id: Mapped[str] = mapped_column(
+        String(length=36),
+        nullable=False
+    )
+    points: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+    maximum_points: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+    percentage: Mapped[float] = mapped_column(
+        Float,
+        nullable=False
+    )
+
+    assessment_id: Mapped[str] = mapped_column(
+        ForeignKey("assessments.id"),
+        nullable=False
+    )

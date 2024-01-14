@@ -1,17 +1,35 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP, Table, UniqueConstraint
+from datetime import datetime
 
-from app.database.metadata import metadata_obj
+from sqlalchemy import ForeignKey, Integer, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
-excercises = Table(
-    "exercises",
-    metadata_obj,
-    Column("id", String(length=36), primary_key=True),
-    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+from app.database.tables.base import Base
 
-    Column("position", Integer, nullable=False),
 
-    Column("assessment_id", ForeignKey("assessments.id"), nullable=False),
-    Column("multimedia_file_id", ForeignKey("multimedia_files.id"), nullable=False),
+class Exercise(Base):
+    __tablename__ = "exercises"
 
-    UniqueConstraint("position", "assessment_id"),
-)
+    id: Mapped[str] = mapped_column(
+        String(length=36),
+        primary_key=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        nullable=False
+    )
+
+    position: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+
+    assessment_id: Mapped[str] = mapped_column(
+        ForeignKey("assessments.id"),
+        nullable=False
+    )
+    multimedia_file_id: Mapped[str] = mapped_column(
+        ForeignKey("multimedia_files.id"),
+        nullable=False
+    )
+
+    UniqueConstraint("position", "assessment_id")

@@ -5,27 +5,18 @@ from typing import Annotated, Iterator
 from urllib.parse import quote
 
 from fastapi import Depends
-from sqlalchemy import create_engine as sqlalchemy_create_engine
-from sqlalchemy.orm import Session, registry, sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import Settings
-from app.core.models.multimedia_file import MultimediaFile
-from app.core.models.submission import Submission
-from app.database.metadata import metadata_obj
-from app.database.tables.multimedia_files import multimedia_files
-from app.database.tables.submissions import submissions
+from app.database.tables.base import Base
 from app.rest.settings import get_settings
 
 
 @lru_cache
 def get_db_session_factory(db_host: str, db_user: str, db_password: str) -> sessionmaker[Session]:
-    engine = sqlalchemy_create_engine(
-        f"postgresql+psycopg2://{db_user}:{quote(db_password)}@{db_host}/backend"
-    )
-    metadata_obj.create_all(bind=engine, checkfirst=True)
-    mapper_registry = registry()
-    mapper_registry.map_imperatively(Submission, submissions)
-    mapper_registry.map_imperatively(MultimediaFile, multimedia_files)
+    engine = create_engine(f"postgresql+psycopg2://{db_user}:{quote(db_password)}@{db_host}/backend")
+    Base.metadata.create_all(bind=engine, checkfirst=True)
 
     return sessionmaker(bind=engine)
 

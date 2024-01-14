@@ -1,17 +1,35 @@
-from sqlalchemy import Boolean, Column, ForeignKey, String, TIMESTAMP, Table, UniqueConstraint
+from datetime import datetime
 
-from app.database.metadata import metadata_obj
+from sqlalchemy import Boolean, ForeignKey, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
-choices = Table(
-    "choices",
-    metadata_obj,
-    Column("id", String(length=36), primary_key=True),
-    Column("created_at", TIMESTAMP(timezone=True), nullable=False),
+from app.database.tables.base import Base
 
-    Column("is_correct", Boolean, nullable=False),
 
-    Column("exercise_id", ForeignKey("exercises.id"), nullable=False),
-    Column("multimedia_file_id", ForeignKey("multimedia_files.id"), nullable=False),
+class Choice(Base):
+    __tablename__ = "choices"
 
-    UniqueConstraint("exercise_id", "multimedia_file_id"),
-)
+    id: Mapped[str] = mapped_column(
+        String(length=36),
+        primary_key=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        nullable=False
+    )
+
+    is_correct: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False
+    )
+
+    exercise_id: Mapped[str] = mapped_column(
+        ForeignKey("exercises.id"),
+        nullable=False
+    )
+    multimedia_file_id: Mapped[str] = mapped_column(
+        ForeignKey("multimedia_files.id"),
+        nullable=False
+    )
+
+    UniqueConstraint("exercise_id", "multimedia_file_id")
