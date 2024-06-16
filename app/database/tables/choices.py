@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, String, TIMESTAMP, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.tables.base import Base

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import TIMESTAMP, String, Unicode, UniqueConstraint
+from sqlalchemy import String, TIMESTAMP, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.models.multimedia_file import MultimediaFile

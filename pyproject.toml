@@ -34,6 +34,7 @@ concurrency = ["thread", "gevent"]
 
 [tool.isort]
 line_length = 100
+order_by_type = false
 
 [[tool.mypy.overrides]]
 module = "fastapi_auth_middleware"

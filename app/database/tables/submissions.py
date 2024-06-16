@@ -1,19 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, Float, ForeignKey, Integer, String
+from sqlalchemy import Float, ForeignKey, Integer, String, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.submission import Submission
 from app.database.tables.base import Base
 from app.database.tables.choices import Choice
 from app.database.tables.submissions_choices import submission_choice
-
-# TODO: 1. new database creation
-#       2. alembic / make database migration possible (after other todos listed here)
-#
-# TODO: code changes to reflect db changes
-#       1. Use submissions_choices n:m table instead of answers column JSON (DONE)
-#       2. Create mappings Domain models <-> Database models
 
 
 class DbSubmission(Base):
@@ -75,3 +68,10 @@ class DbSubmission(Base):
             assessment_id=self.assessment_id,
             answers=self.choices  # todo: rename submissions answers to choices
         )
+
+# TODO: 1. new database creation
+#       2. alembic / make database migration possible (after other todos listed here)
+#
+# TODO: code changes to reflect db changes
+#       1. Use submissions_choices n:m table instead of answers column JSON (DONE)
+#       2. Create mappings Domain models <-> Database models

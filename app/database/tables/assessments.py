@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, String, Unicode
+from sqlalchemy import String, TIMESTAMP, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.assessment import Assessment
