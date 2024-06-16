@@ -1,12 +1,15 @@
-from datetime import datetime
+import uuid
+from datetime import datetime, timezone
 
-from sqlalchemy import String, TIMESTAMP, Unicode, UniqueConstraint
+from sqlalchemy import TIMESTAMP, String, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.models.multimedia_file import MultimediaFile
 from app.database.tables.base import Base
 
+# TODO: What to do with type and url?
 
-class MultiMediaFiles(Base):
+class DbMultiMediaFiles(Base):
     __tablename__ = "multimedia_files"
 
     id: Mapped[str] = mapped_column(
@@ -28,3 +31,18 @@ class MultiMediaFiles(Base):
     )
 
     UniqueConstraint("bucket", "key")
+
+    @classmethod
+    def from_multimedia_file(cls, multimedia_file: MultimediaFile) -> "DbMultiMediaFiles":
+        return cls(
+            id=str(uuid.uuid4()),
+            created_at=datetime.now(tz=timezone.utc),
+            bucket=multimedia_file.bucket,
+            key=multimedia_file.key
+        )
+
+    def to_multimedia_file(self):
+        return MultimediaFile(
+            bucket=self.bucket,
+            key=self.key
+        )

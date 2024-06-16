@@ -1,12 +1,35 @@
 from sqlalchemy.orm import Session
 
 from app.core.models.submission import Submission
+from app.database.tables.submissions import DbSubmission
 
 
-def add(session: Session, submission: Submission) -> None:
-    session.add(submission)
+def add_submission(session: Session, submission: Submission) -> None:
+    session.add(DbSubmission.from_submission(submission))
     session.commit()
 
 
-def list_by_user_id(session: Session, user_id: str) -> list[Submission]:
-    return session.query(Submission).filter_by(user_id=user_id).all()
+def list_submissions(session: Session) -> list[Submission]:
+    result = session.query(DbSubmission).all()
+    return [submission.to_submission() for submission in result]
+
+
+def get_submission_by_id(session: Session, _id: str) -> Submission:
+    result = session.query(DbSubmission).get({"id": _id})
+    return result.to_submission()
+
+
+def delete_submission_by_id(session: Session, _id: str) -> None:
+    session.query(DbSubmission).filter_by(id=_id).delete()
+    session.commit()
+
+
+# TODO: rename table classes to ...Table (or better naming, because instance is not table)
+# TODO: to_modelname and from_modelname in each table class
+# TODO: check if endpoints are working
+
+def list_submission_by_user_id(session: Session, user_id: str | None) -> list[DbSubmission]:
+    if user_id:
+        pass  # TODO: to be implemented
+    result: list[DbSubmission] = session.query(DbSubmission).all()
+    return [r.to_submission() for r in result]

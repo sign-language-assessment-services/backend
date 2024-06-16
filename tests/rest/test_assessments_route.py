@@ -94,10 +94,10 @@ def test_get_assessment(test_client: TestClient) -> None:
 
 
 def test_post_assessment(test_client: TestClient) -> None:
-    assessment_id = 1
+    assessment_id = "1"
     answers = {
-        0: [1],
-        1: [0, 2]
+        "0": ["1"],
+        "1": ["0", "2"]
     }
 
     response = test_client.post(
@@ -135,7 +135,7 @@ def test_get_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
 
 @pytest.mark.parametrize("endpoint", ["/assessments/1/submissions/"])
 def test_post_allowed(test_client_allowed_roles: TestClient, endpoint: str) -> None:
-    response = test_client_allowed_roles.post(endpoint, json={0: [0, 1]})
+    response = test_client_allowed_roles.post(endpoint, json={'0': ['0', '1']})
 
     assert response.status_code == status.HTTP_200_OK
 

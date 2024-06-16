@@ -7,5 +7,5 @@ from app.core.models.media_types import MediaType
 class MultimediaFile:
     bucket: str
     key: str
-    type: MediaType
+    type: MediaType | None = field(default=None)
     url: str = field(default="")

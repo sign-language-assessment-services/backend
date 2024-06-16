@@ -36,17 +36,18 @@ async def read_assessment(
 @router.get("/assessments/")
 async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)]
+        current_user: Annotated[User, Depends(get_current_user)],
+        db_session: Session = Depends(get_db_session)
 ) -> list[AssessmentSummary]:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    return assessment_service.list_assessments()
+    return assessment_service.list_assessments(db_session)
 
 
 @router.get("/submissions/")
 async def list_submissions(
-        user_id: str,
+        # user_id: str,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
@@ -54,16 +55,16 @@ async def list_submissions(
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    if current_user.id != user_id and "test-scorer" not in current_user.roles:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
+    # if current_user.id != user_id and "test-scorer" not in current_user.roles:
+    #     raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    return assessment_service.list_submissions(user_id=user_id, session=db_session)
+    return assessment_service.list_submissions(session=db_session)
 
 
 @router.post("/assessments/{assessment_id}/submissions/")
 async def process_submission(
         assessment_id: str,
-        answers: dict[int, list[int]],
+        answers: dict[str, list[str]],
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)

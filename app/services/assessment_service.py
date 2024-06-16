@@ -17,7 +17,8 @@ from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
-from app.repositories.submissions import add, list_by_user_id
+from app.repositories.assessments import list_assessments
+from app.repositories.submissions import add_submission, list_submission_by_user_id
 from app.rest.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
 
@@ -91,16 +92,14 @@ class AssessmentService:
         assessment = Assessment(name=assessment_id, items=items)
         return self.resolve_assessment(assessment)
 
-    def list_assessments(self) -> list[AssessmentSummary]:
-        return [
-            AssessmentSummary(id=assessment, name=assessment)
-            for assessment in self.object_storage_client.list_folders(bucket_name=self.settings.data_bucket_name)
-        ]
+    @staticmethod
+    def list_assessments(session: Session) -> list[AssessmentSummary]:
+        return list_assessments(session)
 
     def score_assessment(
             self,
             assessment_id: str,
-            answers: dict[int, list[int]],
+            answers: dict[str, list[str]],
             user_id: str,
             session: Session
     ) -> Score:
@@ -115,12 +114,12 @@ class AssessmentService:
             maximum_points=score.maximum_points,
             percentage=score.percentage
         )
-        add(session=session, submission=submission)
+        add_submission(session=session, submission=submission)  # submission=DbSubmission.from_submission(submission))
         return score
 
     @staticmethod
-    def list_submissions(user_id: str, session: Session) -> list[Submission]:
-        return list_by_user_id(session=session, user_id=user_id)
+    def list_submissions(session: Session) -> list[Submission]:
+        return list_submission_by_user_id(session=session, user_id=None)
 
     def resolve_video(self, video: Multimedia) -> Multimedia:
         return dataclasses.replace(

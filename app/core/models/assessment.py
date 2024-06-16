@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 from app.core.models.exceptions import UnexpectedItemType
 from app.core.models.multiple_choice import MultipleChoice
@@ -9,9 +11,12 @@ from app.core.models.static_item import StaticItem
 @dataclass(frozen=True)
 class Assessment:
     name: str
-    items: list[MultipleChoice | StaticItem]
+    items: list[MultipleChoice | StaticItem] = field(default_factory=list)
 
-    def score(self, answers: dict[int, list[int]]) -> Score:
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
+
+    def score(self, answers: dict[str, list[str]]) -> Score:
         points = 0
         max_points = self._get_maximum_points()
         for item_id, answer in answers.items():

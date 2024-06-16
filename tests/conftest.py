@@ -1,6 +1,9 @@
 from unittest.mock import Mock
 
 import pytest
+import sqlalchemy
+from sqlalchemy.orm import Session, sessionmaker
+from testcontainers.postgres import PostgresContainer
 
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
@@ -10,6 +13,28 @@ from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
+from app.database.tables.base import Base
+
+
+@pytest.fixture(scope="session")
+def db_session() -> Session:
+    with PostgresContainer("postgres:9.5") as postgres:
+        engine = sqlalchemy.create_engine(postgres.get_connection_url(), pool_pre_ping=True)
+
+        from app.database.tables.assessments import DbAssessment
+        from app.database.tables.choices import Choice
+        from app.database.tables.exercises import Exercise
+        from app.database.tables.multimedia_files import DbMultiMediaFiles
+        from app.database.tables.primers import DbPrimer
+        from app.database.tables.submissions import DbSubmission
+        Base.metadata.create_all(bind=engine, checkfirst=True)
+
+        session = sessionmaker(bind=engine)()
+        try:
+            yield session
+        finally:
+            session.close()
+            engine.dispose()
 
 
 @pytest.fixture
@@ -105,7 +130,7 @@ def assessment(
 def assessments() -> list[AssessmentSummary]:
     return [
         AssessmentSummary(
-            id = "Test Assessment",
-            name= "Test Assessment"
+            id="Test Assessment",
+            name="Test Assessment"
         )
     ]
