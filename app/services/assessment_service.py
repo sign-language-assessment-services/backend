@@ -19,7 +19,7 @@ from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
 from app.repositories.assessments import list_assessments
 from app.repositories.submissions import add_submission, list_submission_by_user_id
-from app.rest.settings import get_settings
+from app.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
 
 

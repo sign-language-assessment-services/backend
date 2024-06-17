@@ -7,7 +7,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.core.models.multimedia_file import MultimediaFile
 from app.database.tables.base import Base
 
-# TODO: What to do with type and url?
 
 class DbMultiMediaFiles(Base):
     __tablename__ = "multimedia_files"

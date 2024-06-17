@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database.tables.base import Base
 
 
-class Choice(Base):
+class DbChoice(Base):
     __tablename__ = "choices"
 
     id: Mapped[str] = mapped_column(

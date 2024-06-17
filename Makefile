@@ -73,7 +73,7 @@ run:	## Start a development server
 
 .PHONY: run-compose
 run-compose:	## Boot up all docker services defined in docker-compose.yml
-	docker-compose -f docker-compose.yml up -d
+	docker-compose -f docker-compose.yml up --build -d
 
 .PHONY: run-container
 run-container:	## Start a dockerized development server

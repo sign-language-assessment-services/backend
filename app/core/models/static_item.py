@@ -7,6 +7,3 @@ from app.core.models.multimedia import Multimedia
 class StaticItem:
     content: Multimedia
     position: int
-
-
-# TODO: -> moved to primer.py (obsolete)?

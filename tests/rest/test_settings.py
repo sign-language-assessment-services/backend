@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 from _pytest.monkeypatch import MonkeyPatch
 
 from app.config import Settings
-from app.rest.settings import get_settings
+from app.settings import get_settings
 
 
 def test_get_settings(monkeypatch: MonkeyPatch) -> None:

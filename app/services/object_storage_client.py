@@ -6,7 +6,7 @@ from minio import Minio
 from app.config import Settings
 from app.core.models.bucket_object import BucketObject
 from app.core.models.minio_location import MinioLocation
-from app.rest.settings import get_settings
+from app.settings import get_settings
 
 
 class ObjectStorageClient:

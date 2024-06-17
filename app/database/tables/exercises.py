@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database.tables.base import Base
 
 
-class Exercise(Base):
+class DbExercise(Base):
     __tablename__ = "exercises"
 
     id: Mapped[str] = mapped_column(

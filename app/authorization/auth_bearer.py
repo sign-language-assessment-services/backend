@@ -7,7 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.authorization.exceptions import SettingsNotAvailableError
 from app.config import Settings
 from app.core.models.user import User
-from app.rest.settings import get_settings
+from app.settings import get_settings
 
 
 def decode_jwt(token: str, settings: Settings) -> dict[str, Any]:

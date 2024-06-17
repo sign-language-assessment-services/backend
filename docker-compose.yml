@@ -2,8 +2,35 @@ version: "3.5"
 
 services:
   fastapi:
-    image: slportal_backend:compose
+    image: slportal_backend
     build: .
     ports:
-    - "8000:8000"
+    - "8001:8000"
     restart: always
+    environment:
+      DB_HOST: database
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      AUTH_ENABLED: $AUTH_ENABLED
+
+  database:
+    image: postgres:16.3-alpine
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_DB: $DB_USER
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    healthcheck:
+      test: pg_isready -U $DB_USER
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    driver: local

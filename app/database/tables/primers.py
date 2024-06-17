@@ -30,7 +30,7 @@ class DbPrimer(Base):
     )
     multimedia_file_id: Mapped[str] = mapped_column(
         ForeignKey("multimedia_files.id"),
-        nullable=True  # TODO: set to False again
+        nullable=False
     )
 
     assessment = relationship("DbAssessment", back_populates="primers")
