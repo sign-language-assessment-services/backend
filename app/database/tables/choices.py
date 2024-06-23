@@ -4,6 +4,9 @@ from sqlalchemy import Boolean, ForeignKey, String, TIMESTAMP, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.tables.base import Base
+from app.core.models.media_types import MediaType
+from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia_choice import MultimediaChoice
 
 
 class DbChoice(Base):
@@ -33,3 +36,13 @@ class DbChoice(Base):
     )
 
     UniqueConstraint("exercise_id", "multimedia_file_id")
+
+    def to_choice(self) -> MultimediaChoice:
+        return MultimediaChoice(
+            location=MinioLocation(
+                bucket="slportal",
+                key=self.multimedia_file_id
+            ),
+            is_correct=self.is_correct,
+            type=MediaType.VIDEO
+        )

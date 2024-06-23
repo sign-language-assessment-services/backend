@@ -24,10 +24,6 @@ def delete_submission_by_id(session: Session, _id: str) -> None:
     session.commit()
 
 
-# TODO: rename table classes to ...Table (or better naming, because instance is not table)
-# TODO: to_modelname and from_modelname in each table class
-# TODO: check if endpoints are working
-
 def list_submission_by_user_id(session: Session, user_id: str | None) -> list[DbSubmission]:
     if user_id:
         pass  # TODO: to be implemented

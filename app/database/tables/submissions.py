@@ -66,5 +66,5 @@ class DbSubmission(Base):
             maximum_points=self.maximum_points,
             percentage=self.percentage,
             assessment_id=self.assessment_id,
-            answers=self.choices
+            answers=[db_choice.to_choice() for db_choice in self.choices]
         )
