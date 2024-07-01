@@ -69,7 +69,7 @@ pytest:	## Run tests
 
 .PHONY: run
 run:	## Start a development server
-	poetry run uvicorn app.main:app --port "${SERVER_PORT}" --reload
+	docker-compose -f docker-compose.yml up -d database object-storage && poetry run uvicorn app.main:app --port "${SERVER_PORT}" --reload
 
 .PHONY: run-compose
 run-compose:	## Boot up all docker services defined in docker-compose.yml

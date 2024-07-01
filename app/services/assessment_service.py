@@ -8,8 +8,6 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
-from app.core.models.media_types import MediaType
-from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multiple_choice import MultipleChoice
@@ -17,10 +15,10 @@ from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
-from app.repositories.assessments import list_assessments
+from app.repositories.assessments import get_assessment_by_id, list_assessments
 from app.repositories.submissions import add_submission, list_submission_by_user_id
-from app.settings import get_settings
 from app.services.object_storage_client import ObjectStorageClient
+from app.settings import get_settings
 
 
 class AssessmentService:
@@ -32,65 +30,9 @@ class AssessmentService:
         self.object_storage_client = object_storage_client
         self.settings = settings
 
-    def get_assessment_by_id(self, assessment_id: str) -> Assessment:
-        folders = self.object_storage_client.list_folders(
-            bucket_name=self.settings.data_bucket_name,
-            folder=assessment_id
-        )
-
-        items: list[MultipleChoice | StaticItem] = []
-        for position, folder in enumerate(folders):
-            bucket_objects = self.object_storage_client.list_files(
-                bucket_name=self.settings.data_bucket_name,
-                folder=folder
-            )
-            choices = []
-            question = None
-            for bucket_object in bucket_objects:
-                if "frage" in bucket_object.name.lower():
-                    question = Multimedia(
-                        location=MinioLocation(
-                            bucket=self.settings.data_bucket_name,
-                            key=bucket_object.name
-                        ),
-                        type=MediaType.from_content_type(bucket_object.content_type)
-                    )
-                elif "antwort" in bucket_object.name.lower():
-                    choices.append(
-                        MultimediaChoice(
-                            location=MinioLocation(
-                                bucket=self.settings.data_bucket_name,
-                                key=bucket_object.name
-                            ),
-                            is_correct="richtig" in bucket_object.name,
-                            type=MediaType.from_content_type(bucket_object.content_type)
-                        )
-                    )
-            if question:
-                items.append(
-                    MultipleChoice(
-                        question=question,
-                        choices=choices,
-                        position=position
-                    )
-                )
-            else:
-                items.append(
-                    StaticItem(
-                        content=Multimedia(
-                            location=MinioLocation(
-                                bucket=self.settings.data_bucket_name,
-                                key=bucket_objects[0].name
-                            ),
-                            type=MediaType.from_content_type(bucket_objects[0].content_type)
-                        ),
-                        position=position
-                    )
-
-                )
-
-        assessment = Assessment(name=assessment_id, items=items)
-        return self.resolve_assessment(assessment)
+    @staticmethod
+    def get_assessment_by_id(session: Session, assessment_id: str) -> Assessment:
+        return get_assessment_by_id(session=session, _id=assessment_id)
 
     @staticmethod
     def list_assessments(session: Session) -> list[AssessmentSummary]:
@@ -99,12 +41,12 @@ class AssessmentService:
     def score_assessment(
             self,
             assessment_id: str,
-            answers: dict[str, list[str]],
+            answers: dict[str, dict[str, bool]],
             user_id: str,
             session: Session
     ) -> Score:
-        assessment = self.get_assessment_by_id(assessment_id)
-        score = assessment.score(answers)
+        assessment = self.get_assessment_by_id(session=session, assessment_id=assessment_id)
+        score = assessment.score(answers=answers)
         submission = Submission(
             id=str(uuid.uuid4()),
             user_id=user_id,

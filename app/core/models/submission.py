@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 class Submission:
     user_id: str
     assessment_id: str
-    answers: dict[int, list[int]]
+    answers: dict[str, dict[str, bool]]
     points: int
     maximum_points: int
     percentage: float

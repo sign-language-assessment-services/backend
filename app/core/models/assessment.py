@@ -16,7 +16,7 @@ class Assessment:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
 
-    def score(self, answers: dict[str, list[str]]) -> Score:
+    def score(self, answers: dict[str, dict[str, bool]]) -> Score:
         points = 0
         max_points = self._get_maximum_points()
         for item_id, answer in answers.items():
