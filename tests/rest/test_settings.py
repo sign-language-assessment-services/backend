@@ -13,7 +13,7 @@ def test_get_settings(monkeypatch: MonkeyPatch) -> None:
     assert get_settings() == Settings()  # type: ignore[call-arg]
 
 
-@patch("app.rest.settings.Settings")
+@patch("app.settings.Settings")
 def test_get_settings_calls_settings_class_only_once(settings_class: Mock) -> None:
     get_settings.cache_clear()
 

@@ -16,11 +16,11 @@ class Assessment:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
 
-    def score(self, answers: dict[str, dict[str, bool]]) -> Score:
+    def score(self, answers: list[dict[str, str | list[str]]]) -> Score:
         points = 0
         max_points = self._get_maximum_points()
-        for item_id, answer in answers.items():
-            item = self.items[item_id]
+        for answer in answers:
+            item = self.items[int(answer["item_id"])]  # TODO: replace with real id (database), yet position
             if not isinstance(item, MultipleChoice):
                 raise UnexpectedItemType(
                     f"Only multiple choice is allowed. Got {type(item)}"
@@ -29,4 +29,5 @@ class Assessment:
         return Score(points=points, maximum_points=max_points)
 
     def _get_maximum_points(self) -> int:
+        # Each MultipleChoice item gives maximum 1 point, StaticItems are ignored
         return len([item for item in self.items if not isinstance(item, StaticItem)])

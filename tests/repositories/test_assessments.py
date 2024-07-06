@@ -6,12 +6,14 @@ from sqlalchemy import text
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.primer import Primer
-from app.repositories.assessments import (add_assessment, add_assessment_primer,
-                                          delete_assessment_by_id, get_assessment_by_id,
-                                          list_assessments)
+from app.repositories.assessments import (
+    add_assessment, add_assessment_primer,
+    delete_assessment_by_id, get_assessment_by_id,
+    list_assessments
+)
 
 
-def test_add_assessment(db_session):
+def test_add_assessment(db_session, insert_multimedia_file):
     assessment = Assessment(name="Test Assessment")
     add_assessment(db_session, assessment)
 
@@ -19,10 +21,11 @@ def test_add_assessment(db_session):
 
     assert db_assessment[2] == "Test Assessment"
 
+    insert_multimedia_file(1)
     primer = Primer(
         position=1,
         assessment_id=assessment.id,
-        multimedia_file_id=None,
+        multimedia_file_id="test_id-1",
     )
     add_assessment_primer(db_session, primer)
 

@@ -13,7 +13,7 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
 
 
 def get_assessment_by_id(session: Session, _id: str) -> Assessment:
-    result = session.query(DbAssessment).get({"id": _id})
+    result = session.get(DbAssessment, {"id": _id})
     return result.to_assessment()
 
 

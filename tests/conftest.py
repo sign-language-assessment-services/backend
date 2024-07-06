@@ -45,6 +45,9 @@ def settings() -> Mock:
     settings.data_root_user = "testuser"
     settings.data_root_password = "testpassword"
     settings.data_secure = False
+    settings.db_user = "testuser"
+    settings.db_password = "testpassword"
+    settings.db_host = "localhost"
     return settings
 
 

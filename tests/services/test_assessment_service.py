@@ -22,7 +22,8 @@ from app.services.assessment_service import AssessmentService
 def test_get_assessment_by_id(assessment_service: AssessmentService) -> None:
     assessment_id = "Test Assessment"
 
-    assessment = assessment_service.get_assessment_by_id(assessment_id)
+    mocked_session = Mock()
+    assessment = assessment_service.get_assessment_by_id(mocked_session, assessment_id)
 
     assert assessment.name == assessment_id
     assert assessment.items == [
@@ -94,7 +95,8 @@ def test_score_assessment(_: str, assessment_service_multiple_choice_only: Asses
     session_spy = Mock(Session)
 
     score = assessment_service_multiple_choice_only.score_assessment(
-        "1", {0: [0], 1: [1]},
+        assessment_id="1",
+        answers=[{"item_id": "0", "choice_ids": ["0"]}, {"item_id": "2", "choice_ids": ["1"]}],
         user_id="testuser_id",
         session=session_spy
     )
@@ -113,4 +115,9 @@ def test_score_assessment(_: str, assessment_service_multiple_choice_only: Asses
 
 def test_score_assessment_raises_exception_on_static_item(assessment_service: AssessmentService) -> None:
     with pytest.raises(UnexpectedItemType):
-        assessment_service.score_assessment("1", {0: [0], 1: [1]}, mock.ANY, mock.ANY)
+        assessment_service.score_assessment(
+            assessment_id="1",
+            answers=[{"item_id": "0", "choice_ids": ["0"]}, {"item_id": 1, "choice_ids": ["1"]}],
+            user_id=mock.ANY,
+            session=mock.ANY
+        )

@@ -41,7 +41,7 @@ class AssessmentService:
     def score_assessment(
             self,
             assessment_id: str,
-            answers: dict[str, dict[str, bool]],
+            answers: list[dict[str, str | list[str]]],
             user_id: str,
             session: Session
     ) -> Score:

@@ -96,8 +96,8 @@ def test_get_assessment(test_client: TestClient) -> None:
 def test_post_assessment(test_client: TestClient) -> None:
     assessment_id = "1"
     answers = {
-        "0": ["1"],
-        "1": ["0", "2"]
+        "0": {"choice-1": True},
+        "1": {"choice-0": True, "choice-2": True}
     }
 
     response = test_client.post(
@@ -135,13 +135,13 @@ def test_get_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
 
 @pytest.mark.parametrize("endpoint", ["/assessments/1/submissions/"])
 def test_post_allowed(test_client_allowed_roles: TestClient, endpoint: str) -> None:
-    response = test_client_allowed_roles.post(endpoint, json={'0': ['0', '1']})
+    response = test_client_allowed_roles.post(endpoint, json={"0": {"choice-0": True, "choice-1": True}})
 
     assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize("endpoint", ["/assessments/1/submissions/"])
 def test_post_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
-    response = test_client_no_roles.post(endpoint, json={0: [0, 1]})
+    response = test_client_no_roles.post(endpoint, json={"0": {"choice-0": True, "choice-1": True}})
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
