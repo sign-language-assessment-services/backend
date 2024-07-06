@@ -7,4 +7,7 @@ from app.settings import get_settings
 if os.environ.get("SLPORTAL_ENV").upper() != "TESTING":
     init_db(engine=get_db_engine(settings=get_settings()))
 
+if os.environ.get("SLPORTAL_ENV").upper() != "TESTING":
+    init_db(engine=get_db_engine(settings=get_settings()))
+
 app = create_app()

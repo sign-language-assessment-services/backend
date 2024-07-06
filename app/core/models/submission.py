@@ -9,7 +9,7 @@ from app.type_hints import Answers
 class Submission:
     user_id: str
     assessment_id: str
-    answers: Answers
+    answers: list[dict[str, str | list[str]]]
     points: int
     maximum_points: int
     percentage: float

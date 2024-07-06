@@ -19,6 +19,7 @@ def test_get_assessment_by_id(mocked_get_assessment, assessment_service: Assessm
     assessment_id = "1234"
     mocked_session = Mock()
 
+    mocked_session = Mock()
     assessment = assessment_service.get_assessment_by_id(mocked_session, assessment_id)
 
     assert assessment.id == assessment_id
@@ -61,11 +62,11 @@ def test_score_assessment(
     answers = [{"item_id": "0", "choice_ids": ["0"]}]
     mocked_session = Mock()
 
-    score = assessment_service.score_assessment(
-        assessment_id="foo42",
-        answers=answers,
-        user_id="001",
-        session=mocked_session
+    score = assessment_service_multiple_choice_only.score_assessment(
+        assessment_id="1",
+        answers=[{"item_id": "0", "choice_ids": ["0"]}, {"item_id": "2", "choice_ids": ["1"]}],
+        user_id="testuser_id",
+        session=session_spy
     )
 
     assert score == Score(points=1, maximum_points=1)
@@ -85,7 +86,7 @@ def test_score_assessment_raises_exception_on_static_item(_, assessment_service:
     with pytest.raises(UnexpectedItemType):
         assessment_service.score_assessment(
             assessment_id="1",
-            answers=[{"item_id": 1, "choice_ids": ["1"]}],
+            answers=[{"item_id": "0", "choice_ids": ["0"]}, {"item_id": 1, "choice_ids": ["1"]}],
             user_id=mock.ANY,
             session=mock.ANY
         )
