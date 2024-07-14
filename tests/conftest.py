@@ -21,6 +21,7 @@ def db_session() -> Session:
     with PostgresContainer("postgres:9.5") as postgres:
         engine = sqlalchemy.create_engine(postgres.get_connection_url(), pool_pre_ping=True)
 
+        # pylint: disable=import-outside-toplevel,unused-import
         from app.database.tables.assessments import DbAssessment
         from app.database.tables.choices import DbChoice
         from app.database.tables.exercises import DbExercise

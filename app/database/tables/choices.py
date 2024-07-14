@@ -1,25 +1,14 @@
-from datetime import datetime
-
-from sqlalchemy import Boolean, ForeignKey, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database.tables.base import Base
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_choice import MultimediaChoice
+from app.database.tables.base import Base
 
 
 class DbChoice(Base):
     __tablename__ = "choices"
-
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
 
     is_correct: Mapped[bool] = mapped_column(
         Boolean,

@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import ForeignKey, Integer, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.primer import Primer
@@ -8,27 +6,20 @@ from app.database.tables.base import Base
 
 
 class DbPrimer(Base):
+    # pylint: disable=duplicate-code
     __tablename__ = "primers"
 
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
-
-    position: Mapped[int] = mapped_column(
+    position: Mapped[int] = mapped_column(  # pylint: disable=unsubscriptable-object
         Integer,
         nullable=False
     )
 
-    assessment_id: Mapped[str] = mapped_column(
+    assessment_id: Mapped[str] = mapped_column(  # pylint: disable=unsubscriptable-object
         ForeignKey("assessments.id"),
         nullable=False
     )
-    multimedia_file_id: Mapped[str] = mapped_column(
+
+    multimedia_file_id: Mapped[str] = mapped_column(  # pylint: disable=unsubscriptable-object
         ForeignKey("multimedia_files.id"),
         nullable=False
     )
@@ -38,7 +29,7 @@ class DbPrimer(Base):
     UniqueConstraint("position", "assessment_id")
 
     @classmethod
-    def from_primer(cls, primer) -> "DbPrimer":
+    def from_primer(cls, primer: Primer) -> "DbPrimer":
         return cls(
             id=primer.id,
             created_at=primer.created_at,
@@ -47,7 +38,7 @@ class DbPrimer(Base):
             multimedia_file_id=primer.multimedia_file_id
         )
 
-    def to_primer(self):
+    def to_primer(self) -> Primer:
         return Primer(
             id=self.id,
             created_at=self.created_at,

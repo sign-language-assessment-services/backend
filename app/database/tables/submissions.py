@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import Float, ForeignKey, Integer, String, TIMESTAMP
+from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.submission import Submission
@@ -11,15 +9,6 @@ from app.database.tables.submissions_choices import submission_choice
 
 class DbSubmission(Base):
     __tablename__ = "submissions"
-
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
 
     user_id: Mapped[str] = mapped_column(
         String(length=36),
@@ -57,7 +46,7 @@ class DbSubmission(Base):
             assessment_id=submission.assessment_id
         )
 
-    def to_submission(self):
+    def to_submission(self) -> Submission:
         return Submission(
             id=self.id,
             created_at=self.created_at,

@@ -1,22 +1,12 @@
-from datetime import datetime
-
-from sqlalchemy import ForeignKey, Integer, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.tables.base import Base
 
 
 class DbExercise(Base):
+    # pylint: disable=duplicate-code
     __tablename__ = "exercises"
-
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
 
     position: Mapped[int] = mapped_column(
         Integer,

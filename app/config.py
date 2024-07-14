@@ -21,5 +21,8 @@ class Settings(BaseSettings):
     db_password: str
     db_host: str
 
+    # FastAPI
+    slportal_env: str
+
     # Environment variables from .env file in root folder
     model_config = SettingsConfigDict(env_file=".env")

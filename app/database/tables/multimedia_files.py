@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import String, TIMESTAMP, Unicode, UniqueConstraint
+from sqlalchemy import String, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.models.multimedia_file import MultimediaFile
@@ -10,15 +10,6 @@ from app.database.tables.base import Base
 
 class DbMultiMediaFiles(Base):
     __tablename__ = "multimedia_files"
-
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
 
     bucket: Mapped[str] = mapped_column(
         String(length=63),
@@ -40,7 +31,7 @@ class DbMultiMediaFiles(Base):
             key=multimedia_file.key
         )
 
-    def to_multimedia_file(self):
+    def to_multimedia_file(self) -> MultimediaFile:
         return MultimediaFile(
             bucket=self.bucket,
             key=self.key

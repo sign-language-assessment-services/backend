@@ -10,12 +10,12 @@ def add_multimedia_file(session: Session, multimedia_file: MultimediaFile) -> No
 
 
 def get_multimedia_file_by_id(session: Session, _id: str) -> MultimediaFile:
-    result = session.query(DbMultiMediaFiles).get({"id": _id})
+    result: DbMultiMediaFiles = session.query(DbMultiMediaFiles).get({"id": _id})
     return result.to_multimedia_file()
 
 
 def list_multimedia_files(session: Session) -> list[MultimediaFile]:
-    result = session.query(DbMultiMediaFiles).all()
+    result: DbMultiMediaFiles = session.query(DbMultiMediaFiles).all()
     return [multimedia_file.to_multimedia_file() for multimedia_file in result]
 
 

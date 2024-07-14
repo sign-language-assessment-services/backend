@@ -4,11 +4,11 @@ from unittest.mock import Mock, patch
 import pytest
 
 import app.services.assessment_service as assessment_service_module
+from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.exceptions import UnexpectedItemType
 from app.core.models.score import Score
 from app.services.assessment_service import AssessmentService
-from app.core.models.assessment import Assessment
 
 
 @patch.object(

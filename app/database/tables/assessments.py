@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import String, TIMESTAMP, Unicode
+from sqlalchemy import Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.assessment import Assessment
@@ -10,15 +8,6 @@ from app.database.tables.base import Base
 
 class DbAssessment(Base):
     __tablename__ = "assessments"
-
-    id: Mapped[str] = mapped_column(
-        String(length=36),
-        primary_key=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
-        nullable=False
-    )
 
     name: Mapped[str] = mapped_column(
         Unicode(length=100),
@@ -36,14 +25,14 @@ class DbAssessment(Base):
             name=assessment.name,
         )
 
-    def to_assessment(self):
+    def to_assessment(self) -> Assessment:
         return Assessment(
             id=self.id,
             created_at=self.created_at,
             name=self.name,
         )
 
-    def to_assessment_summary(self):
+    def to_assessment_summary(self) -> AssessmentSummary:
         return AssessmentSummary(
             id=self.id,
             name=self.name,

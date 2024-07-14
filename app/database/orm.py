@@ -4,7 +4,7 @@ from typing import Annotated, Iterator
 from urllib.parse import quote
 
 from fastapi import Depends
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import Settings
@@ -40,8 +40,5 @@ def init_db(engine: Annotated[Engine, Depends(get_db_engine)]) -> None:
 
 def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterator[Session]:
     session_factory = sessionmaker(bind=engine)
-    session = session_factory()
-    try:
+    with session_factory.begin() as session:  # pylint: disable=no-member
         yield session
-    finally:
-        session.close()
