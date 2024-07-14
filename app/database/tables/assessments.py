@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from sqlalchemy import Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,8 +27,6 @@ class DbAssessment(Base):
         )
 
     def to_assessment(self) -> Assessment:
-        primers = [primer.to_primer() for primer in self.primers]
-        exercises = [exercise.to_exercise() for exercise in self.exercises]
         return Assessment(
             id=self.id,
             created_at=self.created_at,

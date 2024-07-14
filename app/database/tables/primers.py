@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -31,7 +29,7 @@ class DbPrimer(Base):
     UniqueConstraint("position", "assessment_id")
 
     @classmethod
-    def from_primer(cls, primer: Primer) -> DbPrimer:
+    def from_primer(cls, primer: Primer) -> "DbPrimer":
         return cls(
             id=primer.id,
             created_at=primer.created_at,

@@ -6,11 +6,9 @@ from sqlalchemy import text
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.primer import Primer
-from app.repositories.assessments import (
-    add_assessment, add_assessment_primer,
-    delete_assessment_by_id, get_assessment_by_id,
-    list_assessments
-)
+from app.repositories.assessments import (add_assessment, add_assessment_primer,
+                                          delete_assessment_by_id, get_assessment_by_id,
+                                          list_assessments)
 
 
 def test_add_assessment(db_session, insert_multimedia_file):

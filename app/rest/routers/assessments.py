@@ -37,3 +37,18 @@ async def list_assessments(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     return assessment_service.list_assessments(db_session)
+
+
+@router.post("/assessments/{assessment_id}/submissions/")
+async def process_submission(
+        assessment_id: str,
+        answers: dict[str, dict[str, bool]],
+        assessment_service: Annotated[AssessmentService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)],
+        db_session: Session = Depends(get_db_session)
+) -> dict[str, float | int]:
+    if "test-taker" not in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    score = assessment_service.score_assessment(assessment_id, answers, current_user.id, db_session)
+    return asdict(score)
