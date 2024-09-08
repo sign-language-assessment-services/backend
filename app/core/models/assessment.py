@@ -6,7 +6,6 @@ from app.core.models.exceptions import UnexpectedItemType
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
-
 from app.type_hints import Answers
 
 
