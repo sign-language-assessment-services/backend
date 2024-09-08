@@ -3,7 +3,7 @@ from fastapi.responses import ORJSONResponse
 
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
-from app.rest.routers import assessments, root
+from app.rest.routers import assessments, root, submissions
 
 
 def create_app() -> FastAPI:
@@ -24,4 +24,5 @@ def create_app() -> FastAPI:
     )
     app.include_router(root.router)
     app.include_router(assessments.router)
+    app.include_router(submissions.router)
     return app

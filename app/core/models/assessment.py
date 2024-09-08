@@ -7,6 +7,8 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
 
+from app.type_hints import Answers
+
 
 @dataclass(frozen=True)
 class Assessment:
@@ -16,7 +18,7 @@ class Assessment:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
 
-    def score(self, answers: list[dict[str, str | list[str]]]) -> Score:
+    def score(self, answers: Answers) -> Score:
         points = 0
         max_points = self._get_maximum_points()
         for answer in answers:

@@ -1,3 +1,5 @@
+from typing import Type
+
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
@@ -18,7 +20,7 @@ def get_assessment_by_id(session: Session, _id: str) -> Assessment:
 
 
 def list_assessments(session: Session) -> list[AssessmentSummary]:
-    result = session.query(DbAssessment).all()
+    result: list[Type[DbAssessment]] = session.query(DbAssessment).all()
     return [assessment.to_assessment_summary() for assessment in result]
 
 

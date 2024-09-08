@@ -2,17 +2,13 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from app.type_hints import Answers
 
+@dataclass(frozen=True)
+class Exercise:
+    position: int
 
-@dataclass
-class Submission:
-    user_id: str
     assessment_id: str
-    answers: Answers
-    points: int
-    maximum_points: int
-    percentage: float
+    multimedia_file_id: str | None
 
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))

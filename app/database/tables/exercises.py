@@ -1,6 +1,9 @@
-from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from __future__ import annotations
 
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.models.exercise import Exercise
 from app.database.tables.base import Base
 
 
@@ -22,4 +25,25 @@ class DbExercise(Base):
         nullable=False
     )
 
+    assessment = relationship("DbAssessment", back_populates="exercises")
+
     UniqueConstraint("position", "assessment_id")
+
+    @classmethod
+    def from_exercise(cls, exercise: Exercise) -> DbExercise:
+        return cls(
+            id=exercise.id,
+            created_at=exercise.created_at,
+            position=exercise.position,
+            assessment_id=exercise.assessment_id,
+            multimedia_file_id=exercise.multimedia_file_id
+        )
+
+    def to_exercise(self) -> Exercise:
+        return Exercise(
+            id=self.id,
+            created_at=self.created_at,
+            position=self.position,
+            assessment_id=self.assessment_id,
+            multimedia_file_id=self.multimedia_file_id
+        )

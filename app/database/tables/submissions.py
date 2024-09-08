@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -35,7 +37,7 @@ class DbSubmission(Base):
     choices: Mapped[list[DbChoice]] = relationship(secondary=submission_choice)
 
     @classmethod
-    def from_submission(cls, submission: Submission) -> "DbSubmission":
+    def from_submission(cls, submission: Submission) -> DbSubmission:
         return cls(
             id=submission.id,
             created_at=submission.created_at,

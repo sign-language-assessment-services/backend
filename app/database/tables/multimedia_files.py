@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime, timezone
 
@@ -23,7 +25,7 @@ class DbMultiMediaFiles(Base):
     UniqueConstraint("bucket", "key")
 
     @classmethod
-    def from_multimedia_file(cls, multimedia_file: MultimediaFile) -> "DbMultiMediaFiles":
+    def from_multimedia_file(cls, multimedia_file: MultimediaFile) -> DbMultiMediaFiles:
         return cls(
             id=str(uuid.uuid4()),
             created_at=datetime.now(tz=timezone.utc),

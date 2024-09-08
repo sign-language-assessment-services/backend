@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   fastapi:
     image: slportal_backend
@@ -12,6 +10,7 @@ services:
       DB_USER: $DB_USER
       DB_PASSWORD: $DB_PASSWORD
       AUTH_ENABLED: $AUTH_ENABLED
+      SLPORTAL_ENV: $SLPORTAL_ENV
     depends_on:
       database:
         condition: service_healthy
@@ -44,8 +43,8 @@ services:
       - "9090:9090"
     restart: always
     environment:
-      MINIO_ROOT_USER: $MINIO_ROOT_USER
-      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_ROOT_USER: $DATA_ROOT_USER
+      MINIO_ROOT_PASSWORD: $DATA_ROOT_PASSWORD
     volumes:
       - minio_data:/data
     healthcheck:

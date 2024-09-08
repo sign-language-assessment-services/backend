@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from sqlalchemy import Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,9 +18,10 @@ class DbAssessment(Base):
     )
 
     primers = relationship("DbPrimer", back_populates="assessment")
+    exercises = relationship("DbExercise", back_populates="assessment")
 
     @classmethod
-    def from_assessment(cls, assessment: Assessment) -> "DbAssessment":
+    def from_assessment(cls, assessment: Assessment) -> DbAssessment:
         return cls(
             id=assessment.id,
             created_at=assessment.created_at,
@@ -26,10 +29,13 @@ class DbAssessment(Base):
         )
 
     def to_assessment(self) -> Assessment:
+        primers = [primer.to_primer() for primer in self.primers]
+        exercises = [exercise.to_exercise() for exercise in self.exercises]
         return Assessment(
             id=self.id,
             created_at=self.created_at,
             name=self.name,
+            items=sorted(primers + exercises, key=lambda item: item.position)
         )
 
     def to_assessment_summary(self) -> AssessmentSummary:
