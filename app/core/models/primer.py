@@ -1,3 +1,5 @@
+# pylint: disable=R0801
+
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone

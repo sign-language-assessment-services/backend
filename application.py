@@ -9,7 +9,7 @@ app being a local web server. This is very helpful to debug the app as
 described here: https://fastapi.tiangolo.com/tutorial/debugging/ .
 """
 
-from app.main import app
+from app.main import app  # pylint: disable=unused-import
 
 if __name__ == "__main__":
     import uvicorn
