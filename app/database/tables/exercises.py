@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.exercise import Exercise
 from app.database.tables.base import Base
