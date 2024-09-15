@@ -7,7 +7,7 @@ license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = {version = "^0.104", extras = ["all"]}
+fastapi = {version = "^0.109", extras = ["all"]}
 pyjwt = {version = "^2.8", extras = ["crypto"]}
 minio = "^7.1"
 python-multipart = "^0.0"
