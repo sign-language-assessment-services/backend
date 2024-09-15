@@ -9,9 +9,9 @@ app being a local web server. This is very helpful to debug the app as
 described here: https://fastapi.tiangolo.com/tutorial/debugging/ .
 """
 
-from app.main import app  # pylint: disable=unused-import
+from app.main import app
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("application:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="localhost", port=8000)
