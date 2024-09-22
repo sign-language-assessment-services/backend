@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -8,25 +10,50 @@ from app.database.tables.base import Base
 
 
 class DbExercise(Base):
-    # pylint: disable=duplicate-code
     __tablename__ = "exercises"
 
+    # COLUMNS
+    # ------------------------------------------------------------------------
     position: Mapped[int] = mapped_column(
         Integer,
         nullable=False
     )
 
-    assessment_id: Mapped[str] = mapped_column(
-        ForeignKey("assessments.id"),
+    # FOREIGN KEYS
+    # ------------------------------------------------------------------------
+    assessment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(
+            "assessments.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
-    multimedia_file_id: Mapped[str] = mapped_column(
-        ForeignKey("multimedia_files.id"),
+    multimedia_file_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(
+            "multimedia_files.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
-    assessment = relationship("DbAssessment", back_populates="exercises")
+    # RELATIONSHIPS
+    # ------------------------------------------------------------------------
+    assessment: Mapped["DbAssessment"] = relationship(
+        "DbAssessment",
+        back_populates="exercises"
+    )
+    choices: Mapped[list["DbChoice"]] = relationship(
+        "DbChoice",
+        back_populates="exercise",
+        cascade="all, delete-orphan"
+    )
+    multimedia_file = relationship(
+        "DbMultiMediaFile",
+        back_populates="exercise",
+    )
 
+    # CONSTRAINTS
+    # ------------------------------------------------------------------------
     UniqueConstraint("position", "assessment_id")
 
     @classmethod

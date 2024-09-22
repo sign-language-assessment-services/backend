@@ -5,13 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.submission import Submission
 from app.database.tables.base import Base
-from app.database.tables.choices import DbChoice
-from app.database.tables.submissions_choices import submission_choice
+from app.database.tables.submissions_choices import submission_choice_association
 
 
 class DbSubmission(Base):
     __tablename__ = "submissions"
 
+    # COLUMNS
+    # ------------------------------------------------------------------------
     user_id: Mapped[str] = mapped_column(
         String(length=36),
         nullable=False
@@ -29,12 +30,27 @@ class DbSubmission(Base):
         nullable=False
     )
 
+    # FOREIGN KEYS
+    # ------------------------------------------------------------------------
     assessment_id: Mapped[str] = mapped_column(
-        ForeignKey("assessments.id"),
+        ForeignKey(
+            "assessments.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
-    choices: Mapped[list[DbChoice]] = relationship(secondary=submission_choice)
+    # RELATIONSHIPS
+    # ------------------------------------------------------------------------
+    assessment: Mapped["DbAssessment"] = relationship(
+        "DbAssessment",
+        back_populates="submissions"
+    )
+    choices: Mapped[list["DbChoice"]] = relationship(
+        "DbChoice",
+        secondary=submission_choice_association,
+        back_populates="submissions"
+    )
 
     @classmethod
     def from_submission(cls, submission: Submission) -> DbSubmission:

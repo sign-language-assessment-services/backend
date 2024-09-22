@@ -1,10 +1,27 @@
-from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy import Column, ForeignKey, Table, Uuid
 
 from app.database.tables.base import Base
 
-submission_choice = Table(
+submission_choice_association = Table(
     "submissions_choices",
     Base.metadata,
-    Column("submission_id", ForeignKey("submissions.id")),
-    Column("choice_id", ForeignKey("choices.id"))
+
+    # COLUMNS
+    # ------------------------------------------------------------------------
+    Column(
+        "submission_id",
+        Uuid,
+        ForeignKey(
+            "submissions.id",
+            ondelete="CASCADE"
+        )
+    ),
+    Column(
+        "choice_id",
+        Uuid,
+        ForeignKey(
+            "choices.id",
+            ondelete="CASCADE"
+        )
+    )
 )

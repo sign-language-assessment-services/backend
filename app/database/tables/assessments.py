@@ -11,14 +11,31 @@ from app.database.tables.base import Base
 class DbAssessment(Base):
     __tablename__ = "assessments"
 
+    # COLUMNS
+    # ------------------------------------------------------------------------
     name: Mapped[str] = mapped_column(
         Unicode(length=100),
         nullable=False,
-        unique=True
+        unique=True  # TODO: to be discussed
     )
 
-    primers = relationship("DbPrimer", back_populates="assessment")
-    exercises = relationship("DbExercise", back_populates="assessment")
+    # RELATIONSHIPS
+    # ------------------------------------------------------------------------
+    primers: Mapped[list["DbPrimer"]] = relationship(
+        "DbPrimer",
+        back_populates="assessment",
+        cascade="all, delete-orphan"
+    )
+    exercises: Mapped[list["DbExercise"]] = relationship(
+        "DbExercise",
+        back_populates="assessment",
+        cascade="all, delete-orphan"
+    )
+    submissions: Mapped[list["DbSubmission"]] = relationship(
+        "DbSubmission",
+        back_populates="assessment",
+        cascade="all, delete-orphan"
+    )
 
     @classmethod
     def from_assessment(cls, assessment: Assessment) -> DbAssessment:
@@ -31,11 +48,12 @@ class DbAssessment(Base):
     def to_assessment(self) -> Assessment:
         primers = [primer.to_primer() for primer in self.primers]
         exercises = [exercise.to_exercise() for exercise in self.exercises]
+        items = sorted(primers + exercises, key=lambda item: item.position)
         return Assessment(
             id=self.id,
             created_at=self.created_at,
             name=self.name,
-            items=sorted(primers + exercises, key=lambda item: item.position)
+            items=items
         )
 
     def to_assessment_summary(self) -> AssessmentSummary:

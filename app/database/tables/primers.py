@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -8,26 +10,45 @@ from app.database.tables.base import Base
 
 
 class DbPrimer(Base):
-    # pylint: disable=duplicate-code
     __tablename__ = "primers"
 
-    position: Mapped[int] = mapped_column(  # pylint: disable=unsubscriptable-object
+    # COLUMNS
+    # ------------------------------------------------------------------------
+    position: Mapped[int] = mapped_column(
         Integer,
         nullable=False
     )
 
-    assessment_id: Mapped[str] = mapped_column(  # pylint: disable=unsubscriptable-object
-        ForeignKey("assessments.id"),
+    # FOREIGN KEYS
+    # ------------------------------------------------------------------------
+    assessment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(
+            "assessments.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
-
-    multimedia_file_id: Mapped[str] = mapped_column(  # pylint: disable=unsubscriptable-object
-        ForeignKey("multimedia_files.id"),
-        nullable=False
+    multimedia_file_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(
+            "multimedia_files.id",
+            ondelete="CASCADE"
+        ),
+        nullable=False,
     )
 
-    assessment = relationship("DbAssessment", back_populates="primers")
+    # RELATIONSHIPS
+    # ------------------------------------------------------------------------
+    assessment: Mapped["DbAssessment"] = relationship(
+        "DbAssessment",
+        back_populates="primers"
+    )
+    multimedia_file: Mapped["DbMultiMediaFile"] = relationship(
+        "DbMultiMediaFile",
+        back_populates="primer"
+    )
 
+    # CONSTRAINTS
+    # ------------------------------------------------------------------------
     UniqueConstraint("position", "assessment_id")
 
     @classmethod
