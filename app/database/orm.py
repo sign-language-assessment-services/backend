@@ -27,14 +27,17 @@ def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engin
 
 
 def init_db(engine: Annotated[Engine, Depends(get_db_engine)]) -> None:
-    # The table classes have to be imported before using create_all method.
-    # pylint: disable=wrong-import-position,import-outside-toplevel,unused-import
+    # pylint: disable=wrong-import-position,import-outside-toplevel
     from app.database.tables.assessments import DbAssessment
     from app.database.tables.choices import DbChoice
     from app.database.tables.exercises import DbExercise
     from app.database.tables.multimedia_files import DbMultiMediaFile
     from app.database.tables.primers import DbPrimer
     from app.database.tables.submissions import DbSubmission
+
+    # prevent to get accidentally stripped away by IDE because of unused imports
+    _ = DbAssessment, DbChoice, DbExercise, DbMultiMediaFile, DbPrimer, DbSubmission
+
     Base.metadata.create_all(bind=engine, checkfirst=True)
 
 
