@@ -9,7 +9,7 @@ from sqlalchemy.exc import DataError, IntegrityError
 from app.database.tables.assessments import DbAssessment
 
 
-def test_insert_correct_assessment(db_session):
+def test_insert_valid_assessment(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),

@@ -17,6 +17,7 @@ class Base(DeclarativeBase):
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         nullable=False,
+        server_default=text("now()"),
         sort_order=-1  # should be the second column on table creation
     )
 

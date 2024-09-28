@@ -10,8 +10,8 @@ def test_delete_assessment(db_session):
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "name": "Test Assessment"
     }
-
     _add_assessment_data(db_session, **data)
 
     db_session.query(DbAssessment).delete()
+
     assert db_session.query(DbAssessment).count() == 0
