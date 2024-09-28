@@ -18,7 +18,7 @@ def db_engine():
         test_engine.dispose()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function", autouse=True)
 def db_tables(db_engine):
     init_db(engine=db_engine)
     yield
