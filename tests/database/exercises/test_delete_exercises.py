@@ -3,13 +3,13 @@ from datetime import UTC, datetime
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.multimedia_files import DbMultiMediaFile
 from app.database.tables.primers import DbPrimer
-from database.primers.test_add_primers import (
-    _add_primer_data
+from database.exercises.test_add_exercises import (
+    _add_exercise_data
 )
 from database.dependencies import add_assessment, add_multimedia_file
 
 
-def test_delete_primers(db_session):
+def test_delete_exercises(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
@@ -19,7 +19,7 @@ def test_delete_primers(db_session):
     }
     add_assessment(db_session)
     add_multimedia_file(db_session)
-    _add_primer_data(db_session, **data)
+    _add_exercise_data(db_session, **data)
 
     db_session.query(DbPrimer).delete()
 

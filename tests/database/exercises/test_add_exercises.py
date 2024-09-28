@@ -6,11 +6,11 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from app.database.tables.primers import DbPrimer
+from app.database.tables.exercises import DbExercise
 from database.dependencies import add_assessment, add_multimedia_file
 
 
-def test_insert_valid_primer(db_session):
+def test_insert_valid_exercise(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
@@ -21,9 +21,9 @@ def test_insert_valid_primer(db_session):
 
     add_assessment(db_session)
     add_multimedia_file(db_session)
-    _add_primer_data(db_session, **data)
+    _add_exercise_data(db_session, **data)
 
-    data_query = db_session.query(DbPrimer)
+    data_query = db_session.query(DbExercise)
     assert data_query.count() == 1
     assert data_query.first().id == UUID(data.get("id"))
     assert data_query.first().created_at == data.get("created_at")
@@ -32,7 +32,7 @@ def test_insert_valid_primer(db_session):
     assert data_query.first().multimedia_file_id == UUID(data.get("multimedia_file_id"))
 
 
-def test_insert_primer_with_missing_assessment_fails(db_session):
+def test_insert_exercise_with_missing_assessment_fails(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
@@ -48,10 +48,10 @@ def test_insert_primer_with_missing_assessment_fails(db_session):
         re.DOTALL
     )
     with pytest.raises(IntegrityError, match=failure_details):
-        _add_primer_data(db_session, **data)
+        _add_exercise_data(db_session, **data)
 
 
-def test_insert_primer_with_missing_multimedia_file_fails(db_session):
+def test_insert_exercise_with_missing_multimedia_file_fails(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
@@ -67,13 +67,13 @@ def test_insert_primer_with_missing_multimedia_file_fails(db_session):
         re.DOTALL
     )
     with pytest.raises(IntegrityError, match=failure_details):
-        _add_primer_data(db_session, **data)
+        _add_exercise_data(db_session, **data)
 
 
-def _add_primer_data(session, **kwargs) -> None:
+def _add_exercise_data(session, **kwargs) -> None:
     statement = text(
         """
-        INSERT INTO primers(id, created_at, position, assessment_id, multimedia_file_id)
+        INSERT INTO Exercises(id, created_at, position, assessment_id, multimedia_file_id)
         VALUES (:id, :created_at, :position, :assessment_id, :multimedia_file_id)
         """
     )
