@@ -3,10 +3,8 @@ from datetime import UTC, datetime
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.multimedia_files import DbMultiMediaFile
 from app.database.tables.primers import DbPrimer
-from database.primers.test_add_primers import (
-    _add_primer_data
-)
 from database.dependencies import add_assessment, add_multimedia_file
+from database.primers.test_add_primers import _add_primer_data
 
 
 def test_delete_primers(db_session):

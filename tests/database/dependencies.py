@@ -2,10 +2,10 @@ from datetime import UTC, datetime
 
 from sqlalchemy import text
 
-
 ASSESSMENT_ID = "00000000-0000-0000-0000-000000000000"
 MULTIMEDIA_FILE_ID = "00000000-0000-0000-0000-000000000001"
 EXERCISE_ID = "00000000-0000-0000-0000-000000000002"
+PRIMER_ID = "00000000-0000-0000-0000-000000000003"
 
 
 def add_assessment(session) -> None:
@@ -59,3 +59,24 @@ def add_exercise(session, with_dependencies=True) -> None:
         """
     )
     session.execute(exercise_statement, exercise)
+
+
+def add_primer(session, with_dependencies=True) -> None:
+    if with_dependencies:
+        add_assessment(session)
+        add_multimedia_file(session)
+
+    primer = {
+        "id": PRIMER_ID,
+        "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
+        "position": 1,
+        "assessment_id": ASSESSMENT_ID,
+        "multimedia_file_id": MULTIMEDIA_FILE_ID
+    }
+    primer_statement = text(
+        """
+        INSERT INTO primers(id, created_at, position, assessment_id, multimedia_file_id)
+        VALUES (:id, :created_at, :position, :assessment_id, :multimedia_file_id)
+        """
+    )
+    session.execute(primer_statement, primer)
