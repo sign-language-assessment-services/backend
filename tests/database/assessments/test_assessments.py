@@ -9,9 +9,6 @@ from sqlalchemy.exc import DataError
 from app.database.tables.assessments import DbAssessment
 
 
-# TODO: get a clean state after each test
-
-
 def test_insert_correct_assessment(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
@@ -64,7 +61,7 @@ def test_insert_assessment_with_too_long_name(db_session):
         "name": "x" * 101
     }
 
-    with pytest.raises(DataError, match="value too long for type character varying(100)"):
+    with pytest.raises(DataError, match=r"value too long for type character varying\(100\)"):
         _add_assessment_data(db_session, **data)
 
 
@@ -75,7 +72,7 @@ def test_insert_assessment_with_wrong_uuid(db_session):
         "name": "Test Assessment"
     }
 
-    with pytest.raises(DataError, match="invalid input syntax for type uuid"):
+    with pytest.raises(DataError, match=r"invalid input syntax for type uuid"):
         _add_assessment_data(db_session, **data)
 
 
@@ -86,7 +83,7 @@ def test_insert_assessment_with_wrong_date(db_session):
         "name": "Test Assessment"
     }
 
-    with pytest.raises(DataError, match="date/time field value out of range"):
+    with pytest.raises(DataError, match=r"date/time field value out of range"):
         _add_assessment_data(db_session, **data)
 
 
