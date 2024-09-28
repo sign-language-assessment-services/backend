@@ -1,10 +1,10 @@
 from datetime import UTC, datetime, timezone
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 import pytz
 from sqlalchemy import text
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import DataError, IntegrityError
 
 from app.database.tables.assessments import DbAssessment
 
@@ -54,6 +54,24 @@ def test_insert_assessment_with_different_timezone_saves_it_as_utc(db_session):
     assert data_query.first().created_at == datetime(2000, 1, 1, 11, tzinfo=UTC)
 
 
+def test_insert_two_assessments_with_same_name_will_fail(db_session):
+    data_1 = {
+        "id": uuid4(),
+        "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
+        "name": "Equal Name Assessment"
+    }
+    data_2 = {
+        "id": uuid4(),
+        "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
+        "name": "Equal Name Assessment"
+    }
+
+    _add_assessment_data(db_session, **data_1)
+
+    with pytest.raises(IntegrityError, match=r"duplicate key value violates unique constraint"):
+        _add_assessment_data(db_session, **data_2)
+
+
 def test_insert_assessment_with_too_long_name(db_session):
     data = {
         "id": "01234567-89ab-cdef-0123-456789abcdef",
@@ -85,6 +103,19 @@ def test_insert_assessment_with_wrong_date(db_session):
 
     with pytest.raises(DataError, match=r"date/time field value out of range"):
         _add_assessment_data(db_session, **data)
+
+
+def test_delete_assessment(db_session):
+    data = {
+        "id": "01234567-89ab-cdef-0123-456789abcdef",
+        "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
+        "name": "Test Assessment"
+    }
+
+    _add_assessment_data(db_session, **data)
+
+    db_session.query(DbAssessment).delete()
+    assert db_session.query(DbAssessment).count() == 0
 
 
 def _add_assessment_data(session, **kwargs) -> None:
