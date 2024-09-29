@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 
 from app.core.models.media_types import MediaType
+from app.core.models.minio_location import MinioLocation
 
 
 @dataclass(frozen=True)
 class MultimediaFile:
-    bucket: str
-    key: str
+    location: MinioLocation
     type: MediaType | None = field(default=None)
     url: str = field(default="")

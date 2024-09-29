@@ -24,7 +24,8 @@ async def read_assessment(
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    return assessment_service.get_assessment_by_id(db_session, assessment_id)
+    assessment = assessment_service.get_assessment_by_id(db_session, assessment_id)
+    return assessment_service.resolve_assessment(assessment)
 
 
 @router.get("/assessments/")

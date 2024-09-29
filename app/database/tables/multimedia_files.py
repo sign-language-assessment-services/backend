@@ -7,6 +7,7 @@ from sqlalchemy import Enum, String, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.media_types import MediaType
+from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.database.tables.base import Base
 
@@ -56,12 +57,15 @@ class DbMultiMediaFile(Base):
         return cls(
             id=str(uuid.uuid4()),
             created_at=datetime.now(tz=timezone.utc),
-            bucket=multimedia_file.bucket,
-            key=multimedia_file.key
+            bucket=multimedia_file.location.bucket,
+            key=multimedia_file.location.key
         )
 
     def to_multimedia_file(self) -> MultimediaFile:
         return MultimediaFile(
-            bucket=self.bucket,
-            key=self.key
+            location=MinioLocation(
+                bucket=self.bucket,
+                key=self.key
+            ),
+            type=self.mediatype,
         )

@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
-from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
+from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
@@ -61,7 +61,7 @@ class AssessmentService:
     def list_submissions(session: Session) -> list[Submission]:
         return list_submission_by_user_id(session=session, user_id=None)
 
-    def resolve_video(self, video: Multimedia) -> Multimedia:
+    def resolve_video(self, video: MultimediaFile) -> MultimediaFile:
         return dataclasses.replace(
             video, url=self.object_storage_client.get_presigned_url(video.location)
         )

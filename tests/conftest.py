@@ -9,8 +9,8 @@ from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
-from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
+from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.static_item import StaticItem
 from app.database.tables.base import Base
@@ -25,7 +25,7 @@ def db_session() -> Session:
         from app.database.tables.assessments import DbAssessment
         from app.database.tables.choices import DbChoice
         from app.database.tables.exercises import DbExercise
-        from app.database.tables.multimedia_files import DbMultiMediaFiles
+        from app.database.tables.multimedia_files import DbMultiMediaFile
         from app.database.tables.primers import DbPrimer
         from app.database.tables.submissions import DbSubmission
         Base.metadata.create_all(bind=engine, checkfirst=True)
@@ -55,7 +55,7 @@ def settings() -> Mock:
 @pytest.fixture
 def multiple_choice_question1() -> MultipleChoice:
     return MultipleChoice(
-        question=Multimedia(
+        question=MultimediaFile(
             location=MinioLocation(bucket="testbucket", key="question1.mp4"),
             type=MediaType.VIDEO
         ),
@@ -78,7 +78,7 @@ def multiple_choice_question1() -> MultipleChoice:
 @pytest.fixture
 def multiple_choice_question2() -> MultipleChoice:
     return MultipleChoice(
-        question=Multimedia(
+        question=MultimediaFile(
             location=MinioLocation(bucket="testbucket", key="question2.mp4"),
             type=MediaType.VIDEO
         ),
@@ -107,7 +107,7 @@ def multiple_choice_question2() -> MultipleChoice:
 def static_item() -> StaticItem:
     return StaticItem(
         position=0,
-        content=Multimedia(
+        content=MultimediaFile(
             location=MinioLocation(bucket="testbucket", key="introduction.mp4"),
             type=MediaType.VIDEO
         )

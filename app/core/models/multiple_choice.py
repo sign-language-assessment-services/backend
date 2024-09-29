@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Sequence
 
-from app.core.models.multimedia import Multimedia
 from app.core.models.multimedia_choice import MultimediaChoice
+from app.core.models.multimedia_file import MultimediaFile
 from app.type_hints import SelectedAnswers
 
 
 @dataclass(frozen=True)
 class MultipleChoice:
-    question: Multimedia
+    question: MultimediaFile
     choices: Sequence[MultimediaChoice]
     position: int
 
