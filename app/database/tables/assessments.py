@@ -58,6 +58,6 @@ class DbAssessment(Base):
 
     def to_assessment_summary(self) -> AssessmentSummary:
         return AssessmentSummary(
-            id=self.id,
+            id=self.name,  # temporary use name as id
             name=self.name,
         )

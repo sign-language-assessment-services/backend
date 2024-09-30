@@ -1,6 +1,6 @@
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from uuid import UUID, uuid4
 
 from app.type_hints import Answers
 
@@ -14,5 +14,5 @@ class Submission:
     maximum_points: int
     percentage: float
 
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID = field(default_factory=lambda: uuid4())
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))

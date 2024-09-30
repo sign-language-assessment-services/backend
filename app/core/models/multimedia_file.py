@@ -7,5 +7,5 @@ from app.core.models.minio_location import MinioLocation
 @dataclass(frozen=True)
 class MultimediaFile:
     location: MinioLocation
-    type: MediaType | None = field(default=None)
+    type: MediaType
     url: str = field(default="")

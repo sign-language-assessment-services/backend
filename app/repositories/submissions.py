@@ -24,8 +24,8 @@ def delete_submission_by_id(session: Session, _id: str) -> None:
     session.commit()
 
 
-def list_submission_by_user_id(session: Session, user_id: str | None) -> list[DbSubmission]:
+def list_submission_by_user_id(session: Session, user_id: str | None) -> list[Submission]:
     if user_id:
         pass  # TODO: to be implemented
-    result: list[DbSubmission] = session.query(DbSubmission).all()
+    result = session.query(DbSubmission).all()
     return [r.to_submission() for r in result]

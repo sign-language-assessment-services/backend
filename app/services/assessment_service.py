@@ -7,11 +7,11 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
+from app.core.models.exercise import Exercise
 from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multimedia_file import MultimediaFile
-from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.primer import Primer
 from app.core.models.score import Score
-from app.core.models.static_item import StaticItem
 from app.core.models.submission import Submission
 from app.core.models.text_choice import TextChoice
 from app.repositories.assessments import get_assessment_by_id, list_assessments
@@ -73,8 +73,8 @@ class AssessmentService:
             )
         return choice  # pragma: no cover (TextChoice yet not implemented)
 
-    def resolve_item(self, item: MultipleChoice | StaticItem) -> MultipleChoice | StaticItem:
-        if isinstance(item, MultipleChoice):
+    def resolve_item(self, item: Primer | Exercise) -> Primer | Exercise:
+        if isinstance(item, Exercise):
             return dataclasses.replace(
                 item,
                 question=self.resolve_video(item.question),

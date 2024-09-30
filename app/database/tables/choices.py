@@ -57,8 +57,8 @@ class DbChoice(Base):
     def to_choice(self) -> MultimediaChoice:
         return MultimediaChoice(
             location=MinioLocation(
-                bucket="slportal",
-                key=self.multimedia_file_id
+                bucket=self.multimedia_file.to_multimedia_file().location.bucket,
+                key=self.multimedia_file.to_multimedia_file().location.key
             ),
             is_correct=self.is_correct,
             type=MediaType.VIDEO

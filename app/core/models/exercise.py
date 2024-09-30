@@ -1,18 +1,20 @@
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import Sequence
+from uuid import UUID, uuid4
 
+from app.core.models.multimedia_choice import MultimediaChoice
 from app.core.models.multimedia_file import MultimediaFile
 
 
 @dataclass(frozen=True)
 class Exercise:
     position: int
+    question: MultimediaFile
+    choices: Sequence[MultimediaChoice]
 
-    assessment_id: str
-    multimedia_file_id: str | None
+    assessment_id: UUID
+    multimedia_file_id: UUID
 
-    content: MultimediaFile | None
-
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID = field(default_factory=lambda: uuid4())
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))

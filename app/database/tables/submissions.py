@@ -55,8 +55,6 @@ class DbSubmission(Base):
     @classmethod
     def from_submission(cls, submission: Submission) -> DbSubmission:
         return cls(
-            id=submission.id,
-            created_at=submission.created_at,
             user_id=submission.user_id,
             points=submission.points,
             maximum_points=submission.maximum_points,
@@ -69,9 +67,9 @@ class DbSubmission(Base):
             id=self.id,
             created_at=self.created_at,
             user_id=self.user_id,
+            assessment_id=self.assessment_id,
+            answers=[db_choice.to_choice() for db_choice in self.choices],
             points=self.points,
             maximum_points=self.maximum_points,
             percentage=self.percentage,
-            assessment_id=self.assessment_id,
-            answers=[db_choice.to_choice() for db_choice in self.choices]
         )

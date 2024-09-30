@@ -1,22 +1,22 @@
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from uuid import UUID, uuid4
 
 from app.core.models.exceptions import UnexpectedItemType
+from app.core.models.exercise import Exercise
 from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.primer import Primer
 from app.core.models.score import Score
 from app.core.models.static_item import StaticItem
-from app.type_hints import Answers
-
 from app.type_hints import Answers
 
 
 @dataclass(frozen=True)
 class Assessment:
     name: str
-    items: list[MultipleChoice | StaticItem] = field(default_factory=list)
+    items: list[Primer | Exercise] = field(default_factory=list)
 
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID = field(default_factory=lambda: uuid4())
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
 
     def score(self, answers: Answers) -> Score:

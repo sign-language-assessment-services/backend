@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy import Enum, String, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -55,10 +53,9 @@ class DbMultiMediaFile(Base):
     @classmethod
     def from_multimedia_file(cls, multimedia_file: MultimediaFile) -> DbMultiMediaFile:
         return cls(
-            id=str(uuid.uuid4()),
-            created_at=datetime.now(tz=timezone.utc),
             bucket=multimedia_file.location.bucket,
-            key=multimedia_file.location.key
+            key=multimedia_file.location.key,
+            mediatype=multimedia_file.type
         )
 
     def to_multimedia_file(self) -> MultimediaFile:

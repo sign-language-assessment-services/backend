@@ -71,7 +71,8 @@ class DbExercise(Base):
             id=self.id,
             created_at=self.created_at,
             position=self.position,
-            content=self.multimedia_file.to_multimedia_file(),
+            question=self.multimedia_file.to_multimedia_file(),
+            choices=[choice.to_choice() for choice in self.choices],
             assessment_id=self.assessment_id,
             multimedia_file_id=self.multimedia_file_id
         )
