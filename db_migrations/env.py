@@ -17,8 +17,8 @@ config = context.config
 load_dotenv()
 
 section = config.config_ini_section
-config.set_section_option(section, "DB_USER", os.environ.get("DB_USER", "backend"))
-config.set_section_option(section, "DB_PASSWORD", os.environ.get("DB_PASSWORD", "ABC"))
+config.set_section_option(section, "DB_USER", os.environ.get("DB_USER"))
+config.set_section_option(section, "DB_PASSWORD", os.environ.get("DB_PASSWORD"))
 config.set_section_option(section, "DB_HOST", os.environ.get("DB_HOST", "localhost"))
 config.set_section_option(section, "DB_PORT", os.environ.get("DB_PORT", "5432"))
 config.set_section_option(section, "DB_NAME", os.environ.get("DB_NAME", "backend"))
