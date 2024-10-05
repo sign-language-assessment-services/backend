@@ -1,32 +1,21 @@
 from dataclasses import dataclass
 from typing import Sequence
 
-from app.core.models.multimedia_choice import MultimediaChoice
-from app.core.models.multimedia_file import MultimediaFile
-from app.type_hints import SelectedAnswers
+from app.core.models.exceptions import ChoiceNotFound
+from app.core.models.exercise import Exercise
 
 
 @dataclass(frozen=True)
-class MultipleChoice:
-    question: MultimediaFile
-    choices: Sequence[MultimediaChoice]
-    position: int
-
-    def score(self, selected_answers: SelectedAnswers) -> int:
-        # TODO: use real id for choice_id (not position as choice_id)
-        selected_answers = [int(c) for c in selected_answers.get("choice_ids", [])]
-        self.__validate_input(selects=selected_answers)
-        correct_answers = {
-            index for index, choice in enumerate(self.choices)
-            if choice.is_correct
-        }
+class MultipleChoice(Exercise):
+    def score(self, selected_answers: list[str]) -> int:
+        self.__validate_input(selected_choice_ids=selected_answers)
+        correct_answers = {str(choice.id) for choice in self.choices if choice.is_correct}
         if correct_answers == set(selected_answers):
             return 1
         return 0
 
-    def __validate_input(self, selects: Sequence[int]) -> None:
-        if selects and (
-                max(selects) >= len(self.choices) or
-                min(selects) < 0
-        ):
-            raise ValueError("A selected answer does not exist.")
+    def __validate_input(self, selected_choice_ids: Sequence[str]) -> None:
+        valid_choice_ids = {str(choice.id) for choice in self.choices}
+        for selected_choice_id in selected_choice_ids:
+            if selected_choice_id not in valid_choice_ids:
+                raise ChoiceNotFound(f"The selected choice {selected_choice_id} does not exist.")

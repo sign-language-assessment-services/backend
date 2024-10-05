@@ -56,6 +56,8 @@ class DbChoice(Base):
 
     def to_choice(self) -> MultimediaChoice:
         return MultimediaChoice(
+            id=self.id,
+            created_at=self.created_at,
             location=MinioLocation(
                 bucket=self.multimedia_file.to_multimedia_file().location.bucket,
                 key=self.multimedia_file.to_multimedia_file().location.key

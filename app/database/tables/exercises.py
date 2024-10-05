@@ -5,7 +5,7 @@ import uuid
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.models.exercise import Exercise
+from app.core.models.multiple_choice import MultipleChoice
 from app.database.tables.base import Base
 
 
@@ -57,17 +57,17 @@ class DbExercise(Base):
     UniqueConstraint("position", "assessment_id")
 
     @classmethod
-    def from_exercise(cls, exercise: Exercise) -> DbExercise:
+    def from_multiple_choie(cls, multiple_choice: MultipleChoice) -> DbExercise:
         return cls(
-            id=exercise.id,
-            created_at=exercise.created_at,
-            position=exercise.position,
-            assessment_id=exercise.assessment_id,
-            multimedia_file_id=exercise.multimedia_file_id
+            id=multiple_choice.id,
+            created_at=multiple_choice.created_at,
+            position=multiple_choice.position,
+            assessment_id=multiple_choice.assessment_id,
+            multimedia_file_id=multiple_choice.multimedia_file_id
         )
 
-    def to_exercise(self) -> Exercise:
-        return Exercise(
+    def to_multiple_choice(self) -> MultipleChoice:
+        return MultipleChoice(
             id=self.id,
             created_at=self.created_at,
             position=self.position,

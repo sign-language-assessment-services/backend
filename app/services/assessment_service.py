@@ -1,5 +1,6 @@
 import dataclasses
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -18,6 +19,7 @@ from app.repositories.assessments import get_assessment_by_id, list_assessments
 from app.repositories.submissions import add_submission, list_submission_by_user_id
 from app.services.object_storage_client import ObjectStorageClient
 from app.settings import get_settings
+from app.type_hints import AssessmentAnswers
 
 
 class AssessmentService:
@@ -30,8 +32,8 @@ class AssessmentService:
         self.settings = settings
 
     @staticmethod
-    def get_assessment_by_id(session: Session, assessment_id: str) -> Assessment:
-        return get_assessment_by_id(session=session, _id=assessment_id)
+    def get_assessment_by_id(session: Session, assessment_id: UUID) -> Assessment:
+        return get_assessment_by_id(session=session, _id=str(assessment_id))
 
     @staticmethod
     def list_assessments(session: Session) -> list[AssessmentSummary]:
@@ -39,8 +41,8 @@ class AssessmentService:
 
     def score_assessment(
             self,
-            assessment_id: str,
-            answers: list[dict[str, str | list[str]]],
+            assessment_id: UUID,
+            answers: AssessmentAnswers,
             user_id: str,
             session: Session
     ) -> Score:

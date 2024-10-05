@@ -47,7 +47,7 @@ class DbAssessment(Base):
 
     def to_assessment(self) -> Assessment:
         primers = [primer.to_primer() for primer in self.primers]
-        exercises = [exercise.to_exercise() for exercise in self.exercises]
+        exercises = [exercise.to_multiple_choice() for exercise in self.exercises]
         items = sorted(primers + exercises, key=lambda item: item.position)
         return Assessment(
             id=self.id,

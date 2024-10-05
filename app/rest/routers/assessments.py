@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 @router.get("/assessments/{assessment_id}")
 async def read_assessment(
-        assessment_id: str,
+        assessment_id: UUID,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
