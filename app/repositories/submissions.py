@@ -15,7 +15,7 @@ def list_submissions(session: Session) -> list[Submission]:
 
 
 def get_submission_by_id(session: Session, _id: str) -> Submission:
-    result = session.query(DbSubmission).get({"id": _id})
+    result = session.get(DbSubmission, {"id": _id})
     return result.to_submission()
 
 

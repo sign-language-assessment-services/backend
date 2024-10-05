@@ -11,6 +11,8 @@ class MultimediaChoice:
     location: MinioLocation
     is_correct: bool
     type: MediaType
+    exercise_id: UUID
+    multimedia_file_id: UUID
     url: str = field(default="")
 
     id: UUID = field(default_factory=lambda: uuid4())

@@ -57,7 +57,7 @@ class DbExercise(Base):
     UniqueConstraint("position", "assessment_id")
 
     @classmethod
-    def from_multiple_choie(cls, multiple_choice: MultipleChoice) -> DbExercise:
+    def from_multiple_choice(cls, multiple_choice: MultipleChoice) -> DbExercise:
         return cls(
             id=multiple_choice.id,
             created_at=multiple_choice.created_at,

@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import uuid
+
 from sqlalchemy import Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -19,14 +23,14 @@ class DbChoice(Base):
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
-    exercise_id: Mapped[str] = mapped_column(
+    exercise_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey(
             "exercises.id",
             ondelete="CASCADE"
         ),
         nullable=False,
     )
-    multimedia_file_id: Mapped[str] = mapped_column(
+    multimedia_file_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey(
             "multimedia_files.id",
             ondelete="CASCADE"
@@ -54,6 +58,17 @@ class DbChoice(Base):
     # ------------------------------------------------------------------------
     UniqueConstraint("exercise_id", "multimedia_file_id")
 
+
+    @classmethod
+    def from_choice(cls, choice: MultimediaChoice) -> DbChoice:
+        return cls(
+            id=choice.id,
+            created_at=choice.created_at,
+            is_correct=choice.is_correct,
+            exercise_id=choice.exercise_id,
+            multimedia_file_id=choice.multimedia_file_id
+        )
+
     def to_choice(self) -> MultimediaChoice:
         return MultimediaChoice(
             id=self.id,
@@ -63,5 +78,7 @@ class DbChoice(Base):
                 key=self.multimedia_file.to_multimedia_file().location.key
             ),
             is_correct=self.is_correct,
+            exercise_id=self.exercise_id,
+            multimedia_file_id=self.multimedia_file_id,
             type=MediaType.VIDEO
         )

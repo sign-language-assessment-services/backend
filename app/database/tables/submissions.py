@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import uuid
+from collections import defaultdict
 
 from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.submission import Submission
 from app.database.tables.base import Base
+from app.database.tables.choices import DbChoice
 from app.database.tables.submissions_choices import submission_choice_association
 
 
@@ -65,12 +67,16 @@ class DbSubmission(Base):
         )
 
     def to_submission(self) -> Submission:
+        answers = defaultdict(list)
+        for choice in self.choices:
+            answers[choice.exercise_id].append(choice.id)
+
         return Submission(
             id=self.id,
             created_at=self.created_at,
             user_id=self.user_id,
             assessment_id=self.assessment_id,
-            answers=[db_choice.to_choice() for db_choice in self.choices],
+            answers=answers,
             points=self.points,
             maximum_points=self.maximum_points,
             percentage=self.percentage,
