@@ -8,4 +8,4 @@ class Score:
     percentage: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.percentage = self.points / self.maximum_points
+        self.percentage = self.points / self.maximum_points * 100

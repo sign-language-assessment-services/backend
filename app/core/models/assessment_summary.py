@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 
 @dataclass(frozen=True)
 class AssessmentSummary:
-    id: str  # temporary use name as id
+    id: UUID
     name: str

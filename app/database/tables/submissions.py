@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -32,7 +34,7 @@ class DbSubmission(Base):
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
-    assessment_id: Mapped[str] = mapped_column(
+    assessment_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey(
             "assessments.id",
             ondelete="CASCADE"
