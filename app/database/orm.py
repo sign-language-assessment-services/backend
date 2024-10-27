@@ -46,7 +46,7 @@ def import_tables() -> None:
     from app.database.tables.multiple_choices import DbMultipleChoice
     from app.database.tables.primers import DbPrimer
     from app.database.tables.submissions import DbSubmission
-    from app.database.tables.submissions_choices import submissions_choices
+    from app.database.tables.multiple_choice_submissions_choices import submissions_choices
     from app.database.tables.tasks import DbTask
     from app.database.tables.text_submissions import DbTextSubmission
     from app.database.tables.texts import DbText

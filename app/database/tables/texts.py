@@ -2,7 +2,7 @@ from sqlalchemy import UnicodeText
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
-from app.database.type_hints import Choices, Primers
+from app.database.type_hints import Choices, Exercises, Primers
 
 
 class DbText(DbBase):
@@ -17,9 +17,12 @@ class DbText(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    primers: Mapped[Primers] = relationship(
-        back_populates="buckets"
-    )
     choices: Mapped[Choices] = relationship(
-        back_populates="buckets"
+        back_populates="text"
+    )
+    exercises: Mapped[Exercises] = relationship(
+        back_populates="text"
+    )
+    primers: Mapped[Primers] = relationship(
+        back_populates="text"
     )

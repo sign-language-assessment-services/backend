@@ -16,19 +16,19 @@ class DbPrimer(DbTask):
         ForeignKey("tasks.id", ondelete="CASCADE"),
         primary_key=True
     )
-    text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id")
-    )
     bucket_id: Mapped[UUID] = mapped_column(
         ForeignKey("buckets.id")
+    )
+    text_id: Mapped[UUID] = mapped_column(
+        ForeignKey("texts.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    text: Mapped[Text] = relationship(
+    bucket: Mapped[Bucket] = relationship(
         back_populates="primers"
     )
-    bucket: Mapped[Bucket] = relationship(
+    text: Mapped[Text] = relationship(
         back_populates="primers"
     )
 

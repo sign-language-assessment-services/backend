@@ -12,16 +12,19 @@ class DbSubmission(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
+    submission_type: Mapped[str] = mapped_column(
+        String(length=26),
+        nullable=False
+    )
     user_name: Mapped[str] = mapped_column(
         String(length=36),
         nullable=False
     )
+
+    # FOREIGN KEYS
+    # ------------------------------------------------------------------------
     exercise_id: Mapped[UUID] = mapped_column(
         ForeignKey("exercises.id"),
-        nullable=False
-    )
-    submission_type: Mapped[str] = mapped_column(
-        String(length=26),
         nullable=False
     )
 

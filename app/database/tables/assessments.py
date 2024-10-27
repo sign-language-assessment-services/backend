@@ -18,6 +18,6 @@ class DbAssessment(DbBase):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     tasks: Mapped[Tasks] = relationship(
-        secondary="tasks_assessments",
+        secondary="assessments_tasks",
         back_populates="assessments",
     )

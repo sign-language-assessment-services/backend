@@ -16,17 +16,21 @@ class DbMultipleChoiceSubmission(DbSubmission):
         ForeignKey("submissions.id", ondelete="CASCADE"),
         primary_key=True
     )
+
     multiple_choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("multiple_choice.id"),
+        ForeignKey("multiple_choices.id"),
         nullable=False
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    multiple_choice: Mapped[MultipleChoice] = relationship()
+    multiple_choice: Mapped[MultipleChoice] = relationship(
+        back_populates="multiple_choice_submissions"
+    )
+
     choices: Mapped[Choices] = relationship(
-        secondary="submissions_choices",
-        back_populates="submissions"
+        secondary="multiple_choice_submissions_choices",
+        back_populates="multiple_choice_submissions"
     )
 
     # CONFIGURATION

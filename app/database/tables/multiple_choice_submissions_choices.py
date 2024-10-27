@@ -3,7 +3,7 @@ from sqlalchemy import Column, ForeignKey, Table, UniqueConstraint
 from app.database.tables.base import DbBase
 
 submissions_choices = Table(
-    "submissions_choices",
+    "multiple_choice_submissions_choices",
     DbBase.metadata,
 
     # COLUMNS

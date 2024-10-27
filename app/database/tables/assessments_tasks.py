@@ -3,7 +3,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Table, UniqueConstraint
 from app.database.tables.base import DbBase
 
 assessment_tasks = Table(
-    "assessment_tasks",
+    "assessments_tasks",
     DbBase.metadata,
 
     # COLUMNS

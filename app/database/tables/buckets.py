@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.media_types import MediaType
 from app.database.tables.base import DbBase
-from app.database.type_hints import Choices, Primers
+from app.database.type_hints import Choices, Exercises, Primers
 
 
 class DbBucket(DbBase):
@@ -26,11 +26,14 @@ class DbBucket(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    primers: Mapped[Primers] = relationship(
-        back_populates="buckets"
-    )
     choices: Mapped[Choices] = relationship(
-        back_populates="buckets"
+        back_populates="bucket"
+    )
+    exercises: Mapped[Exercises] = relationship(
+        back_populates="bucket"
+    )
+    primers: Mapped[Primers] = relationship(
+        back_populates="bucket"
     )
 
     # CONSTRAINTS

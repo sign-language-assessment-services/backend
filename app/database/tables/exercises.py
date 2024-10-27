@@ -16,25 +16,25 @@ class DbExercise(DbTask):
         ForeignKey("tasks.id", ondelete="CASCADE"),
         primary_key=True
     )
-    text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id")
-    )
     bucket_id: Mapped[UUID] = mapped_column(
         ForeignKey("buckets.id")
     )
     multiple_choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("multiple_choice.id")
+        ForeignKey("multiple_choices.id")
+    )
+    text_id: Mapped[UUID] = mapped_column(
+        ForeignKey("texts.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    text: Mapped[Text] = relationship(
-        back_populates="exercises"
-    )
     bucket: Mapped[Bucket] = relationship(
         back_populates="exercises"
     )
     multiple_choice: Mapped[MultipleChoice] = relationship(
+        back_populates="exercises"
+    )
+    text: Mapped[Text] = relationship(
         back_populates="exercises"
     )
 

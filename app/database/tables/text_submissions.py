@@ -15,6 +15,7 @@ class DbTextSubmission(DbSubmission):
         ForeignKey("submissions.id", ondelete="CASCADE"),
         primary_key=True
     )
+
     text: Mapped[str] = mapped_column(
         Text,
         nullable=False

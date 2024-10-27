@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, UniqueCons
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
-from app.database.type_hints import Bucket, MultipleChoice
+from app.database.type_hints import Bucket, MultipleChoice, MultipleChoiceSubmissions, Text
 
 
 class DbChoice(DbBase):
@@ -23,8 +23,11 @@ class DbChoice(DbBase):
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
+    bucket_id: Mapped[UUID] = mapped_column(
+        ForeignKey("buckets.id")
+    )
     multiple_choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("multiple_choice.id")
+        ForeignKey("multiple_choices.id")
     )
     text_id: Mapped[UUID] = mapped_column(
         ForeignKey("texts.id")
@@ -32,11 +35,18 @@ class DbChoice(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
+    bucket: Mapped[Bucket] = relationship(
+        back_populates="choices"
+    )
     multiple_choice: Mapped[MultipleChoice] = relationship(
         back_populates="choices"
     )
-    buckets: Mapped[Bucket] = relationship(
-        secondary="choices_buckets",
+    text: Mapped[Text] = relationship(
+        back_populates="choices"
+    )
+
+    multiple_choice_submissions: Mapped[MultipleChoiceSubmissions] = relationship(
+        secondary="multiple_choice_submissions_choices",
         back_populates="choices"
     )
 
