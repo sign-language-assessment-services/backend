@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 
 
-@dataclass(frozen=True)
-class MinioLocation:
-    bucket: str
-    key: str
+class MinioLocation(BaseModel):
+    bucket: str = Field(max_length=63)
+    key: str = Field(max_length=1024)

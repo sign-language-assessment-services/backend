@@ -31,7 +31,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('bucket', sa.String(length=63), nullable=False),
     sa.Column('key', sa.Unicode(length=1024), nullable=False),
-    sa.Column('mediatype', sa.Enum('IMAGE', 'VIDEO', name='mediatype'), nullable=False),
+    sa.Column('content_type', sa.Enum('IMAGE', 'VIDEO', name='content_type'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('multiple_choices',

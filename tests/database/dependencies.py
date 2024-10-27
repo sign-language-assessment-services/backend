@@ -31,12 +31,12 @@ def add_multimedia_file(session, _id: str | None = None) -> None:
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "bucket": "testportal",
         "key": "test.mpeg",
-        "mediatype": "VIDEO"
+        "content_type": "VIDEO"
     }
     multimedia_file_statement = text(
         """
-        INSERT INTO multimedia_files(id, created_at, bucket, key, mediatype)
-        VALUES (:id, :created_at, :bucket, :key, :mediatype)
+        INSERT INTO multimedia_files(id, created_at, bucket, key, content_type)
+        VALUES (:id, :created_at, :bucket, :key, :content_type)
         """
     )
     session.execute(multimedia_file_statement, multimedia_file)

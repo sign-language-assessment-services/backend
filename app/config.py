@@ -23,8 +23,5 @@ class Settings(BaseSettings):
     db_port: int = 5432
     db_name: str = "slportal"
 
-    # FastAPI
-    slportal_env: str
-
     # Environment variables from .env file in root folder
     model_config = SettingsConfigDict(env_file=".env")

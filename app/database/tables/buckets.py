@@ -19,7 +19,7 @@ class DbBucket(DbBase):
         Unicode(length=1024),
         nullable=False
     )
-    mediatype: Mapped[MediaType] = mapped_column(
+    content_type: Mapped[MediaType] = mapped_column(
         Enum(MediaType),
         nullable=False
     )

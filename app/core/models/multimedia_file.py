@@ -1,11 +1,9 @@
-from dataclasses import dataclass, field
+from pydantic import BaseModel
 
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 
 
-@dataclass(frozen=True)
-class MultimediaFile:
+class MultimediaFile(BaseModel):
     location: MinioLocation
-    type: MediaType
-    url: str = field(default="")
+    content_type: MediaType

@@ -5,5 +5,5 @@ from pydantic import BaseModel
 from app.core.models.choice import Choice
 
 
-class MultipleChoice(BaseModel):
-    choices: Sequence[Choice]
+class Answer(BaseModel):
+    choices: Sequence[Choice] | str

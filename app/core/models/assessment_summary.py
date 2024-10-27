@@ -1,8 +1,5 @@
-from dataclasses import dataclass
-from uuid import UUID
+from pydantic import BaseModel
 
 
-@dataclass(frozen=True)
-class AssessmentSummary:
-    id: UUID
+class AssessmentSummary(BaseModel):
     name: str

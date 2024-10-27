@@ -10,7 +10,7 @@ def test_delete_multimedia_file(db_session):
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "bucket": "example_bucket",
         "key": "example_key",
-        "mediatype": "VIDEO"
+        "content_type": "VIDEO"
     }
     _add_multimedia_file_data(db_session, **data)
 

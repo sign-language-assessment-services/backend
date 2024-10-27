@@ -1,11 +1,12 @@
-from dataclasses import dataclass, field
+from typing import Any
+
+from pydantic import BaseModel, Field
 
 
-@dataclass(slots=True)
-class Score:
+class Score(BaseModel):
     points: int
     maximum_points: int
-    percentage: float = field(init=False)
+    percentage: float = Field(init=False, ge=0, le=100)
 
-    def __post_init__(self) -> None:
+    def model_post_init(self, __context: Any) -> None:
         self.percentage = self.points / self.maximum_points * 100
