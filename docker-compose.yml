@@ -10,7 +10,6 @@ services:
       DB_USER: $DB_USER
       DB_PASSWORD: $DB_PASSWORD
       AUTH_ENABLED: $AUTH_ENABLED
-      SLPORTAL_ENV: $SLPORTAL_ENV
     depends_on:
       database:
         condition: service_healthy

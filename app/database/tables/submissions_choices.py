@@ -1,27 +1,25 @@
-from sqlalchemy import Column, ForeignKey, Table, Uuid
+from sqlalchemy import Column, ForeignKey, Table, UniqueConstraint
 
-from app.database.tables.base import Base
+from app.database.tables.base import DbBase
 
-submission_choice_association = Table(
+submissions_choices = Table(
     "submissions_choices",
-    Base.metadata,
+    DbBase.metadata,
 
     # COLUMNS
     # ------------------------------------------------------------------------
     Column(
         "submission_id",
-        Uuid,
-        ForeignKey(
-            "submissions.id",
-            ondelete="CASCADE"
-        )
+        ForeignKey("multiple_choice_submissions.id", ondelete="CASCADE"),
+        primary_key=True
     ),
     Column(
         "choice_id",
-        Uuid,
-        ForeignKey(
-            "choices.id",
-            ondelete="CASCADE"
-        )
-    )
+        ForeignKey("choices.id", ondelete="CASCADE"),
+        primary_key=True
+    ),
+
+    # CONSTRAINTS
+    # ------------------------------------------------------------------------
+    UniqueConstraint("submission_id", "choice_id")
 )

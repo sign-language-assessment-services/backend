@@ -1,78 +1,54 @@
-from __future__ import annotations
+from uuid import UUID
 
-import uuid
-
-from sqlalchemy import ForeignKey, Integer, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.models.multiple_choice import MultipleChoice
-from app.database.tables.base import Base
+from app.database.tables.tasks import DbTask
+from app.database.type_hints import Bucket, MultipleChoice, Text
 
 
-class DbExercise(Base):
+class DbExercise(DbTask):
     __tablename__ = "exercises"
 
-    # COLUMNS
+    # FOREIGN_KEYS
     # ------------------------------------------------------------------------
-    position: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False
+    id: Mapped[UUID] = mapped_column(
+        ForeignKey("tasks.id", ondelete="CASCADE"),
+        primary_key=True
     )
-
-    # FOREIGN KEYS
-    # ------------------------------------------------------------------------
-    assessment_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "assessments.id",
-            ondelete="CASCADE"
-        ),
-        nullable=False
+    text_id: Mapped[UUID] = mapped_column(
+        ForeignKey("texts.id")
     )
-    multimedia_file_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "multimedia_files.id",
-            ondelete="CASCADE"
-        ),
-        nullable=False
+    bucket_id: Mapped[UUID] = mapped_column(
+        ForeignKey("buckets.id")
+    )
+    multiple_choice_id: Mapped[UUID] = mapped_column(
+        ForeignKey("multiple_choice.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    assessment: Mapped["DbAssessment"] = relationship(
-        "DbAssessment",
+    text: Mapped[Text] = relationship(
         back_populates="exercises"
     )
-    choices: Mapped[list["DbChoice"]] = relationship(
-        "DbChoice",
-        back_populates="exercise",
-        cascade="all, delete-orphan"
+    bucket: Mapped[Bucket] = relationship(
+        back_populates="exercises"
     )
-    multimedia_file = relationship(
-        "DbMultiMediaFile",
-        back_populates="exercise",
+    multiple_choice: Mapped[MultipleChoice] = relationship(
+        back_populates="exercises"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    UniqueConstraint("position", "assessment_id")
+    CheckConstraint(
+        "text_id IS NOT NULL AND bucket_id IS NULL"
+        " OR "
+        "text_id IS NULL AND bucket_id IS NOT NULL",
+        name="check_exercise_text_or_bucket"
+    )
 
-    @classmethod
-    def from_multiple_choice(cls, multiple_choice: MultipleChoice) -> DbExercise:
-        return cls(
-            id=multiple_choice.id,
-            created_at=multiple_choice.created_at,
-            position=multiple_choice.position,
-            assessment_id=multiple_choice.assessment_id,
-            multimedia_file_id=multiple_choice.multimedia_file_id
-        )
-
-    def to_multiple_choice(self) -> MultipleChoice:
-        return MultipleChoice(
-            id=self.id,
-            created_at=self.created_at,
-            position=self.position,
-            question=self.multimedia_file.to_multimedia_file(),
-            choices=[choice.to_choice() for choice in self.choices],
-            assessment_id=self.assessment_id,
-            multimedia_file_id=self.multimedia_file_id
-        )
+    # CONFIGURATION
+    # ------------------------------------------------------------------------
+    __mapper_args__ = {
+        "polymorphic_identity": "exercise"
+    }

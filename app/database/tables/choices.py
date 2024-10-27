@@ -1,17 +1,13 @@
-from __future__ import annotations
+from uuid import UUID
 
-import uuid
-
-from sqlalchemy import Boolean, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.models.media_types import MediaType
-from app.core.models.minio_location import MinioLocation
-from app.core.models.multimedia_choice import MultimediaChoice
-from app.database.tables.base import Base
+from app.database.tables.base import DbBase
+from app.database.type_hints import Bucket, MultipleChoice
 
 
-class DbChoice(Base):
+class DbChoice(DbBase):
     __tablename__ = "choices"
 
     # COLUMNS
@@ -20,65 +16,36 @@ class DbChoice(Base):
         Boolean,
         nullable=False
     )
+    position: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
-    exercise_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "exercises.id",
-            ondelete="CASCADE"
-        ),
-        nullable=False,
+    multiple_choice_id: Mapped[UUID] = mapped_column(
+        ForeignKey("multiple_choice.id")
     )
-    multimedia_file_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "multimedia_files.id",
-            ondelete="CASCADE"
-        ),
-        nullable=False
+    text_id: Mapped[UUID] = mapped_column(
+        ForeignKey("texts.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    exercise: Mapped["DbExercise"] = relationship(
-        "DbExercise",
+    multiple_choice: Mapped[MultipleChoice] = relationship(
         back_populates="choices"
     )
-    multimedia_file: Mapped["DbMultiMediaFile"] = relationship(
-        "DbMultiMediaFile",
-        back_populates="choice",
-    )
-    submissions: Mapped[list["DbSubmission"]] = relationship(
-        "DbSubmission",
-        secondary="submissions_choices",
+    buckets: Mapped[Bucket] = relationship(
+        secondary="choices_buckets",
         back_populates="choices"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    UniqueConstraint("exercise_id", "multimedia_file_id")
-
-
-    @classmethod
-    def from_choice(cls, choice: MultimediaChoice) -> DbChoice:
-        return cls(
-            id=choice.id,
-            created_at=choice.created_at,
-            is_correct=choice.is_correct,
-            exercise_id=choice.exercise_id,
-            multimedia_file_id=choice.multimedia_file_id
-        )
-
-    def to_choice(self) -> MultimediaChoice:
-        return MultimediaChoice(
-            id=self.id,
-            created_at=self.created_at,
-            location=MinioLocation(
-                bucket=self.multimedia_file.to_multimedia_file().location.bucket,
-                key=self.multimedia_file.to_multimedia_file().location.key
-            ),
-            is_correct=self.is_correct,
-            exercise_id=self.exercise_id,
-            multimedia_file_id=self.multimedia_file_id,
-            type=MediaType.VIDEO
-        )
+    UniqueConstraint("multiple_choice_id", "position")
+    CheckConstraint(
+        "text_id IS NOT NULL AND id NOT IN (SELECT choice_id FROM choices_buckets)"
+        " OR "
+        "text_id IS NULL AND id IN (SELECT choice_id FROM choices_buckets)",
+        name='check_choice_text_or_bucket'
+    )

@@ -1,14 +1,14 @@
-import uuid
 from datetime import datetime
+from uuid import UUID
 
 from sqlalchemy import TIMESTAMP, Uuid, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-class Base(DeclarativeBase):
+class DbBase(DeclarativeBase):
     # COLUMNS
     # ------------------------------------------------------------------------
-    id: Mapped[uuid.UUID] = mapped_column(
+    id: Mapped[UUID] = mapped_column(
         Uuid,
         primary_key=True,
         server_default=text("gen_random_uuid()"),

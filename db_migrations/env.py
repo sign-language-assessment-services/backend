@@ -1,11 +1,14 @@
 import os
 from logging.config import fileConfig
 
-from alembic import context
 from dotenv import load_dotenv
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
 
-from app.database.orm import Base
+from alembic import context
+
+from app.database.orm import import_tables
+from app.database.tables.base import DbBase
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -26,6 +29,7 @@ config.set_section_option(section, "DB_NAME", os.environ.get("DB_NAME", "backend
 # END CUSTOM SETTINGS
 # ---------------------------------------------------------------------
 
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -35,15 +39,9 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.database.tables.assessments import DbAssessment
-from app.database.tables.choices import DbChoice
-from app.database.tables.exercises import DbExercise
-from app.database.tables.multimedia_files import DbMultiMediaFile
-from app.database.tables.primers import DbPrimer
-from app.database.tables.submissions import DbSubmission
-# prevent to get accidentally stripped away by IDE because of unused imports
-_ = DbAssessment, DbChoice, DbExercise, DbMultiMediaFile, DbPrimer, DbSubmission
-target_metadata = Base.metadata
+# target_metadata = None
+import_tables()
+target_metadata = DbBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
