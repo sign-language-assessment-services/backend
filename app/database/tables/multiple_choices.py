@@ -2,7 +2,6 @@ from sqlalchemy import Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
-from app.database.type_hints import Choices, Exercises, MultipleChoiceSubmissions
 
 
 class DbMultipleChoice(DbBase):
@@ -18,12 +17,12 @@ class DbMultipleChoice(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    choices: Mapped[Choices] = relationship(
+    choices: Mapped[list["DbChoice"]] = relationship(
         back_populates="multiple_choice"
     )
-    exercises: Mapped[Exercises] = relationship(
+    exercises: Mapped[list["DbExercise"]] = relationship(
         back_populates="multiple_choice"
     )
-    multiple_choice_submissions: Mapped[MultipleChoiceSubmissions] = relationship(
+    multiple_choice_submissions: Mapped[list["DbMultipleChoiceSubmission"]] = relationship(
         back_populates="multiple_choice"
     )

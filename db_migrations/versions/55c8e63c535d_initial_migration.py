@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: e7e0f7e8b23f
+Revision ID: 55c8e63c535d
 Revises: 
-Create Date: 2024-10-27 12:20:08.846283+00:00
+Create Date: 2024-11-02 13:35:44.597888+00:00
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e7e0f7e8b23f'
+revision: str = '55c8e63c535d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,8 +31,9 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('bucket', sa.String(length=63), nullable=False),
     sa.Column('key', sa.Unicode(length=1024), nullable=False),
-    sa.Column('content_type', sa.Enum('IMAGE', 'VIDEO', name='content_type'), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('content_type', sa.Enum('IMAGE', 'VIDEO', name='mediatype'), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('bucket', 'key')
     )
     op.create_table('multiple_choices',
     sa.Column('id', sa.Uuid(), server_default=sa.text('gen_random_uuid()'), nullable=False),
@@ -66,19 +67,22 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('is_correct', sa.Boolean(), nullable=False),
     sa.Column('position', sa.Integer(), nullable=False),
-    sa.Column('bucket_id', sa.Uuid(), nullable=False),
+    sa.Column('bucket_id', sa.Uuid(), nullable=True),
+    sa.Column('text_id', sa.Uuid(), nullable=True),
     sa.Column('multiple_choice_id', sa.Uuid(), nullable=False),
-    sa.Column('text_id', sa.Uuid(), nullable=False),
+    sa.CheckConstraint('text_id IS NOT NULL AND bucket_id IS NULL OR text_id IS NULL AND bucket_id IS NOT NULL', name='check_choice_text_or_bucket'),
     sa.ForeignKeyConstraint(['bucket_id'], ['buckets.id'], ),
     sa.ForeignKeyConstraint(['multiple_choice_id'], ['multiple_choices.id'], ),
     sa.ForeignKeyConstraint(['text_id'], ['texts.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('multiple_choice_id', 'position')
     )
     op.create_table('exercises',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('bucket_id', sa.Uuid(), nullable=False),
+    sa.Column('bucket_id', sa.Uuid(), nullable=True),
+    sa.Column('text_id', sa.Uuid(), nullable=True),
     sa.Column('multiple_choice_id', sa.Uuid(), nullable=False),
-    sa.Column('text_id', sa.Uuid(), nullable=False),
+    sa.CheckConstraint('text_id IS NOT NULL AND bucket_id IS NULL OR text_id IS NULL AND bucket_id IS NOT NULL', name='check_exercise_text_or_bucket'),
     sa.ForeignKeyConstraint(['bucket_id'], ['buckets.id'], ),
     sa.ForeignKeyConstraint(['id'], ['tasks.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['multiple_choice_id'], ['multiple_choices.id'], ),
@@ -87,8 +91,9 @@ def upgrade() -> None:
     )
     op.create_table('primers',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('bucket_id', sa.Uuid(), nullable=False),
-    sa.Column('text_id', sa.Uuid(), nullable=False),
+    sa.Column('bucket_id', sa.Uuid(), nullable=True),
+    sa.Column('text_id', sa.Uuid(), nullable=True),
+    sa.CheckConstraint('text_id IS NOT NULL AND bucket_id IS NULL OR text_id IS NULL AND bucket_id IS NOT NULL', name='check_primer_text_or_bucket'),
     sa.ForeignKeyConstraint(['bucket_id'], ['buckets.id'], ),
     sa.ForeignKeyConstraint(['id'], ['tasks.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['text_id'], ['texts.id'], ),

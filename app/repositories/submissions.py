@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 
 from app.core.models.submission import Submission
+from app.database.tables.multiple_choice_submissions import DbMultipleChoiceSubmission
 from app.database.tables.submissions import DbSubmission
+from app.mappers.submission_mapper import SubmissionMapper
 
 
 def add_submission(session: Session, submission: Submission) -> None:
@@ -10,13 +12,13 @@ def add_submission(session: Session, submission: Submission) -> None:
 
 
 def list_submissions(session: Session) -> list[Submission]:
-    result = session.query(DbSubmission).all()
-    return [submission.to_submission() for submission in result]
+    results = session.query(DbMultipleChoiceSubmission).all()
+    return [SubmissionMapper.db_to_domain(result) for result in results]
 
 
 def get_submission_by_id(session: Session, _id: str) -> Submission:
-    result = session.get(DbSubmission, {"id": _id})
-    return result.to_submission()
+    result = session.get(DbMultipleChoiceSubmission, {"id": _id})
+    return SubmissionMapper.db_to_domain(result)
 
 
 def delete_submission_by_id(session: Session, _id: str) -> None:
@@ -24,8 +26,8 @@ def delete_submission_by_id(session: Session, _id: str) -> None:
     session.commit()
 
 
-def list_submission_by_user_id(session: Session, user_id: str | None) -> list[Submission]:
+def list_submissions_by_user_id(session: Session, user_id: str | None) -> list[Submission]:
     if user_id:
-        pass  # TODO: to be implemented
-    result = session.query(DbSubmission).all()
-    return [r.to_submission() for r in result]
+        results = session.query(DbMultipleChoiceSubmission).filter_by(user_name=user_id).all()
+        return [SubmissionMapper.db_to_domain(result) for result in results]
+    return list_submissions(session=session)

@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from sqlalchemy import Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.database.tables.assessments_tasks import assessments_tasks
 from app.database.tables.base import DbBase
-from app.database.type_hints import Tasks
 
 
 class DbAssessment(DbBase):
@@ -17,7 +19,7 @@ class DbAssessment(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    tasks: Mapped[Tasks] = relationship(
-        secondary="assessments_tasks",
+    tasks: Mapped[list["DbTask"]] = relationship(
+        secondary=assessments_tasks,
         back_populates="assessments",
     )

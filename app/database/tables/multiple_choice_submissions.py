@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.database.tables.multiple_choice_submissions_choices import submissions_choices
 from app.database.tables.submissions import DbSubmission
-from app.database.type_hints import Choices, MultipleChoice
 
 
 class DbMultipleChoiceSubmission(DbSubmission):
@@ -24,12 +24,12 @@ class DbMultipleChoiceSubmission(DbSubmission):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    multiple_choice: Mapped[MultipleChoice] = relationship(
+    multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="multiple_choice_submissions"
     )
 
-    choices: Mapped[Choices] = relationship(
-        secondary="multiple_choice_submissions_choices",
+    choices: Mapped[list["DbChoice"]] = relationship(
+        secondary=submissions_choices,
         back_populates="multiple_choice_submissions"
     )
 

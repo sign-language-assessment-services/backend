@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Table, UniqueConstraint
 
 from app.database.tables.base import DbBase
 
-assessment_tasks = Table(
+assessments_tasks = Table(
     "assessments_tasks",
     DbBase.metadata,
 

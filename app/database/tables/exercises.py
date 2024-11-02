@@ -4,7 +4,6 @@ from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.tasks import DbTask
-from app.database.type_hints import Bucket, MultipleChoice, Text
 
 
 class DbExercise(DbTask):
@@ -16,35 +15,44 @@ class DbExercise(DbTask):
         ForeignKey("tasks.id", ondelete="CASCADE"),
         primary_key=True
     )
+    # bucket or text represents the question
     bucket_id: Mapped[UUID] = mapped_column(
-        ForeignKey("buckets.id")
-    )
-    multiple_choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("multiple_choices.id")
+        ForeignKey("buckets.id"),
+        nullable=True
     )
     text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id")
+        ForeignKey("texts.id"),
+        nullable=True
+    )
+    # multiple choice is currently the only possibility to answer an exercise
+    multiple_choice_id: Mapped[UUID] = mapped_column(
+        ForeignKey("multiple_choices.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    bucket: Mapped[Bucket] = relationship(
+    submission: Mapped["DbSubmission"] = relationship(
+        back_populates="exercise"
+    )
+    bucket: Mapped["DbBucket"] = relationship(
         back_populates="exercises"
     )
-    multiple_choice: Mapped[MultipleChoice] = relationship(
+    multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="exercises"
     )
-    text: Mapped[Text] = relationship(
+    text: Mapped["DbText"] = relationship(
         back_populates="exercises"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    CheckConstraint(
-        "text_id IS NOT NULL AND bucket_id IS NULL"
-        " OR "
-        "text_id IS NULL AND bucket_id IS NOT NULL",
-        name="check_exercise_text_or_bucket"
+    __table_args__ = (
+        CheckConstraint(
+            "text_id IS NOT NULL AND bucket_id IS NULL"
+            " OR "
+            "text_id IS NULL AND bucket_id IS NOT NULL",
+            name="check_exercise_text_or_bucket"
+        ),
     )
 
     # CONFIGURATION

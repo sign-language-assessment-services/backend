@@ -4,7 +4,6 @@ from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.tasks import DbTask
-from app.database.type_hints import Bucket, Text
 
 
 class DbPrimer(DbTask):
@@ -17,28 +16,32 @@ class DbPrimer(DbTask):
         primary_key=True
     )
     bucket_id: Mapped[UUID] = mapped_column(
-        ForeignKey("buckets.id")
+        ForeignKey("buckets.id"),
+        nullable=True
     )
     text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id")
+        ForeignKey("texts.id"),
+        nullable=True
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    bucket: Mapped[Bucket] = relationship(
+    bucket: Mapped["DbBucket"] = relationship(
         back_populates="primers"
     )
-    text: Mapped[Text] = relationship(
+    text: Mapped["DbText"] = relationship(
         back_populates="primers"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    CheckConstraint(
-        "text_id IS NOT NULL AND bucket_id IS NULL"
-        " OR "
-        "text_id IS NULL AND bucket_id IS NOT NULL",
-        name="check_primer_text_or_bucket"
+    __table_args__ = (
+        CheckConstraint(
+            "text_id IS NOT NULL AND bucket_id IS NULL"
+            " OR "
+            "text_id IS NULL AND bucket_id IS NOT NULL",
+            name="check_primer_text_or_bucket"
+        ),
     )
 
     # CONFIGURATION

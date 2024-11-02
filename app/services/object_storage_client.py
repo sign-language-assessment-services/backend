@@ -4,8 +4,8 @@ from fastapi import Depends, HTTPException
 from minio import Minio
 
 from app.config import Settings
-from app.core.models.bucket_object import BucketObject
 from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia_file import MultimediaFile
 from app.settings import get_settings
 
 
@@ -40,11 +40,23 @@ class ObjectStorageClient:
             if item.is_dir
         ]
 
-    def list_files(self, bucket_name: str, folder: str) -> list[BucketObject]:
+    def list_files(self, bucket_name: str, folder: str) -> list[MultimediaFile]:
         if folder:
             folder += "/"
+
+        # todo: for iteration only for debugging purposes can be deleted
+        for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True):
+            if not item.is_dir:
+                print(item)
+
         return [
-            BucketObject(name=item.object_name, content_type=item.metadata["content-type"])
+            MultimediaFile(
+                location=MinioLocation(
+                    bucket=item.bucket_name,
+                    key=item.object_name
+                ),
+                content_type=item.metadata["content-type"]
+            )
             for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True)
             if not item.is_dir
         ]

@@ -4,7 +4,6 @@ from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
-from app.database.type_hints import Exercise
 
 
 class DbSubmission(DbBase):
@@ -30,7 +29,9 @@ class DbSubmission(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    exercise: Mapped[Exercise] = relationship()
+    exercise: Mapped["DbExercise"] = relationship(
+        back_populates="submission"
+    )
 
     # CONFIGURATION
     # ------------------------------------------------------------------------

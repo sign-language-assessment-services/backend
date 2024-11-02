@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
 from app.core.models.assessment import Assessment
-from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
@@ -16,7 +15,7 @@ router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
 @router.get("/assessments/{assessment_id}")
-async def read_assessment(
+async def get_assessment(
         assessment_id: UUID,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
@@ -26,7 +25,9 @@ async def read_assessment(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     assessment = assessment_service.get_assessment_by_id(db_session, assessment_id)
-    return assessment_service.resolve_assessment(assessment)
+    if not assessment:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    return assessment
 
 
 @router.get("/assessments/")
@@ -34,7 +35,7 @@ async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> list[AssessmentSummary]:
+) -> list[Assessment]:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 

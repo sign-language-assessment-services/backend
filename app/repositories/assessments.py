@@ -1,12 +1,10 @@
-from typing import Type
-
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
-from app.core.models.assessment_summary import AssessmentSummary
 from app.core.models.primer import Primer
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.primers import DbPrimer
+from app.mappers.assessment_mapper import AssessmentMapper
 
 
 def add_assessment(session: Session, assessment: Assessment) -> None:
@@ -14,15 +12,16 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
     session.commit()
 
 
-def get_assessment_by_id(session: Session, _id: str) -> Assessment:
+def get_assessment_by_id(session: Session, _id: str) -> Assessment | None:
     result = session.get(DbAssessment, {"id": _id})
-    # result = session.query(DbAssessment).filter(DbAssessment.name == _id).first()  # temporary use name as id
-    return result.to_assessment()
+    if result:
+        return AssessmentMapper.db_to_domain(result)
+    return None
 
 
-def list_assessments(session: Session) -> list[AssessmentSummary]:
-    result: list[Type[DbAssessment]] = session.query(DbAssessment).all()
-    return [assessment.to_assessment_summary() for assessment in result]
+def list_assessments(session: Session) -> list[Assessment]:
+    results = session.query(DbAssessment).all()
+    return [AssessmentMapper.db_to_domain(result) for result in results]
 
 
 def delete_assessment_by_id(session: Session, _id: str) -> None:

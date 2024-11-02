@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from uuid import UUID
 
 from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
-from app.database.type_hints import Bucket, MultipleChoice, MultipleChoiceSubmissions, Text
+from app.database.tables.multiple_choice_submissions_choices import submissions_choices
 
 
 class DbChoice(DbBase):
@@ -24,38 +26,45 @@ class DbChoice(DbBase):
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
     bucket_id: Mapped[UUID] = mapped_column(
-        ForeignKey("buckets.id")
+        ForeignKey("buckets.id"),
+        nullable=True
+    )
+    text_id: Mapped[UUID] = mapped_column(
+        ForeignKey("texts.id"),
+        nullable=True
     )
     multiple_choice_id: Mapped[UUID] = mapped_column(
         ForeignKey("multiple_choices.id")
     )
-    text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id")
-    )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    bucket: Mapped[Bucket] = relationship(
+    bucket: Mapped["DbBucket"] = relationship(
         back_populates="choices"
     )
-    multiple_choice: Mapped[MultipleChoice] = relationship(
+    multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="choices"
     )
-    text: Mapped[Text] = relationship(
+    text: Mapped["DbText"] = relationship(
         back_populates="choices"
     )
 
-    multiple_choice_submissions: Mapped[MultipleChoiceSubmissions] = relationship(
-        secondary="multiple_choice_submissions_choices",
+    multiple_choice_submissions: Mapped[list["DbMultipleChoiceSubmission"]] = relationship(
+        secondary=submissions_choices,
         back_populates="choices"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    UniqueConstraint("multiple_choice_id", "position")
-    CheckConstraint(
-        "text_id IS NOT NULL AND id NOT IN (SELECT choice_id FROM choices_buckets)"
-        " OR "
-        "text_id IS NULL AND id IN (SELECT choice_id FROM choices_buckets)",
-        name='check_choice_text_or_bucket'
+    __table_args__ = (
+        UniqueConstraint(
+            "multiple_choice_id",
+            "position"
+        ),
+        CheckConstraint(
+            "text_id IS NOT NULL AND bucket_id IS NULL"
+            " OR "
+            "text_id IS NULL AND bucket_id IS NOT NULL",
+            name='check_choice_text_or_bucket'
+        )
     )

@@ -12,13 +12,26 @@ from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
 from app.rest.routers.assessments import router
 from app.services.assessment_service import AssessmentService
+from app.services.submission_service import SubmissionService
 from app.type_hints import AssessmentAnswers
+
+
+@router.get("/submissions/{submission_id}")
+async def get_submission(
+        submission_id: UUID,
+        submission_service: Annotated[SubmissionService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)],
+        db_session: Session = Depends(get_db_session)
+) -> Submission:
+    if "slas-frontend-user" not in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+    return submission_service.get_submission_by_id(session=db_session, submission_id=submission_id)
 
 
 @router.get("/submissions/")
 async def list_submissions(
         # user_id: str,
-        assessment_service: Annotated[AssessmentService, Depends()],
+        submission_service: Annotated[SubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ) -> list[Submission]:
@@ -28,7 +41,7 @@ async def list_submissions(
     # if current_user.id != user_id and "test-scorer" not in current_user.roles:
     #     raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    return assessment_service.list_submissions(session=db_session)
+    return submission_service.list_submissions(session=db_session)
 
 
 @router.post("/assessments/{assessment_id}/submissions/")

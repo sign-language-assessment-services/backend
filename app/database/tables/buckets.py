@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from sqlalchemy import Enum, String, Unicode, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.media_types import MediaType
 from app.database.tables.base import DbBase
-from app.database.type_hints import Choices, Exercises, Primers
 
 
 class DbBucket(DbBase):
@@ -26,16 +27,18 @@ class DbBucket(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    choices: Mapped[Choices] = relationship(
+    choices: Mapped[list["DbChoice"]] = relationship(
         back_populates="bucket"
     )
-    exercises: Mapped[Exercises] = relationship(
+    exercises: Mapped[list["DbExercise"]] = relationship(
         back_populates="bucket"
     )
-    primers: Mapped[Primers] = relationship(
+    primers: Mapped[list["DbPrimer"]] = relationship(
         back_populates="bucket"
     )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    UniqueConstraint("bucket", "key")
+    __table_args__ = (
+        UniqueConstraint("bucket", "key"),
+    )
