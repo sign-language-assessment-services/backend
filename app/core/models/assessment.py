@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.models.exercise import Exercise
 from app.core.models.primer import Primer
@@ -13,3 +13,14 @@ class Assessment(BaseModel):
 
     name: str
     tasks: list[Primer | Exercise] = Field(default_factory=list)
+
+
+class AssessmentResponse(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    name: str
+    tasks: list[UUID]
+
+    @field_validator("tasks", mode="before")
+    @classmethod
+    def extract_task_ids(cls, value):
+        return [task.id for task in value]

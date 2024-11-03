@@ -1,5 +1,4 @@
-from unittest.mock import ANY
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi import status
@@ -8,67 +7,17 @@ from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 
 
 def test_get_assessment(test_client: TestClient) -> None:
-    response = test_client.get("/assessments/a0000000-0000-0000-0000-000000000001")
+    assessment_id = "a0000000-0000-0000-0000-000000000001"
 
+    response = test_client.get(f"/assessments/{assessment_id}")
+
+    assert response.status_code == HTTP_200_OK
+    assert response.json()["id"] == assessment_id
     assert response.json()["name"] == "Test Assessment 1"
-    assert response.json()["tasks"] == [
-        {
-            # primer
-            "id": ANY,
-            "created_at": ANY,
-            "content": {
-                "id": ANY,
-                "created_at": ANY,
-                "location": {"bucket": "test", "key": "test.mpg"},
-                "media_type": "VIDEO"
-            }
-        },
-        {
-            # exercise
-            "id": ANY,
-            "created_at": ANY,
-            "points": 1,
-            "question": {
-                "content": {
-                    "id": ANY,
-                    "created_at": ANY,
-                    "location": {"bucket": "test", "key": "test.mpg"},
-                    "media_type": "VIDEO"
-                }
-            },
-            "question_type": {
-                # multiple choice
-                "content": {
-                    "id": ANY,
-                    "created_at": ANY,
-                    "choices": [
-                        {
-                            "id": ANY,
-                            "created_at": ANY,
-                            "is_correct": True,
-                            "content": {
-                                "id": ANY,
-                                "created_at": ANY,
-                                "location": {"bucket": "test", "key": "test.mpg"},
-                                "media_type": "VIDEO"
-                            }
-                        },
-                        {
-                            "id": ANY,
-                            "created_at": ANY,
-                            "is_correct": False,
-                            "content": {
-                                "id": ANY,
-                                "created_at": ANY,
-                                "location": {"bucket": "test", "key": "test.mpg"},
-                                "media_type": "VIDEO"
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    ]
+    assert len(response.json()["tasks"]) == 2
+    for _id in response.json()["tasks"]:
+        assert isinstance(_id, str)
+        assert UUID(_id)
 
 
 def test_get_assessment_not_found(test_client_no_assessment: TestClient) -> None:
