@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 import sqlalchemy
+from sqlalchemy import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from testcontainers.postgres import PostgresContainer
 
@@ -10,18 +11,24 @@ from app.database.tables.base import DbBase
 
 
 @pytest.fixture(scope="session")
-def db_session() -> Session:
+def db_engine() -> Engine:
     with PostgresContainer("postgres:16.1") as postgres:
         engine = sqlalchemy.create_engine(postgres.get_connection_url(), pool_pre_ping=True)
-        import_tables()
-        DbBase.metadata.create_all(bind=engine, checkfirst=True)
+        yield engine
+        engine.dispose()
 
-        session = sessionmaker(bind=engine)()
-        try:
-            yield session
-        finally:
-            session.close()
-            engine.dispose()
+
+@pytest.fixture(scope="function")
+def db_session(db_engine) -> Session:
+    import_tables()
+    DbBase.metadata.create_all(bind=db_engine, checkfirst=True)
+
+    session = sessionmaker(bind=db_engine)()
+    try:
+        yield session
+    finally:
+        session.close()
+        DbBase.metadata.drop_all(db_engine, checkfirst=True)
 
 
 @pytest.fixture
