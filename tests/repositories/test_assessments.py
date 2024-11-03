@@ -1,44 +1,37 @@
 from datetime import datetime, timezone
+from uuid import uuid4
 
-import pytest
 from sqlalchemy import text
 
 from app.core.models.assessment import Assessment
-from app.core.models.assessment_summary import AssessmentSummary
-from app.core.models.primer import Primer
-from app.repositories.assessments import (add_assessment, add_assessment_primer,
-                                          delete_assessment_by_id, get_assessment_by_id,
-                                          list_assessments)
+from app.repositories.assessments import (
+    add_assessment, delete_assessment_by_id, get_assessment_by_id, list_assessments, update_assessment
+)
 
 
-def test_add_assessment(db_session, insert_multimedia_file):
+def test_add_assessment(db_session):
     assessment = Assessment(name="Test Assessment")
     add_assessment(db_session, assessment)
 
-    db_assessment = db_session.execute(text("SELECT * FROM assessments")).fetchone()
+    result = db_session.execute(text("SELECT * FROM assessments")).fetchone()
 
-    assert db_assessment[2] == "Test Assessment"
+    assert result[2] == "Test Assessment"
 
-    insert_multimedia_file(1)
-    primer = Primer(
-        position=1,
-        assessment_id=assessment.id,
-        multimedia_file_id="test_id-1",
+
+def test_get_assessment_by_id(db_session):
+    _id = uuid4()
+    date = datetime.now(timezone.utc)
+    db_session.execute(
+        text("INSERT INTO assessments(id, created_at, name) VALUES (:_id, :date, :name)"),
+        {"_id": _id, "date": date, "name": "Test Assessment"}
     )
-    add_assessment_primer(db_session, primer)
 
-    db_primer = db_session.execute(text("SELECT * FROM primers")).fetchone()
+    result = get_assessment_by_id(session=db_session, _id=_id)
 
-    assert db_primer[2] == 1
-    assert db_primer[3] == db_assessment[0]
-
-
-def test_get_assessment_by_id(db_session, insert_assessments):
-    insert_assessments(1)
-    assert get_assessment_by_id(db_session, "test_id-1") == Assessment(
-        id='test_id-1',
-        created_at=datetime(2000, 12, 31, 12, 0, 1, tzinfo=timezone.utc),
-        name='Test Assessment 1',
+    assert result == Assessment(
+        id=_id,
+        created_at=date,
+        name="Test Assessment",
         items=[]
     )
 
@@ -48,32 +41,63 @@ def test_list_no_assessments(db_session):
     assert result == []
 
 
-def test_list_one_assessment(db_session, insert_assessments):
-    insert_assessments(1)
-
-    result = list_assessments(db_session)
-
-    assert result == [
-        AssessmentSummary(
-            name="Test Assessment 1",
-            id="test_id-1"
+def test_list_multiple_assessments(db_session):
+    for i in range(100):
+        db_session.execute(
+            text("INSERT INTO assessments(name) VALUES (:name)"),
+            {"name": f"Test Assessment {i}"}
         )
-    ]
-
-
-def test_list_multiple_assessments(db_session, insert_assessments):
-    insert_assessments(100)
 
     result = list_assessments(db_session)
 
     assert len(result) == 100
 
 
-def test_delete_one_of_two_assessments(db_session, insert_assessments):
-    insert_assessments(2)
+def test_update_assessment(db_session):
+    _id = db_session.execute(
+        text("INSERT INTO assessments(name) VALUES (:name) RETURNING id"),
+        {"name": "Test Assessment"}
+    ).mappings().first()["id"]
 
-    delete_assessment_by_id(db_session, "test_id-1")
+    before_update = get_assessment_by_id(session=db_session, _id=_id)
+    update_assessment(
+        session=db_session,
+        assessment=before_update,
+        **{"name": "Updated Assessment"}
+    )
+    after_update = get_assessment_by_id(session=db_session, _id=_id)
 
-    assert get_assessment_by_id(db_session, "test_id-2")
-    with pytest.raises(AttributeError):
-        get_assessment_by_id(db_session, "test_id-1")
+    assert before_update.name == "Test Assessment"
+    assert after_update.name == "Updated Assessment"
+    assert len(list_assessments(db_session)) == 1
+
+
+def test_delete_assessment(db_session):
+    _id = db_session.execute(
+        text("INSERT INTO assessments(name) VALUES (:name) RETURNING id"),
+        {"name": "Test Assessment"}
+    ).mappings().first()["id"]
+
+    delete_assessment_by_id(session=db_session, _id=_id)
+    result = get_assessment_by_id(session=db_session, _id=_id)
+
+    assert result is None
+
+
+def test_delete_one_of_two_assessments(db_session):
+    _id = db_session.execute(
+        text("INSERT INTO assessments(name) VALUES (:name) RETURNING id"),
+        {"name": "Test Assessment 1"}
+    ).mappings().first()["id"]
+    db_session.execute(
+        text("INSERT INTO assessments(name) VALUES (:name)"),
+        {"name": "Test Assessment 2"}
+    )
+
+    before_deletion = list_assessments(db_session)
+    delete_assessment_by_id(session=db_session, _id=_id)
+    after_deletion = list_assessments(db_session)
+
+    assert len(before_deletion) == 2
+    assert len(after_deletion) == 1
+    assert after_deletion[0].id != _id
