@@ -21,7 +21,7 @@ def db_engine() -> Engine:
 @pytest.fixture(scope="function")
 def db_session(db_engine) -> Session:
     import_tables()
-    DbBase.metadata.create_all(bind=db_engine, checkfirst=True)
+    DbBase.metadata.create_all(bind=db_engine)
 
     session = sessionmaker(bind=db_engine)()
     try:
