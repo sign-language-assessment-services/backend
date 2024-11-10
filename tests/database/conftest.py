@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from testcontainers.postgres import PostgresContainer
 
 from app.database.orm import init_db
-from app.database.tables.base import Base
+from app.database.tables.base import DbBase
 
 
 @pytest.fixture(scope="session")
@@ -22,7 +22,7 @@ def db_engine():
 def db_tables(db_engine):
     init_db(engine=db_engine)
     yield
-    Base.metadata.drop_all(db_engine)
+    DbBase.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="function")

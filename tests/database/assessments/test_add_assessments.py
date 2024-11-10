@@ -54,16 +54,17 @@ def test_insert_assessment_with_different_timezone_saves_it_as_utc(db_session):
     assert data_query.first().created_at == datetime(2000, 1, 1, 11, tzinfo=UTC)
 
 
-def test_insert_two_assessments_with_same_name_will_fail(db_session):
+def test_insert_two_assessments_with_same_id_will_fail(db_session):
+    any_uuid = uuid4()
     data_1 = {
-        "id": uuid4(),
+        "id": any_uuid,
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
-        "name": "Equal Name Assessment"
+        "name": "Foo"
     }
     data_2 = {
-        "id": uuid4(),
+        "id": any_uuid,
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
-        "name": "Equal Name Assessment"
+        "name": "Bar"
     }
 
     _add_assessment_data(db_session, **data_1)
