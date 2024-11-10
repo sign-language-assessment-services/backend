@@ -11,42 +11,62 @@ on:
 
 jobs:
   build:
+    
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-    - name: Install dependencies
-      run: |
-        pip install poetry
-        make install
-    - name: Linting
-      run: make lint
-    - name: Testing
-      run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
-    - name: Coverage
-      env:
-        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-      run: |
-        make coverage
-        make coverage-codacy
-    - name: Security checks
-      run: make security
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          make install
+      
+      - name: Linting
+        run: make lint
+      
+      - name: Testing
+        run: make test DATA_ROOT_USER=test DATA_ROOT_PASSWORD=test AUTH_ENABLED=false
+      
+      - name: Coverage
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          make coverage
+          make coverage-codacy
+      
+      - name: Security checks
+        run: make security
+  
   publish:
     needs: build
     env:
       IMAGE_NAME: slportal_backend
       IMAGE_VERSION: latest
+    
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
       - name: Build Docker image
         run: make docker-build
+      
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      
       - name: Push image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME          
