@@ -1,6 +1,8 @@
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, String
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
@@ -11,13 +13,13 @@ class DbSubmission(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    submission_type: Mapped[str] = mapped_column(
-        String(length=26),
-        nullable=False
-    )
     user_name: Mapped[str] = mapped_column(
         String(length=36),
         nullable=False
+    )
+    choices: Mapped[list[UUID]] = mapped_column(
+        MutableList.as_mutable(ARRAY(String(length=36), dimensions=1)),
+        nullable=True
     )
 
     # FOREIGN KEYS
@@ -26,16 +28,16 @@ class DbSubmission(DbBase):
         ForeignKey("exercises.id"),
         nullable=False
     )
+    multiple_choice_id: Mapped[UUID] = mapped_column(
+        ForeignKey("multiple_choices.id"),
+        nullable=False
+    )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     exercise: Mapped["DbExercise"] = relationship(
-        back_populates="submission"
+        back_populates="submissions"
     )
-
-    # CONFIGURATION
-    # ------------------------------------------------------------------------
-    __mapper_args__ = {
-        "polymorphic_on": "submission_type",
-        "polymorphic_identity": "submission"
-    }
+    multiple_choice: Mapped["DbMultipleChoice"] = relationship(
+        back_populates="submissions"
+    )

@@ -7,8 +7,8 @@ from app.core.models.media_types import MediaType
 from app.database.tables.base import DbBase
 
 
-class DbBucket(DbBase):
-    __tablename__ = "buckets"
+class DbBucketObjects(DbBase):
+    __tablename__ = "bucket_objects"
 
     # COLUMNS
     # ------------------------------------------------------------------------
@@ -28,13 +28,13 @@ class DbBucket(DbBase):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     choices: Mapped[list["DbChoice"]] = relationship(
-        back_populates="bucket"
+        back_populates="bucket_object"
     )
     exercises: Mapped[list["DbExercise"]] = relationship(
-        back_populates="bucket"
+        back_populates="bucket_object"
     )
     primers: Mapped[list["DbPrimer"]] = relationship(
-        back_populates="bucket"
+        back_populates="bucket_object"
     )
 
     # CONSTRAINTS

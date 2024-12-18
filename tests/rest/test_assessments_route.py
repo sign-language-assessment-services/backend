@@ -13,7 +13,7 @@ def test_get_assessment(test_client: TestClient) -> None:
                 {
                     "is_correct": False,
                     "location": {
-                        "bucket": "testbucket",
+                        "bucket_object": "testbucket",
                         "key": "1-A.mp4"
                     },
                     "type": "video",
@@ -22,7 +22,7 @@ def test_get_assessment(test_client: TestClient) -> None:
                 {
                     "is_correct": True,
                     "location": {
-                        "bucket": "testbucket",
+                        "bucket_object": "testbucket",
                         "key": "1-B.mp4"
                     },
                     "type": "video",
@@ -32,7 +32,7 @@ def test_get_assessment(test_client: TestClient) -> None:
             "position": 0,
             "question": {
                 "location": {
-                    "bucket": "testbucket",
+                    "bucket_object": "testbucket",
                     "key": "question1.mp4"
                 },
                 "type": "video",
@@ -42,7 +42,7 @@ def test_get_assessment(test_client: TestClient) -> None:
         {
             "content": {
                 "location": {
-                    "bucket": "testbucket",
+                    "bucket_object": "testbucket",
                     "key": "introduction.mp4"
                 },
             "type": "video",
@@ -55,7 +55,7 @@ def test_get_assessment(test_client: TestClient) -> None:
                 {
                     "is_correct": True,
                     "location": {
-                        "bucket": "testbucket",
+                        "bucket_object": "testbucket",
                         "key": "2-A.mp4"
                     },
                     "type": "video",
@@ -64,7 +64,7 @@ def test_get_assessment(test_client: TestClient) -> None:
                 {
                     "is_correct": False,
                     "location": {
-                        "bucket": "testbucket",
+                        "bucket_object": "testbucket",
                         "key": "2-B.mp4"
                     },
                     "type": "video",
@@ -73,7 +73,7 @@ def test_get_assessment(test_client: TestClient) -> None:
                 {
                     "is_correct": False,
                     "location": {
-                        "bucket": "testbucket",
+                        "bucket_object": "testbucket",
                         "key": "2-C.mp4"
                     },
                     "type": "video",
@@ -83,7 +83,7 @@ def test_get_assessment(test_client: TestClient) -> None:
             "position": 1,
             "question": {
                 "location": {
-                    "bucket": "testbucket",
+                    "bucket_object": "testbucket",
                     "key": "question2.mp4"
                 },
                "type": "video",

@@ -9,7 +9,7 @@ from app.core.models.assessment import Assessment
 from app.core.models.score import Score
 from app.core.models.submission import Submission
 from app.repositories.assessments import get_assessment_by_id, list_assessments
-from app.repositories.submissions import add_submission, list_submissions_by_user_id
+from app.repositories.submissions import add_submission, list_submissions_for_user
 from app.services.object_storage_client import ObjectStorageClient
 from app.settings import get_settings
 from app.type_hints import AssessmentAnswers
@@ -26,7 +26,7 @@ class AssessmentService:
 
     @staticmethod
     def get_assessment_by_id(session: Session, assessment_id: UUID) -> Assessment | None:
-        return get_assessment_by_id(session=session, _id=str(assessment_id))
+        return get_assessment_by_id(session=session, _id=assessment_id)
 
 
     @staticmethod
@@ -51,9 +51,9 @@ class AssessmentService:
             maximum_points=score.maximum_points,
             percentage=score.percentage
         )
-        add_submission(session=session, submission=submission)  # submission=DbSubmission.from_submission(submission))
+        add_submission(session=session, submission=submission)  # submission=DbExerciseSubmission.from_submission(submission))
         return score
 
     @staticmethod
-    def list_submissions(session: Session) -> list[Submission]:
-        return list_submissions_by_user_id(session=session, user_id=None)
+    def list_submissions(session: Session, user_id) -> list[Submission]:
+        return list_submissions_for_user(session=session, user_id=user_id)

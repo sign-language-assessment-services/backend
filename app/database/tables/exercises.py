@@ -9,52 +9,39 @@ from app.database.tables.tasks import DbTask
 class DbExercise(DbTask):
     __tablename__ = "exercises"
 
+    # COLUMNS
+    # ------------------------------------------------------------------------
+    points: Mapped[int] = mapped_column(
+        nullable=False,
+        default="1"
+    )
+
     # FOREIGN_KEYS
     # ------------------------------------------------------------------------
     id: Mapped[UUID] = mapped_column(
         ForeignKey("tasks.id", ondelete="CASCADE"),
-        primary_key=True
+        primary_key=True,
+        nullable=False
     )
-    # bucket or text represents the question
-    bucket_id: Mapped[UUID] = mapped_column(
-        ForeignKey("buckets.id"),
-        nullable=True
+    bucket_object_id: Mapped[UUID] = mapped_column(
+        ForeignKey("bucket_objects.id"),
+        nullable=False
     )
-    text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id"),
-        nullable=True
-    )
-    # multiple choice is currently the only possibility to answer an exercise
     multiple_choice_id: Mapped[UUID] = mapped_column(
         ForeignKey("multiple_choices.id")
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    submission: Mapped["DbSubmission"] = relationship(
-        back_populates="exercise"
-    )
-    bucket: Mapped["DbBucket"] = relationship(
+    bucket_object: Mapped["DbBucketObjects"] = relationship(
         back_populates="exercises"
     )
     multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="exercises"
     )
-    text: Mapped["DbText"] = relationship(
-        back_populates="exercises"
+    submissions: Mapped[list["DbSubmission"]] = relationship(
+        back_populates="exercise"
     )
-
-    # CONSTRAINTS
-    # ------------------------------------------------------------------------
-    __table_args__ = (
-        CheckConstraint(
-            "text_id IS NOT NULL AND bucket_id IS NULL"
-            " OR "
-            "text_id IS NULL AND bucket_id IS NOT NULL",
-            name="check_exercise_text_or_bucket"
-        ),
-    )
-
     # CONFIGURATION
     # ------------------------------------------------------------------------
     __mapper_args__ = {

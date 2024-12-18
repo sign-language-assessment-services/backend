@@ -43,6 +43,6 @@ class SubmissionService:
             maximum_points=score.maximum_points,
             percentage=score.percentage
         )
-        add_submission(session=session, submission=submission)  # submission=DbSubmission.from_submission(submission))
+        add_submission(session=session, submission=submission)  # submission=DbExerciseSubmission.from_submission(submission))
         return score
 

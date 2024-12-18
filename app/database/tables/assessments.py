@@ -21,5 +21,5 @@ class DbAssessment(DbBase):
     # ------------------------------------------------------------------------
     tasks: Mapped[list["DbTask"]] = relationship(
         secondary=assessments_tasks,
-        back_populates="assessments",
+        back_populates="assessments"
     )

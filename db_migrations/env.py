@@ -1,11 +1,9 @@
 import os
 from logging.config import fileConfig
 
-from dotenv import load_dotenv
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from dotenv import load_dotenv
+from sqlalchemy import engine_from_config, pool
 
 from app.database.orm import import_tables
 from app.database.tables.base import DbBase
@@ -29,7 +27,6 @@ config.set_section_option(section, "DB_NAME", os.environ.get("DB_NAME", "backend
 # END CUSTOM SETTINGS
 # ---------------------------------------------------------------------
 
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -42,6 +39,7 @@ if config.config_file_name is not None:
 # target_metadata = None
 import_tables()
 target_metadata = DbBase.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

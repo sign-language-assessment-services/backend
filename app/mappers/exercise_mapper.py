@@ -10,6 +10,6 @@ class ExerciseMapper:
         return Exercise(
             id=db_exercise.id,
             created_at=db_exercise.created_at,
-            question=MultimediaFileMapper.db_to_domain(db_exercise.bucket),
+            question=MultimediaFileMapper.db_to_domain(db_exercise.bucket_object),
             answer=MultipleChoiceMapper.db_to_domain(db_exercise.multiple_choice)
         )

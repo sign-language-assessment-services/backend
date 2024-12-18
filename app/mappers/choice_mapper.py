@@ -13,13 +13,13 @@ class ChoiceMapper:
             is_correct=db_choice.is_correct,
             position=db_choice.position,
             content=MultimediaFile(
-                id=db_choice.bucket.id,
-                created_at=db_choice.bucket.created_at,
+                id=db_choice.bucket_object.id,
+                created_at=db_choice.bucket_object.created_at,
                 location=MinioLocation(
-                    bucket=db_choice.bucket.bucket,
-                    key=db_choice.bucket.key
+                    bucket=db_choice.bucket_object.bucket_object,
+                    key=db_choice.bucket_object.key
                 ),
-                content_type=db_choice.bucket.content_type
+                content_type=db_choice.bucket_object.content_type
             )
         )
 

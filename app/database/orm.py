@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Annotated, Iterator
 from urllib.parse import quote
 
@@ -38,21 +36,19 @@ def import_tables() -> None:
     """Tables have to be imported in declarative mapping style"""
     # pylint: disable=wrong-import-position,import-outside-toplevel
     from app.database.tables.assessments import DbAssessment
-    from app.database.tables.buckets import DbBucket
+    from app.database.tables.bucket_objects import DbBucketObjects
     from app.database.tables.choices import DbChoice
     from app.database.tables.exercises import DbExercise
-    from app.database.tables.multiple_choice_submissions import DbMultipleChoiceSubmission
     from app.database.tables.multiple_choices import DbMultipleChoice
     from app.database.tables.primers import DbPrimer
     from app.database.tables.submissions import DbSubmission
     from app.database.tables.tasks import DbTask
-    from app.database.tables.text_submissions import DbTextSubmission
-    from app.database.tables.texts import DbText
-    # use imports to prevent them stripped away by IDE
-    _ = (
-        DbAssessment, DbBucket, DbChoice, DbExercise, DbMultipleChoiceSubmission,
-        DbMultipleChoice, DbPrimer, DbSubmission, DbTask, DbTextSubmission, DbText
+
+    _ = (  # use imports to prevent them automatically stripped away by IDE
+        DbAssessment, DbBucketObjects, DbChoice, DbExercise, DbMultipleChoice,
+        DbPrimer, DbSubmission, DbTask,
     )
+
 
 def run_migrations():
     alembic_cfg = Config("alembic.ini")

@@ -1,11 +1,11 @@
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
-from app.database.tables.buckets import DbBucket
+from app.database.tables.bucket_objects import DbBucketObjects
 
 
 class MultimediaFileMapper:
     @staticmethod
-    def db_to_domain(db_bucket: DbBucket) -> MultimediaFile:
+    def db_to_domain(db_bucket: DbBucketObjects) -> MultimediaFile:
         return MultimediaFile(
             id=db_bucket.id,
             created_at=db_bucket.created_at,
@@ -17,8 +17,8 @@ class MultimediaFileMapper:
         )
 
     @staticmethod
-    def domain_to_db(multimedia_file: MultimediaFile) -> DbBucket:
-        return DbBucket(
+    def domain_to_db(multimedia_file: MultimediaFile) -> DbBucketObjects:
+        return DbBucketObjects(
             bucket=multimedia_file.location.bucket,
             key=multimedia_file.location.key,
             content_type=multimedia_file.content_type

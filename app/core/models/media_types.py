@@ -6,8 +6,8 @@ from app.core.models.exceptions import UnsupportedMimeType
 
 
 class MediaType(Enum):
-    IMAGE = "image"
-    VIDEO = "video"
+    IMAGE = "IMAGE"
+    VIDEO = "VIDEO"
 
     @classmethod
     def from_content_type(cls, content_type: str) -> MediaType:

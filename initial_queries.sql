@@ -1,6 +1,6 @@
 DO $$
 DECLARE
-    var_bucket_id UUID;
+    var_bucket_object_id UUID;
     var_text_id UUID;
     var_multiple_choice_id UUID;
     var_choice_id UUID;
@@ -20,14 +20,14 @@ BEGIN
     VALUES
         (var_assessment_id, now(), 'Initial Queries Test Assessment');
 
-    -- Insert buckets (16 choices, 2 primers and 2 exercises)
+    -- Insert bucket objects (16 choices, 2 primers and 2 exercises)
     ----------------------------------------------------------------------------------------------
     FOR bucket_number IN 1..20 LOOP
-        var_bucket_id := gen_random_uuid();
+        var_bucket_object_id := gen_random_uuid();
 
-        INSERT INTO buckets (id, created_at, bucket, key, content_type)
+        INSERT INTO bucket_objects (id, created_at, bucket, key, content_type)
         VALUES
-            (var_bucket_id, now(), 'slportal', 'testfile-' || bucket_number || '.mp4', 'VIDEO');
+            (var_bucket_object_id, now(), 'slportal', 'testfile-' || bucket_number || '.mp4', 'VIDEO');
     END LOOP;
 
     -- Insert texts (not used, just for completeness)
@@ -52,12 +52,12 @@ BEGIN
         FOR choice_number in 1..4 LOOP
             var_choice_id := gen_random_uuid();
             var_testfile_number := (mc_number - 1) * 4 + choice_number; -- get numbers (1-4, 5-8, 9-12, 13-16)
-            SELECT id INTO var_bucket_id FROM buckets WHERE key = 'testfile-' || var_testfile_number || '.mp4';
+            SELECT id INTO var_bucket_object_id FROM bucket_objects WHERE key = 'testfile-' || var_testfile_number || '.mp4';
 
-            INSERT INTO choices (id, created_at, is_correct, position, bucket_id, text_id, multiple_choice_id)
+            INSERT INTO choices (id, created_at, is_correct, position, bucket_object_id, text_id, multiple_choice_id)
             VALUES
                 -- each first choice is correct, others are false
-                (var_choice_id, now(), CASE WHEN var_testfile_number = 1 THEN true ELSE false END, choice_number, var_bucket_id, null, var_multiple_choice_id);
+                (var_choice_id, now(), CASE WHEN var_testfile_number = 1 THEN true ELSE false END, choice_number, var_bucket_object_id, null, var_multiple_choice_id);
         END LOOP;
     END LOOP;
 
@@ -66,15 +66,15 @@ BEGIN
     FOR primer_number in 1..2 LOOP
         var_primer_id := gen_random_uuid();
         var_testfile_number := 16 + primer_number;
-        SELECT id INTO var_bucket_id FROM buckets WHERE key = 'testfile-' || var_testfile_number || '.mp4';
+        SELECT id INTO var_bucket_object_id FROM bucket_objects WHERE key = 'testfile-' || var_testfile_number || '.mp4';
 
         INSERT INTO tasks (id, created_at, task_type)
         VALUES
             (var_primer_id, now(), 'primer');
 
-        INSERT INTO primers (id, bucket_id, text_id)
+        INSERT INTO primers (id, bucket_object_id, text_id)
         VALUES
-            (var_primer_id, var_bucket_id, null);
+            (var_primer_id, var_bucket_object_id, null);
 
         INSERT INTO assessments_tasks (position, assessment_id, task_id)
         VALUES
@@ -86,16 +86,16 @@ BEGIN
     FOR exercise_number in 1..2 LOOP
         var_exercise_id := gen_random_uuid();
         var_testfile_number := 18 + exercise_number;
-        SELECT id INTO var_bucket_id FROM buckets WHERE key = 'testfile-' || var_testfile_number || '.mp4';
+        SELECT id INTO var_bucket_object_id FROM bucket_objects WHERE key = 'testfile-' || var_testfile_number || '.mp4';
         SELECT id INTO var_multiple_choice_id FROM multiple_choices ORDER BY id LIMIT 1 OFFSET exercise_number;
 
         INSERT INTO tasks (id, created_at, task_type)
         VALUES
             (var_exercise_id, now(), 'exercise');
 
-        INSERT INTO exercises (id, bucket_id, multiple_choice_id, text_id)
+        INSERT INTO exercises (points, id, bucket_object_id, multiple_choice_id, text_id)
         VALUES
-            (var_exercise_id, var_bucket_id, var_multiple_choice_id, null);
+            (1, var_exercise_id, var_bucket_object_id, var_multiple_choice_id, null);
 
         INSERT INTO assessments_tasks (position, assessment_id, task_id)
         VALUES

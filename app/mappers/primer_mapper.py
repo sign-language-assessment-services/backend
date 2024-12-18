@@ -11,13 +11,13 @@ class PrimerMapper:
             id=db_primer.id,
             created_at=db_primer.created_at,
             content=MultimediaFile(
-                id=db_primer.bucket.id,
-                created_at=db_primer.bucket.created_at,
+                id=db_primer.bucket_object.id,
+                created_at=db_primer.bucket_object.created_at,
                 location=MinioLocation(
-                    bucket=db_primer.bucket.bucket,
-                    key=db_primer.bucket.key
+                    bucket=db_primer.bucket_object.bucket_object,
+                    key=db_primer.bucket_object.key
                 ),
-                content_type=db_primer.bucket.content_type
+                content_type=db_primer.bucket_object.content_type
             )
         )
 

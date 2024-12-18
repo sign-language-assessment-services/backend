@@ -13,35 +13,18 @@ class DbPrimer(DbTask):
     # ------------------------------------------------------------------------
     id: Mapped[UUID] = mapped_column(
         ForeignKey("tasks.id", ondelete="CASCADE"),
-        primary_key=True
+        primary_key=True,
+        nullable=False
     )
-    bucket_id: Mapped[UUID] = mapped_column(
-        ForeignKey("buckets.id"),
-        nullable=True
-    )
-    text_id: Mapped[UUID] = mapped_column(
-        ForeignKey("texts.id"),
-        nullable=True
+    bucket_object_id: Mapped[UUID] = mapped_column(
+        ForeignKey("bucket_objects.id"),
+        nullable=False
     )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    bucket: Mapped["DbBucket"] = relationship(
+    bucket_object: Mapped["DbBucketObjects"] = relationship(
         back_populates="primers"
-    )
-    text: Mapped["DbText"] = relationship(
-        back_populates="primers"
-    )
-
-    # CONSTRAINTS
-    # ------------------------------------------------------------------------
-    __table_args__ = (
-        CheckConstraint(
-            "text_id IS NOT NULL AND bucket_id IS NULL"
-            " OR "
-            "text_id IS NULL AND bucket_id IS NOT NULL",
-            name="check_primer_text_or_bucket"
-        ),
     )
 
     # CONFIGURATION

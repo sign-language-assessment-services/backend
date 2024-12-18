@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from app.core.models.submission import Submission
 from app.database.tables.multiple_choice_submissions import DbMultipleChoiceSubmission
-from app.database.tables.submissions import DbSubmission
 from app.mappers.submission_mapper import SubmissionMapper
 
 
@@ -40,7 +39,6 @@ def update_submission(session: Session, submission: Submission, **kwargs: dict[s
 
 
 def delete_submission_by_id(session: Session, _id: str) -> None:
-    session.query(DbSubmission).filter_by(id=_id).delete()
+    session.query(DbMultipleChoiceSubmission).filter_by(id=_id).delete()
     session.commit()
     return None
-
