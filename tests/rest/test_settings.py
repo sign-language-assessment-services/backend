@@ -10,6 +10,8 @@ def test_get_settings(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setenv("DB_USER", "db_testuser")
     monkeypatch.setenv("DB_PASSWORD", "db_testpassword")
     monkeypatch.setenv("DB_HOST", "db_testhost")
+    monkeypatch.setenv("CLIENT_ID", "client_id")
+    monkeypatch.setenv("CLIENT_SECRET", "client_secret")
     assert get_settings() == Settings()  # type: ignore[call-arg]
 
 
