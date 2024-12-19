@@ -32,7 +32,9 @@ def test_client(assessment_service: Mock) -> TestClient:
             auth_enabled=False,
             db_user="db_testuser",
             db_password="db_testpassword",
-            db_host="db_testhost"
+            db_host="db_testhost",
+            client_id="client_id",
+            client_secret="client_secret",
         )
 
     app.dependency_overrides[AssessmentService] = lambda: assessment_service

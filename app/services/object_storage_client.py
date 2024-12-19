@@ -1,7 +1,9 @@
 from typing import Annotated, cast
 
+import requests
 from fastapi import Depends, HTTPException
 from minio import Minio
+from minio.credentials import WebIdentityProvider
 
 from app.config import Settings
 from app.core.models.bucket_object import BucketObject
@@ -11,11 +13,14 @@ from app.rest.settings import get_settings
 
 class ObjectStorageClient:
     def __init__(self, settings: Annotated[Settings, Depends(get_settings)]):
+        self.settings = settings
         self.minio = Minio(
             endpoint=settings.data_endpoint,
-            access_key=settings.data_root_user,
-            secret_key=settings.data_root_password,
             secure=settings.data_secure,
+            credentials=WebIdentityProvider(
+                jwt_provider_func=self._fetch_access_token,
+                sts_endpoint=settings.data_endpoint,
+            )
         )
 
     def get_presigned_url(self, location: MinioLocation) -> str:
@@ -31,7 +36,7 @@ class ObjectStorageClient:
                 status_code=503, detail=f"Minio not reachable. {exc}"
             ) from exc
 
-    def list_folders(self, bucket_name: str, folder: str|None = None) -> list[str]:
+    def list_folders(self, bucket_name: str, folder: str | None = None) -> list[str]:
         if folder:
             folder += "/"
         return [
@@ -48,3 +53,14 @@ class ObjectStorageClient:
             for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True)
             if not item.is_dir
         ]
+
+    def _fetch_access_token(self) -> dict:
+        return requests.post(
+            url=self.settings.token_endpoint,
+            data={
+                "grant_type": "client_credentials",
+                "client_id": self.settings.client_id,
+                "client_secret": self.settings.client_secret,
+            },
+            timeout=10.0
+        ).json()
