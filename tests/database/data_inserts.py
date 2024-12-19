@@ -12,12 +12,12 @@ DbData: TypeAlias = dict[str, Any]
 DbMixedData: TypeAlias = dict[str, dict[str, Any] | list[dict[str, Any]]]
 
 
-def insert_assessment(session: Session) -> DbData:
+def insert_assessment(session: Session, name: str = "") -> DbData:
     """Insert single assessment into database"""
     assessment = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
-        "name": "Test Assessment"
+        "name": name if name != "" else "Test Assessment"
     }
     session.execute(
         text(
@@ -49,13 +49,18 @@ def connect_assessment_with_tasks(session: Session, assessment_id: UUID, task_id
         )
 
 
-def insert_bucket_object(session: Session, content_type: MediaType, suffix: str = "") -> DbData:
+def insert_bucket_object(
+        session: Session,
+        content_type: MediaType,
+        bucket_name: None | str = None,
+        key_suffix: str = ""
+) -> DbData:
     """Insert bucket_object object information (video file) into database"""
     bucket_object = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
-        "bucket": "testportal",
-        "key": "test" + suffix + ".mpeg",
+        "bucket": bucket_name if bucket_name is not None else "testportal",
+        "key": "test" + key_suffix + ".mpeg",
         "content_type": content_type.value
     }
     session.execute(
@@ -209,13 +214,13 @@ def connect_multiple_choice_submission_with_choices(
         )
 
 
-def insert_submission(session: Session, exercise_id: UUID, multiple_choice_id: UUID) -> DbData:
+def insert_submission(session: Session, exercise_id: UUID, multiple_choice_id: UUID, choices: list[UUID]) -> DbData:
     """Insert a submission into database"""
     submission = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "user_name": str(uuid4()),
-        "choices": [str(uuid4())],
+        "choices": choices,
         "exercise_id": exercise_id,
         "multiple_choice_id": multiple_choice_id
     }
