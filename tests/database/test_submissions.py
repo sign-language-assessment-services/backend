@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -11,6 +11,7 @@ from app.database.tables.exercises import DbExercise
 from app.database.tables.multiple_choices import DbMultipleChoice
 from app.database.tables.submissions import DbSubmission
 from database.data_inserts import insert_bucket_object, insert_exercise, insert_multiple_choice, insert_submission
+from database.utils import table_count
 
 
 def test_insert_submission(db_session):
@@ -21,6 +22,7 @@ def test_insert_submission(db_session):
         bucket_object_id=bucket_object_data.get("id"),
         multiple_choice_id=multiple_choice_data.get("id")
     )
+
     submission_data = insert_submission(
         session=db_session,
         exercise_id=exercise_data.get("id"),
@@ -28,10 +30,8 @@ def test_insert_submission(db_session):
         choices=[uuid4()]
     )
 
-    data_query = db_session.query(DbSubmission)
-
-    assert data_query.count() == 1
-    db_submission = data_query.first()
+    db_submission = db_session.get(DbSubmission, submission_data.get("id"))
+    assert table_count(db_session, DbSubmission) == 1
     assert db_submission.id == submission_data.get("id")
     assert db_submission.created_at == submission_data.get("created_at")
     assert db_submission.user_name == submission_data.get("user_name")
@@ -88,11 +88,10 @@ def test_update_submission(db_session: Session) -> None:
     )
 
     new_choices = [uuid4(), uuid4()]
-    db_session.query(DbSubmission).update({"choices": new_choices})
+    db_session.execute(update(DbSubmission).values(choices=new_choices))
 
-    data_query = db_session.query(DbSubmission)
-    assert data_query.count() == 1
-    db_submission = data_query.first()
+    db_submission = db_session.get(DbSubmission, submission_data.get("id"))
+    assert table_count(db_session, DbSubmission) == 1
     assert db_submission.id == submission_data.get("id")
     assert db_submission.choices != [str(choice) for choice in submission_data.get("choices")]
     assert db_submission.choices == [str(choice) for choice in new_choices]
@@ -116,7 +115,7 @@ def test_delete_submissions(db_session: Session) -> None:
     db_submission = db_session.scalar(select(DbSubmission))
     db_session.delete(db_submission)
 
-    assert db_session.query(DbSubmission).count() == 0
-    assert db_session.query(DbBucketObjects).count() == 1
-    assert db_session.query(DbMultipleChoice).count() == 1
-    assert db_session.query(DbExercise).count() == 1
+    assert table_count(db_session, DbSubmission) == 0
+    assert table_count(db_session, DbBucketObjects) == 1
+    assert table_count(db_session, DbMultipleChoice) == 1
+    assert table_count(db_session, DbExercise) == 1

@@ -28,7 +28,7 @@ def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engin
 
 def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterator[Session]:
     session_factory = sessionmaker(bind=engine)
-    with session_factory.begin() as session:  # pylint: disable=no-member
+    with session_factory.begin() as session:
         yield session
 
 

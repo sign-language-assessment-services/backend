@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 import pytest
 import pytz
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import Session
 
@@ -59,8 +59,8 @@ def test_insert_assessment_without_timezone_returns_utc(db_session: Session) -> 
 
     _add_assessment_data(db_session, **data)
 
-    data_query = db_session.query(DbAssessment)
-    assert data_query.first().created_at == datetime(2000, 1, 1, 12, tzinfo=UTC)
+    db_assessment = db_session.scalars(select(DbAssessment).limit(1)).first()
+    assert db_assessment.created_at == datetime(2000, 1, 1, 12, tzinfo=UTC)
 
 
 def test_insert_assessment_with_different_timezone_saves_it_as_utc(db_session: Session) -> None:
@@ -73,8 +73,7 @@ def test_insert_assessment_with_different_timezone_saves_it_as_utc(db_session: S
 
     _add_assessment_data(db_session, **data)
 
-    data_query = db_session.query(DbAssessment)
-    db_assessment = data_query.first()
+    db_assessment = db_session.scalars(select(DbAssessment).limit(1)).first()
     assert db_assessment.created_at == berlin_time
     assert db_assessment.created_at.tzinfo == timezone.utc
     assert db_assessment.created_at == datetime(2000, 1, 1, 11, tzinfo=UTC)

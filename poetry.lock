@@ -1719,22 +1719,6 @@ tomli = {version = ">=1", markers = "python_version < \"3.11\""}
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
-name = "pytest-alembic"
-version = "0.11.1"
-description = "A pytest plugin for verifying alembic migrations."
-optional = false
-python-versions = "<4,>=3.6"
-files = [
-    {file = "pytest_alembic-0.11.1-py3-none-any.whl", hash = "sha256:f83e8c1534d50ced053aa4b1dbf6e261f4674aa626cb852fc1dcb565049ae152"},
-    {file = "pytest_alembic-0.11.1.tar.gz", hash = "sha256:a920d8770b5be77326c5c1b2bd8d4d4a0dd8fc2c2d57abbcd1fec28a21131b85"},
-]
-
-[package.dependencies]
-alembic = "*"
-pytest = ">=6.0"
-sqlalchemy = "*"
-
-[[package]]
 name = "pytest-asyncio"
 version = "0.21.2"
 description = "Pytest support for asyncio"
@@ -2777,4 +2761,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "49cf93671675b7a43fbf08f512058bce460feb880140932325a78d574290ce73"
+content-hash = "5f40589becb2f6db09c620844b255df804fdf81fa0779c8d81af1e17bb36a8ad"

@@ -1,18 +1,18 @@
 import pytest
+from sqlalchemy import delete, select, update
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database.tables.assessments import DbAssessment
+from database.utils import table_count
 from tests.database.data_inserts import insert_assessment
 
 
 def test_insert_assessment(db_session: Session) -> None:
     assessment_data = insert_assessment(db_session)
 
-    data_query = db_session.query(DbAssessment)
-
-    assert data_query.count() == 1
-    db_assessment = data_query.first()
+    db_assessment = db_session.get(DbAssessment, assessment_data.get("id"))
+    assert table_count(db_session, DbAssessment) == 1
     assert db_assessment.id == assessment_data.get("id")
     assert db_assessment.created_at == assessment_data.get("created_at")
     assert db_assessment.name == assessment_data.get("name")
@@ -36,11 +36,10 @@ def test_insert_assessment_with_too_long_name_fails(db_session: Session) -> None
 def test_update_assessment(db_session: Session) -> None:
     assessment_data = insert_assessment(db_session)
 
-    db_session.query(DbAssessment).update({"name": "Updated Assessment"})
+    db_session.execute(update(DbAssessment).values(name="Updated Assessment"))
 
-    data_query = db_session.query(DbAssessment)
-    assert data_query.count() == 1
-    db_assessment = data_query.first()
+    db_assessment = db_session.get(DbAssessment, assessment_data.get("id"))
+    assert table_count(db_session, DbAssessment) == 1
     assert db_assessment.id == assessment_data.get("id")
     assert db_assessment.created_at == assessment_data.get("created_at")
     assert db_assessment.name != assessment_data.get("name")
@@ -50,6 +49,6 @@ def test_update_assessment(db_session: Session) -> None:
 def test_delete_assessment(db_session: Session) -> None:
     insert_assessment(db_session)
 
-    db_session.query(DbAssessment).delete()
+    db_session.execute(delete(DbAssessment))
 
-    assert db_session.query(DbAssessment).count() == 0
+    assert table_count(db_session, DbAssessment) == 0
