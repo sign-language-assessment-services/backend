@@ -6,7 +6,7 @@ import pytest
 import app.services.assessment_service as assessment_service_module
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_summary import AssessmentSummary
-from app.core.models.exceptions import UnexpectedItemType
+from app.core.exceptions import UnexpectedItemType
 from app.core.models.score import Score
 from app.services.assessment_service import AssessmentService
 
@@ -46,7 +46,7 @@ def test_list_assessments(mocked_list_assessment, assessment_service: Assessment
     mocked_list_assessment.assert_called_once_with(mocked_session)
 
 
-# TODO/NOTE: finding the right choice from an answer by giving the position will be replaced by finding it via uuid
+# TODO/NOTE: finding the right choice from an choices by giving the position will be replaced by finding it via uuid
 @patch.object(assessment_service_module, assessment_service_module.add_submission.__name__)
 @patch.object(
     Assessment, Assessment.score.__name__,

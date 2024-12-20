@@ -10,5 +10,4 @@ class MultipleChoice(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=datetime.now)
 
-    choices: list[Choice]
-    random_order: bool = Field(default=False)
+    choices: list[Choice] = Field(default_factory=list)

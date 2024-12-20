@@ -12,4 +12,4 @@ class Assessment(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
 
     name: str
-    items: list[Primer | Exercise] = Field(default_factory=list)
+    tasks: list[Primer | Exercise] = Field(default_factory=list)

@@ -3,13 +3,16 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from app.core.models.multimedia_file import MultimediaFile
-from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.question import Question
+from app.core.models.question_type import QuestionType
+from app.core.models.submission import Submission
 
 
 class Exercise(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=datetime.now)
 
-    question: MultimediaFile
-    answer: MultipleChoice
+    points: int
+    question: Question
+    question_type: QuestionType
+    submissions: list[Submission] = Field(default_factory=list)

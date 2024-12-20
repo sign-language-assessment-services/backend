@@ -18,7 +18,7 @@ def test_add_submission(db_session: Session) -> None:
     assessment = Assessment(name="Test Assessment")
     add_assessment(db_session, assessment)
     submission = Submission(
-        user_id=str(uuid.uuid4()),
+        user_name=str(uuid.uuid4()),
         assessment_id=assessment.id,
         answers={1: [0], 2: [1]},
         points=2,
@@ -40,7 +40,7 @@ def test_get_submission_by_id(db_session: Session, insert_submissions: Callable)
     assert get_submission_by_id(db_session, _id="test_id-1") == Submission(
         id="test_id-1",
         created_at=datetime(2000, 12, 31, 12, 0, 1, tzinfo=timezone.utc),
-        user_id="test_user_id",
+        user_name="test_user_id",
         points=1,
         maximum_points=1,
         percentage=100.0,
@@ -63,7 +63,7 @@ def test_list_one_submission(db_session: Session, insert_submissions: Callable) 
         Submission(
             id='test_id-1',
             created_at=datetime(2000, 12, 31, 12, 0, 1, tzinfo=timezone.utc),
-            user_id='test_user_id',
+            user_name='test_user_id',
             points=1,
             maximum_points=1,
             percentage=100.0,

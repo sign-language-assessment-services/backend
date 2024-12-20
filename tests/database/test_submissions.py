@@ -15,7 +15,7 @@ from database.utils import table_count
 
 
 def test_insert_submission(db_session):
-    bucket_object_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
     exercise_data = insert_exercise(
         session=db_session,
@@ -54,7 +54,7 @@ def test_insert_submission_with_missing_exercise_id_fails(db_session: Session) -
 
 
 def test_insert_submission_with_missing_multiple_choice_id_fails(db_session: Session) -> None:
-    bucket_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
     exercise_data = insert_exercise(
         session=db_session,
@@ -73,7 +73,7 @@ def test_insert_submission_with_missing_multiple_choice_id_fails(db_session: Ses
 
 
 def test_update_submission(db_session: Session) -> None:
-    bucket_object_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
     exercise_data = insert_exercise(
         session=db_session,
@@ -98,7 +98,7 @@ def test_update_submission(db_session: Session) -> None:
 
 
 def test_delete_submissions(db_session: Session) -> None:
-    bucket_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
     exercise_data = insert_exercise(
         session=db_session,

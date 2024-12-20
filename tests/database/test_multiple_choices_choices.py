@@ -13,13 +13,13 @@ from database.utils import table_count
 
 
 def test_multiple_choice_and_choice_connection(db_session: Session) -> None:
-    bucket_1 = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO, key_suffix="1")
+    bucket_1 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, key_suffix="1")
     choice_1 = insert_choice(session=db_session, bucket_object_id=bucket_1.get("id"))
-    bucket_2 = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO, key_suffix="2")
+    bucket_2 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, key_suffix="2")
     choice_2 = insert_choice(session=db_session, bucket_object_id=bucket_2.get("id"))
-    bucket_3 = insert_bucket_object(session=db_session, content_type=MediaType.IMAGE, key_suffix="3")
+    bucket_3 = insert_bucket_object(session=db_session, media_type=MediaType.IMAGE, key_suffix="3")
     choice_3 = insert_choice(session=db_session, bucket_object_id=bucket_3.get("id"))
-    bucket_4 = insert_bucket_object(session=db_session, content_type=MediaType.IMAGE, key_suffix="4")
+    bucket_4 = insert_bucket_object(session=db_session, media_type=MediaType.IMAGE, key_suffix="4")
     choice_4 = insert_choice(session=db_session, bucket_object_id=bucket_4.get("id"))
     multiple_choice = insert_multiple_choice(session=db_session)
 
@@ -36,7 +36,7 @@ def test_multiple_choice_and_choice_connection(db_session: Session) -> None:
 
 def test_choice_deletion_is_reflected_in_asscociation_table(db_session: Session) -> None:
     multiple_choice = insert_multiple_choice(session=db_session)
-    bucket = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     choice_1 = insert_choice(session=db_session, bucket_object_id=bucket.get("id"))
     choice_2 = insert_choice(session=db_session, bucket_object_id=bucket.get("id"))
     choice_3 = insert_choice(session=db_session, bucket_object_id=bucket.get("id"))
@@ -60,7 +60,7 @@ def test_choice_deletion_is_reflected_in_asscociation_table(db_session: Session)
 
 def test_multiple_choice_deletion_does_not_delete_choices(db_session: Session) -> None:
     multiple_choice_data = insert_multiple_choice(session=db_session)
-    bucket_object_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     choice_data = insert_choice(session=db_session, bucket_object_id=bucket_object_data.get("id"))
     connect_multiple_choice_with_choices(
         session=db_session,

@@ -10,6 +10,4 @@ class Choice(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=datetime.now)
 
-    is_correct: bool
-    position: int
     content: MultimediaFile

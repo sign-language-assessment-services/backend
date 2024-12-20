@@ -44,7 +44,7 @@ class AssessmentService:
         assessment = self.get_assessment_by_id(session=session, assessment_id=assessment_id)
         score = assessment.score(answers=answers)
         submission = Submission(
-            user_id=user_id,
+            user_name=user_id,
             assessment_id=assessment_id,
             answers=answers,
             points=score.points,

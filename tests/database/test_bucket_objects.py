@@ -9,9 +9,9 @@ from database.utils import table_count
 from tests.database.data_inserts import insert_bucket_object
 
 
-@pytest.mark.parametrize("content_type", [MediaType.VIDEO, MediaType.IMAGE])
-def test_insert_bucket_object(content_type: MediaType, db_session: Session) -> None:
-    bucket_object_data = insert_bucket_object(db_session, content_type)
+@pytest.mark.parametrize("media_type", [MediaType.VIDEO, MediaType.IMAGE])
+def test_insert_bucket_object(media_type: MediaType, db_session: Session) -> None:
+    bucket_object_data = insert_bucket_object(db_session, media_type)
 
     db_bucket_object = db_session.get(DbBucketObjects, bucket_object_data.get("id"))
 
@@ -20,7 +20,7 @@ def test_insert_bucket_object(content_type: MediaType, db_session: Session) -> N
     assert db_bucket_object.created_at == bucket_object_data.get("created_at")
     assert db_bucket_object.bucket == bucket_object_data.get("bucket")
     assert db_bucket_object.key == bucket_object_data.get("key")
-    assert db_bucket_object.content_type == content_type
+    assert db_bucket_object.media_type == media_type
 
 
 def test_insert_bucket_object_with_too_long_bucket_name(db_session: Session) -> None:
@@ -48,7 +48,7 @@ def test_update_bucket_object(db_session: Session) -> None:
     assert db_bucket_object.created_at == bucket_object_data.get("created_at")
     assert db_bucket_object.bucket == "updated_bucket"
     assert db_bucket_object.key == "updated_key"
-    assert db_bucket_object.content_type == MediaType.VIDEO
+    assert db_bucket_object.media_type == MediaType.VIDEO
 
 
 def test_delete_bucket_object(db_session):

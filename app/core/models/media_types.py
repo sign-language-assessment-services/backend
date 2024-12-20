@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from app.core.models.exceptions import UnsupportedMimeType
+from app.core.exceptions import UnsupportedMimeType
 
 
 class MediaType(Enum):

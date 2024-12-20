@@ -55,7 +55,7 @@ class ObjectStorageClient:
                     bucket=item.bucket_name,
                     key=item.object_name
                 ),
-                content_type=item.metadata["content-type"]
+                media_type=item.metadata["content-type"]
             )
             for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True)
             if not item.is_dir

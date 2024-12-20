@@ -69,7 +69,7 @@ def upgrade() -> None:
             nullable=False
         ),
         sa.Column(
-            "content_type",
+            "media_type",
             sa.Enum("IMAGE", "VIDEO", name="mediatype"),
             nullable=False
         ),

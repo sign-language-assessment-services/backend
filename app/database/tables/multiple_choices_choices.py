@@ -18,6 +18,7 @@ multiple_choices_choices = Table(
         Boolean,
         nullable=False
     ),
+
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
     Column(

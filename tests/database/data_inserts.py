@@ -51,7 +51,7 @@ def connect_assessment_with_tasks(session: Session, assessment_id: UUID, task_id
 
 def insert_bucket_object(
         session: Session,
-        content_type: MediaType,
+        media_type: MediaType,
         bucket_name: None | str = None,
         key_suffix: str = ""
 ) -> DbData:
@@ -61,13 +61,13 @@ def insert_bucket_object(
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "bucket": bucket_name if bucket_name is not None else "testportal",
         "key": "test" + key_suffix + ".mpeg",
-        "content_type": content_type.value
+        "media_type": media_type.value
     }
     session.execute(
         text(
             """
-            INSERT INTO bucket_objects(id, created_at, bucket, key, content_type)
-            VALUES (:id, :created_at, :bucket, :key, :content_type)
+            INSERT INTO bucket_objects(id, created_at, bucket, key, media_type)
+            VALUES (:id, :created_at, :bucket, :key, :media_type)
             """
         ),
         bucket_object

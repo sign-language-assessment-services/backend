@@ -14,7 +14,7 @@ from tests.database.data_inserts import insert_bucket_object, insert_exercise, i
 
 
 def test_insert_exercise(db_session: Session) -> None:
-    bucket_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
 
     exercise_data = insert_exercise(
@@ -42,7 +42,7 @@ def test_insert_exercise_with_non_existing_bucket_object_fails(db_session):
 
 
 def test_insert_exercise_with_non_existing_multiple_choice_object_fails(db_session):
-    bucket_object_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_uuid = uuid4()  # does not exist in database
 
     with pytest.raises(IntegrityError, match=fr'{multiple_choice_uuid}\) is not present in table "multiple_choices"'):
@@ -54,7 +54,7 @@ def test_insert_exercise_with_non_existing_multiple_choice_object_fails(db_sessi
 
 
 def test_update_exercise(db_session: Session) -> None:
-    bucket_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO, key_suffix="1")
+    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, key_suffix="1")
     multiple_choice_data_1 = insert_multiple_choice(session=db_session)
     exercise_data = insert_exercise(
         session=db_session,
@@ -73,7 +73,7 @@ def test_update_exercise(db_session: Session) -> None:
 
 
 def test_delete_exercise(db_session):
-    bucket_data = insert_bucket_object(session=db_session, content_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
     multiple_choice_data = insert_multiple_choice(session=db_session)
     insert_exercise(
         session=db_session,

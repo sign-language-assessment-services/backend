@@ -14,7 +14,7 @@ what each endpoint is trying to achieve.
 An assessment is basically a series of questions and possible answers
 to them. It is used to present to a learner as an exam or for learning
 purposes. An assessment does not have to consist exclusively of
-question-answer pairs. It can also include other elements such as a
+question-choices pairs. It can also include other elements such as a
 video that tells a story before questions. The format of the questions
 and answers (text, images, videos, etc.) is not important for the
 assessment itself.

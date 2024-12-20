@@ -1,29 +1,19 @@
-from app.core.models.minio_location import MinioLocation
-from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.primer import Primer
 from app.database.tables.primers import DbPrimer
+from app.mappers.multimedia_file_mapper import bucket_object_to_domain
 
 
-class PrimerMapper:
-    @staticmethod
-    def db_to_domain(db_primer: DbPrimer) -> Primer:
-        return Primer(
-            id=db_primer.id,
-            created_at=db_primer.created_at,
-            content=MultimediaFile(
-                id=db_primer.bucket_object.id,
-                created_at=db_primer.bucket_object.created_at,
-                location=MinioLocation(
-                    bucket=db_primer.bucket_object.bucket_object,
-                    key=db_primer.bucket_object.key
-                ),
-                content_type=db_primer.bucket_object.content_type
-            )
-        )
+def primer_to_domain(db_primer: DbPrimer) -> Primer:
+    return Primer(
+        id=db_primer.id,
+        created_at=db_primer.created_at,
+        content=bucket_object_to_domain(db_primer.bucket_object)
+    )
 
-    @staticmethod
-    def domain_to_db(primer: Primer) -> DbPrimer:
-        return DbPrimer(
-            bucket_id=primer.bucket.id if primer.bucket else None,
-            text_id=primer.text.id if primer.text else None
-        )
+
+def primer_to_db(primer: Primer) -> DbPrimer:
+    return DbPrimer(
+        id=primer.id,
+        created_at=primer.created_at,
+        bucket_object_id=primer.content.id
+    )

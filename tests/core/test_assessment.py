@@ -1,7 +1,7 @@
 import pytest
 
 from app.core.models.assessment import Assessment
-from app.core.models.exceptions import UnexpectedItemType
+from app.core.exceptions import UnexpectedItemType
 from app.core.models.score import Score
 
 

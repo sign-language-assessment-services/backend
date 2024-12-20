@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.models.exceptions import UnsupportedMimeType
+from app.core.exceptions import UnsupportedMimeType
 from app.core.models.media_types import MediaType
 
 
