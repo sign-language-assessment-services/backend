@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
-from app.core.models.submission import Submission
 
 
 class Exercise(BaseModel):
@@ -15,4 +14,3 @@ class Exercise(BaseModel):
     points: int
     question: Question
     question_type: QuestionType
-    submissions: list[Submission] = Field(default_factory=list)

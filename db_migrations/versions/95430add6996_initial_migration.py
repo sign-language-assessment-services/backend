@@ -272,7 +272,7 @@ def upgrade() -> None:
         ),
         sa.Column(
             "choices",
-            ARRAY(sa.String(length=36), dimensions=1),
+            ARRAY(sa.Uuid(), dimensions=1),
             nullable=True
         ),
         sa.Column(

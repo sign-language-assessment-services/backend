@@ -10,8 +10,8 @@ from app.database.tables.bucket_objects import DbBucketObjects
 from app.database.tables.exercises import DbExercise
 from app.database.tables.multiple_choices import DbMultipleChoice
 from app.database.tables.submissions import DbSubmission
-from database.data_inserts import insert_bucket_object, insert_exercise, insert_multiple_choice, insert_submission
-from database.utils import table_count
+from tests.database.data_inserts import insert_bucket_object, insert_exercise, insert_multiple_choice, insert_submission
+from tests.database.utils import table_count
 
 
 def test_insert_submission(db_session):
@@ -35,7 +35,7 @@ def test_insert_submission(db_session):
     assert db_submission.id == submission_data.get("id")
     assert db_submission.created_at == submission_data.get("created_at")
     assert db_submission.user_name == submission_data.get("user_name")
-    assert db_submission.choices == [str(choice) for choice in submission_data.get("choices")]
+    assert db_submission.choices == [choice for choice in submission_data.get("choices")]
     assert db_submission.exercise_id == exercise_data.get("id")
     assert db_submission.multiple_choice_id == multiple_choice_data.get("id")
 
@@ -93,8 +93,8 @@ def test_update_submission(db_session: Session) -> None:
     db_submission = db_session.get(DbSubmission, submission_data.get("id"))
     assert table_count(db_session, DbSubmission) == 1
     assert db_submission.id == submission_data.get("id")
-    assert db_submission.choices != [str(choice) for choice in submission_data.get("choices")]
-    assert db_submission.choices == [str(choice) for choice in new_choices]
+    assert db_submission.choices != [choice for choice in submission_data.get("choices")]
+    assert db_submission.choices == [choice for choice in new_choices]
 
 
 def test_delete_submissions(db_session: Session) -> None:

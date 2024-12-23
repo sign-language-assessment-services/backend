@@ -1,38 +1,47 @@
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
+from app.core.models.exercise import Exercise
+from app.core.models.primer import Primer
 from app.database.tables.assessments import DbAssessment
-from app.mappers.assessment_mapper import AssessmentMapper
+from app.mappers.assessment_mapper import assessment_to_db, assessment_to_domain
+from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
 
 
 def add_assessment(session: Session, assessment: Assessment) -> None:
-    db_model = AssessmentMapper.domain_to_db(assessment)
-    session.add(db_model)
-    session.commit()
+    db_model = assessment_to_db(assessment)
+    add_entry(session, db_model)
 
 
-def get_assessment_by_id(session: Session, _id: UUID) -> Assessment | None:
-    result = session.execute(select(DbAssessment).filter_by(id=_id)).scalar_one_or_none()
+def get_assessment(session: Session, _id: UUID) -> Assessment | None:
+    result = get_by_id(session, DbAssessment, _id)
     if result:
-        model = AssessmentMapper.db_to_domain(result)
-        return model
+        return assessment_to_domain(result)
 
 
 def list_assessments(session: Session) -> list[Assessment]:
-    results = session.execute(select(DbAssessment)).scalars().all()
-    models = [AssessmentMapper.db_to_domain(result) for result in results]
-    return models
+    results = get_all(session, DbAssessment)
+    return [assessment_to_domain(result) for result in results]
 
 
-def update_assessment(session: Session, assessment: Assessment, **kwargs: dict[str, Any]) -> None:
-    session.execute(update(DbAssessment).where(DbAssessment.id == assessment.id).values(**kwargs))
+def update_assessment(session: Session, _id: UUID, **kwargs: Any) -> None:
+    update_entry(session, DbAssessment, _id, **kwargs)
+
+
+def delete_assessment(session: Session, _id: UUID) -> None:
+    delete_entry(session, DbAssessment, _id)
+
+
+def append_task(session: Session, assessment: Assessment, task: Exercise | Primer) -> None:
+    assessment.tasks.append(task)
+    session.add(assessment)
     session.commit()
 
 
-def delete_assessment_by_id(session: Session, _id: UUID) -> None:
-    session.execute(delete(DbAssessment).where(DbAssessment.id == _id))
+def append_tasks(session: Session, assessment: Assessment, tasks: list[Exercise | Primer]) -> None:
+    assessment.tasks.extend(tasks)
+    session.add(assessment)
     session.commit()

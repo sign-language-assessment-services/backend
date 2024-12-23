@@ -1,44 +1,41 @@
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.models.submission import Submission
-from app.database.tables.multiple_choice_submissions import DbMultipleChoiceSubmission
-from app.mappers.submission_mapper import SubmissionMapper
+from app.database.tables.submissions import DbSubmission
+from app.mappers.submission_mapper import submission_to_db, submission_to_domain
+from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
 
 
 def add_submission(session: Session, submission: Submission) -> None:
-    db_model = SubmissionMapper.domain_to_db(submission)
-    session.add(db_model)
-    session.commit()
-    return None
+    db_model = submission_to_db(submission)
+    add_entry(session, db_model)
 
 
-def get_submission_by_id(session: Session, _id: str) -> Submission | None:
-    result = session.get(DbMultipleChoiceSubmission, {"id": _id})
+def get_submission(session: Session, _id: UUID) -> Submission | None:
+    result = get_by_id(session, DbSubmission, _id)
     if result:
-        model = SubmissionMapper.db_to_domain(result)
-        return model
-    return None
+        return submission_to_domain(result)
 
 
 def list_submissions(session: Session) -> list[Submission]:
-    results = session.query(DbMultipleChoiceSubmission).all()
-    models = [SubmissionMapper.db_to_domain(result) for result in results]
-    return models
+    result = get_all(session, DbSubmission)
+    return [submission_to_domain(r) for r in result]
 
 
-def list_submissions_for_user(session: Session, user_id: str) -> list[Submission]:
-    results = session.query(DbMultipleChoiceSubmission).filter_by(user_name=user_id).all()
-    models = [SubmissionMapper.db_to_domain(result) for result in results]
-    return models
+def list_submissions_for_user(session: Session, user_name: str) -> list[Submission]:
+    result = session.execute(
+        select(DbSubmission).where(DbSubmission.user_name == user_name)
+    ).scalars().all()
+    return [submission_to_domain(r) for r in result]
 
 
-def update_submission(session: Session, submission: Submission, **kwargs: dict[str, str]) -> None:
-    session.query(DbMultipleChoiceSubmission).filter_by(id=submission.id).update(kwargs)
-    session.commit()
-    return None
+def update_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
+    update_entry(session, DbSubmission, _id, **kwargs)
 
 
-def delete_submission_by_id(session: Session, _id: str) -> None:
-    session.query(DbMultipleChoiceSubmission).filter_by(id=_id).delete()
-    session.commit()
-    return None
+def delete_submission(session: Session, _id: UUID) -> None:
+    delete_entry(session, DbSubmission, _id)

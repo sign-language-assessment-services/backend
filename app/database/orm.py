@@ -40,13 +40,14 @@ def import_tables() -> None:
     from app.database.tables.choices import DbChoice
     from app.database.tables.exercises import DbExercise
     from app.database.tables.multiple_choices import DbMultipleChoice
+    from app.database.tables.multiple_choices_choices import DbMultipleChoicesChoices
     from app.database.tables.primers import DbPrimer
     from app.database.tables.submissions import DbSubmission
     from app.database.tables.tasks import DbTask
 
     _ = (  # use imports to prevent them automatically stripped away by IDE
         DbAssessment, DbBucketObjects, DbChoice, DbExercise, DbMultipleChoice,
-        DbPrimer, DbSubmission, DbTask,
+        DbMultipleChoicesChoices, DbPrimer, DbSubmission, DbTask,
     )
 
 

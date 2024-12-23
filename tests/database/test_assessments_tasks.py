@@ -6,16 +6,16 @@ from app.database.tables.assessments import DbAssessment
 from app.database.tables.assessments_tasks import assessments_tasks
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
-from database.data_inserts import (
+from tests.database.data_inserts import (
     connect_assessment_with_tasks, insert_assessment, insert_bucket_object, insert_exercise, insert_multiple_choice,
     insert_primer, insert_task
 )
-from database.utils import table_count
+from tests.database.utils import table_count
 
 
 def test_assessment_and_task_connection(db_session: Session) -> None:
     assessment_data = insert_assessment(session=db_session)
-    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session)
     primer_data = insert_primer(session=db_session, bucket_object_id=bucket_data.get("id"))
     multiple_choice_data = insert_multiple_choice(session=db_session)
     exercise_1 = insert_exercise(
@@ -42,7 +42,7 @@ def test_assessment_and_task_connection(db_session: Session) -> None:
 
 def test_task_deletion_is_reflected_in_association_table(db_session: Session) -> None:
     assessment_data = insert_assessment(session=db_session)
-    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session)
     primer_data_1 = insert_primer(session=db_session, bucket_object_id=bucket_data.get("id"))
     primer_data_2 = insert_primer(session=db_session, bucket_object_id=bucket_data.get("id"))
     primer_data_3 = insert_primer(session=db_session, bucket_object_id=bucket_data.get("id"))
@@ -66,7 +66,7 @@ def test_task_deletion_is_reflected_in_association_table(db_session: Session) ->
 
 def test_assessment_deletion_is_reflected_in_association_table(db_session: Session) -> None:
     assessment_data = insert_assessment(session=db_session)
-    bucket_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
+    bucket_data = insert_bucket_object(session=db_session)
     primer_data = insert_primer(session=db_session, bucket_object_id=bucket_data.get("id"))
     connect_assessment_with_tasks(
         session=db_session,
@@ -85,7 +85,7 @@ def test_assessment_deletion_is_reflected_in_association_table(db_session: Sessi
 
 def test_assessment_deletion_does_not_delete_tasks(db_session: Session) -> None:
     assessment_data = insert_assessment(session=db_session)
-    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
+    bucket_object_data = insert_bucket_object(session=db_session)
     primer_data = insert_primer(session=db_session, bucket_object_id=bucket_object_data.get("id"))
     connect_assessment_with_tasks(
         session=db_session,

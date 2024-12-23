@@ -9,7 +9,7 @@ from app.core.models.media_types import MediaType
 from app.database.tables.bucket_objects import DbBucketObjects
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
-from database.utils import table_count
+from tests.database.utils import table_count
 from tests.database.data_inserts import insert_bucket_object, insert_primer
 
 
@@ -32,10 +32,10 @@ def test_insert_primer_with_non_existing_bucket_object_fails(db_session):
 
 
 def test_update_primer(db_session: Session) -> None:
-    bucket_object_data_1 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, key_suffix="1")
+    bucket_object_data_1 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, filename="1")
     primer_data = insert_primer(session=db_session, bucket_object_id=bucket_object_data_1.get("id"))
 
-    bucket_object_data_2 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, key_suffix="2")
+    bucket_object_data_2 = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO, filename="2")
     db_session.execute(update(DbPrimer).values(bucket_object_id=bucket_object_data_2.get("id")))
 
     db_primer = db_session.get(DbPrimer, primer_data.get("id"))

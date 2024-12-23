@@ -51,16 +51,16 @@ def connect_assessment_with_tasks(session: Session, assessment_id: UUID, task_id
 
 def insert_bucket_object(
         session: Session,
-        media_type: MediaType,
+        media_type: MediaType = MediaType.VIDEO,
         bucket_name: None | str = None,
-        key_suffix: str = ""
+        filename: str = ""
 ) -> DbData:
     """Insert bucket_object object information (video file) into database"""
     bucket_object = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "bucket": bucket_name if bucket_name is not None else "testportal",
-        "key": "test" + key_suffix + ".mpeg",
+        "key": filename if filename else f"{uuid4()}.mpeg",
         "media_type": media_type.value
     }
     session.execute(
@@ -191,27 +191,6 @@ def insert_task(session: Session, task_type: str) -> DbData:
         task
     )
     return task
-
-
-def connect_multiple_choice_submission_with_choices(
-        session: Session,
-        submission_id: UUID,
-        choice_ids: list[UUID]
-) -> None:
-    """Connect a list of choices with a multiple choice submission"""
-    for choice_id in choice_ids:
-        session.execute(
-            text(
-                """
-                INSERT INTO multiple_choice_submissions_choices(submission_id, choice_id)
-                VALUES (:submission_id, :choice_id)
-                """
-            ),
-            {
-                "submission_id": submission_id,
-                "choice_id": choice_id
-            }
-        )
 
 
 def insert_submission(session: Session, exercise_id: UUID, multiple_choice_id: UUID, choices: list[UUID]) -> DbData:

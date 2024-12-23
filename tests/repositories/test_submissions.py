@@ -1,52 +1,62 @@
-import math
-import uuid
 from datetime import datetime, timezone
 from typing import Callable
+from uuid import uuid4
 
 import pytest
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.core.models.assessment import Assessment
+from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.core.models.submission import Submission
-from app.repositories.assessments import add_assessment
-from app.repositories.submissions import (add_submission, delete_submission_by_id,
-                                          get_submission_by_id, list_submissions)
+from app.database.tables.submissions import DbSubmission
+from app.repositories.submissions import (
+    add_submission, delete_submission, get_submission, list_submissions, update_submission
+)
+from database.data_inserts import (
+    insert_bucket_object, insert_exercise, insert_multiple_choice,
+    insert_submission
+)
+from database.utils import table_count
 
 
 def test_add_submission(db_session: Session) -> None:
-    assessment = Assessment(name="Test Assessment")
-    add_assessment(db_session, assessment)
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
     submission = Submission(
-        user_name=str(uuid.uuid4()),
-        assessment_id=assessment.id,
-        answers={1: [0], 2: [1]},
-        points=2,
-        maximum_points=3,
-        percentage=100.0
+        user_name=str(uuid4()),
+        exercise_id=exercise_id,
+        multiple_choice_id=multiple_choice_id,
+        answer=MultipleChoiceAnswer(choices=[uuid4(), uuid4(), uuid4()])
     )
+
     add_submission(db_session, submission)
 
-    db_submission = db_session.execute(text("SELECT * FROM submissions")).fetchone()
+    db_submission = db_session.get(DbSubmission, submission.id)  # execute(text("SELECT * FROM submissions")).fetchone()
+    assert db_submission.id == submission.id
+    assert db_submission.user_name == submission.user_name
+    assert db_submission.exercise_id == submission.exercise_id
+    assert db_submission.multiple_choice_id == submission.multiple_choice_id
+    assert db_submission.choices == submission.answer.choices
+    assert table_count(db_session, DbSubmission) == 1
 
-    assert db_submission[3] == 2
-    assert db_submission[4] == 3
-    assert math.isclose(db_submission[5], 100.0)
-    assert db_submission[6] == assessment.id
 
+def test_get_submission_by_id(db_session: Session) -> None:
+    choice_uuid = uuid4()
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    submission_id = insert_submission(
+        db_session,
+        exercise_id,
+        multiple_choice_id,
+        choices=[choice_uuid],
+    ).get("id")
 
-def test_get_submission_by_id(db_session: Session, insert_submissions: Callable) -> None:
-    insert_submissions(1)
-    assert get_submission_by_id(db_session, _id="test_id-1") == Submission(
-        id="test_id-1",
-        created_at=datetime(2000, 12, 31, 12, 0, 1, tzinfo=timezone.utc),
-        user_name="test_user_id",
-        points=1,
-        maximum_points=1,
-        percentage=100.0,
-        assessment_id="test_id-1",
-        answers=[]
-    )
+    result = get_submission(db_session, submission_id)
+
+    assert result.id == submission_id
+    assert result.answer.choices == [choice_uuid]
+    assert table_count(db_session, DbSubmission) == 1
 
 
 def test_list_no_submissions(db_session: Session) -> None:
@@ -54,38 +64,70 @@ def test_list_no_submissions(db_session: Session) -> None:
     assert result == []
 
 
-def test_list_one_submission(db_session: Session, insert_submissions: Callable) -> None:
-    insert_submissions(1)
-
-    result = list_submissions(db_session)
-
-    assert result == [
-        Submission(
-            id='test_id-1',
-            created_at=datetime(2000, 12, 31, 12, 0, 1, tzinfo=timezone.utc),
-            user_name='test_user_id',
-            points=1,
-            maximum_points=1,
-            percentage=100.0,
-            assessment_id='test_id-1',
-            answers=[]
-        )
-    ]
-
-
-def test_list_multiple_submissions(db_session: Session, insert_submissions: Callable) -> None:
-    insert_submissions(100)
+def test_list_multiple_submissions(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    for i in range(100):
+        insert_submission(db_session, exercise_id, multiple_choice_id, choices=[])
 
     result = list_submissions(db_session)
 
     assert len(result) == 100
+    assert table_count(db_session, DbSubmission) == 100
 
 
-def test_delete_one_of_two_submissions(db_session: Session, insert_submissions: Callable) -> None:
-    insert_submissions(2)
+def test_update_submission(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    submission_id = insert_submission(
+        db_session,
+        exercise_id,
+        multiple_choice_id,
+        choices=[uuid4()],
+    ).get("id")
 
-    delete_submission_by_id(db_session, "test_id-1")
+    new_choices = [uuid4()]
+    update_submission(db_session, submission_id, **{"choices": new_choices})
 
-    assert get_submission_by_id(db_session, "test_id-2")
-    with pytest.raises(AttributeError):
-        get_submission_by_id(db_session, "test_id-1")
+    result = db_session.get(DbSubmission, submission_id)
+    assert result.choices == new_choices
+    assert table_count(db_session, DbSubmission) == 1
+
+
+def test_delete_submission(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    submission_id = insert_submission(
+        db_session,
+        exercise_id,
+        multiple_choice_id,
+        choices=[uuid4()],
+    ).get("id")
+
+    delete_submission(db_session, submission_id)
+
+    result = db_session.get(DbSubmission, submission_id)
+    assert result is None
+    assert table_count(db_session, DbSubmission) == 0
+
+
+def test_delete_one_of_two_submissions(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    submission_id = insert_submission(
+        db_session,
+        exercise_id,
+        multiple_choice_id,
+        choices=[uuid4()],
+    ).get("id")
+    insert_submission(db_session, exercise_id, multiple_choice_id, choices=[])
+
+    delete_submission(db_session, submission_id)
+
+    result = db_session.get(DbSubmission, submission_id)
+    assert result is None
+    assert table_count(db_session, DbSubmission) == 1

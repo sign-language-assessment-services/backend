@@ -42,6 +42,7 @@ class DbExercise(DbTask):
     submissions: Mapped[list["DbSubmission"]] = relationship(
         back_populates="exercise"
     )
+
     # CONFIGURATION
     # ------------------------------------------------------------------------
     __mapper_args__ = {
