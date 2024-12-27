@@ -6,13 +6,11 @@ from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.core.models.submission import Submission
 from app.database.tables.submissions import DbSubmission
 from app.repositories.submissions import (
-    add_submission, delete_submission, get_submission, list_submissions, update_submission
+    add_submission, delete_submission, get_submission, list_submissions,
+    update_submission
 )
-from database.data_inserts import (
-    insert_bucket_object, insert_exercise, insert_multiple_choice,
-    insert_submission
-)
-from database.utils import table_count
+from tests.database.data_inserts import insert_bucket_object, insert_exercise, insert_multiple_choice, insert_submission
+from tests.database.utils import table_count
 
 
 def test_add_submission(db_session: Session) -> None:

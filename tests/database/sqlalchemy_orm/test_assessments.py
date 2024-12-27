@@ -4,8 +4,8 @@ from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database.tables.assessments import DbAssessment
-from database.data_inserts import insert_assessment
-from database.utils import table_count
+from tests.database.data_inserts import insert_assessment
+from tests.database.utils import table_count
 
 
 def test_insert_assessment(db_session: Session) -> None:

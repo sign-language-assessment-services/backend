@@ -13,8 +13,8 @@ from app.database.tables.multiple_choices_choices import DbMultipleChoicesChoice
 from app.repositories.multiple_choices import (
     add_multiple_choice, delete_multiple_choice, get_multiple_choice, list_multiple_choices, update_multiple_choice
 )
-from database.data_inserts import insert_bucket_object, insert_multiple_choice
-from database.utils import table_count
+from tests.database.data_inserts import insert_bucket_object, insert_multiple_choice
+from tests.database.utils import table_count
 
 
 def test_add_multiple_choice(db_session: Session) -> None:
