@@ -12,7 +12,7 @@ from app.repositories.multimedia_files import (
     get_multimedia_file, list_multimedia_files, update_multimedia_file
 )
 from database.data_inserts import insert_bucket_object
-from tests.database.utils import table_count
+from database.utils import table_count
 
 
 @pytest.mark.parametrize("_type", [MediaType.VIDEO, MediaType.IMAGE])

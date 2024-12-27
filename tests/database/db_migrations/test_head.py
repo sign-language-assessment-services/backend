@@ -17,7 +17,7 @@ def test_database_has_the_latest_migration_applied():
     This test ensures that the running application is using the latest
     changes in the database structure.
     """
-    root_path = Path(__file__).parent.parent.parent
+    root_path = Path(__file__).parent.parent.parent.parent
     alembic_config = alembic.config.Config(str(root_path / "alembic.ini"))
     alembic_config.set_main_option("script_location", str(root_path / "db_migrations"))
     migrations_folder = script.ScriptDirectory.from_config(alembic_config)

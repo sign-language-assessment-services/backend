@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from sqlalchemy.orm import Session
 
 from app.core.models.choice import Choice
@@ -11,7 +9,7 @@ from app.repositories.choices import (
     add_choice, delete_choice, get_choice, list_choices, update_choice
 )
 from database.data_inserts import insert_bucket_object, insert_choice
-from tests.database.utils import table_count
+from database.utils import table_count
 
 
 def test_add_choice(db_session: Session) -> None:

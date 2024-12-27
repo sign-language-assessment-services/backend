@@ -44,11 +44,6 @@ class ObjectStorageClient:
         if folder:
             folder += "/"
 
-        # todo: for iteration only for debugging purposes can be deleted
-        for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True):
-            if not item.is_dir:
-                print(item)
-
         return [
             MultimediaFile(
                 location=MinioLocation(

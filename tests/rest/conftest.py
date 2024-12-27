@@ -1,11 +1,20 @@
 from unittest.mock import Mock
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings
 from app.core.models.assessment import Assessment
-from app.core.models.assessment_summary import AssessmentSummary
+from app.core.models.choice import Choice
+from app.core.models.exercise import Exercise
+from app.core.models.media_types import MediaType
+from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia_file import MultimediaFile
+from app.core.models.multiple_choice import MultipleChoice
+from app.core.models.primer import Primer
+from app.core.models.question import Question
+from app.core.models.question_type import QuestionType
 from app.core.models.score import Score
 from app.core.models.user import User
 from app.database.orm import get_db_session
@@ -16,11 +25,74 @@ from app.settings import get_settings
 
 
 @pytest.fixture
-def assessment_service(assessment: Assessment, assessments: list[AssessmentSummary]) -> Mock:
+def minio_location() -> MinioLocation:
+    return MinioLocation(bucket="test", key="test.mpg")
+
+
+@pytest.fixture
+def multimedia_file(minio_location: MinioLocation) -> MultimediaFile:
+    return MultimediaFile(location=minio_location, media_type=MediaType.VIDEO)
+
+
+@pytest.fixture
+def right_choice(multimedia_file: MultimediaFile) -> Choice:
+    return Choice(content=multimedia_file, is_correct=True)
+
+
+@pytest.fixture
+def wrong_choice(multimedia_file: MultimediaFile) -> Choice:
+    return Choice(content=multimedia_file, is_correct=False)
+
+
+@pytest.fixture
+def multiple_choice(right_choice: Choice, wrong_choice: Choice) -> MultipleChoice:
+    return MultipleChoice(choices=[right_choice, wrong_choice])
+
+
+@pytest.fixture
+def question(multimedia_file: MultimediaFile) -> Question:
+    return Question(content=multimedia_file)
+
+
+@pytest.fixture
+def question_type(multiple_choice: MultipleChoice) -> Question:
+    return QuestionType(content=multiple_choice)
+
+
+@pytest.fixture
+def primer(multimedia_file: MultimediaFile) -> Primer:
+    return Primer(content=multimedia_file)
+
+
+@pytest.fixture
+def exercise(question: Question, question_type: QuestionType) -> Exercise:
+    return Exercise(points=1, question=question, question_type=question_type)
+
+
+@pytest.fixture
+def assessment_1(primer: Primer, exercise: Exercise) -> Assessment:
+    return Assessment(
+        id=UUID("a0000000-0000-0000-0000-000000000001"),
+        name="Test Assessment 1",
+        tasks=[primer, exercise]
+    )
+
+
+@pytest.fixture
+def assessment_2(primer: Primer, exercise: Exercise) -> Assessment:
+    return Assessment(name="Test Assessment 2", tasks=[primer, exercise])
+
+
+@pytest.fixture
+def assessments(assessment_1: Assessment, assessment_2: Assessment) -> list[Assessment]:
+    return [assessment_1, assessment_2]
+
+
+@pytest.fixture
+def assessment_service(assessments: list[Assessment]) -> Mock:
     assessment_service = Mock()
-    assessment_service.get_assessment_by_id.return_value = assessment
+    assessment_service.get_assessment_by_id.return_value = assessments[0]
     assessment_service.list_assessments.return_value = assessments
-    assessment_service.score_assessment.return_value = Score(points=42, maximum_points=42)
     return assessment_service
 
 

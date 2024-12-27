@@ -9,8 +9,8 @@ from app.core.models.media_types import MediaType
 from app.database.tables.bucket_objects import DbBucketObjects
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
-from tests.database.utils import table_count
-from tests.database.data_inserts import insert_bucket_object, insert_primer
+from database.utils import table_count
+from database.data_inserts import insert_bucket_object, insert_primer
 
 
 def test_insert_primer(db_session: Session) -> None:

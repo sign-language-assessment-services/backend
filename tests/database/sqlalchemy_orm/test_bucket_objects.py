@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.core.models.media_types import MediaType
 from app.database.tables.bucket_objects import DbBucketObjects
-from tests.database.utils import table_count
-from tests.database.data_inserts import insert_bucket_object
+from database.utils import table_count
+from database.data_inserts import insert_bucket_object
 
 
 @pytest.mark.parametrize("media_type", [MediaType.VIDEO, MediaType.IMAGE])

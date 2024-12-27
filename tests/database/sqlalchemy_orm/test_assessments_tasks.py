@@ -1,16 +1,15 @@
-from sqlalchemy import delete, select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from app.core.models.media_types import MediaType
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.assessments_tasks import assessments_tasks
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
-from tests.database.data_inserts import (
+from database.data_inserts import (
     connect_assessment_with_tasks, insert_assessment, insert_bucket_object, insert_exercise, insert_multiple_choice,
     insert_primer, insert_task
 )
-from tests.database.utils import table_count
+from database.utils import table_count
 
 
 def test_assessment_and_task_connection(db_session: Session) -> None:

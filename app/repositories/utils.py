@@ -1,8 +1,8 @@
-from typing import Type, TypeVar
+from typing import Any, Type, TypeVar
 from uuid import UUID, uuid4
 
-from sqlalchemy import Sequence, select, update
-from sqlalchemy.orm import DeclarativeBase, Session
+from sqlalchemy import Sequence, and_, select, update
+from sqlalchemy.orm import DeclarativeBase, InstrumentedAttribute, Session
 
 from app.database.exceptions import EntryNotFoundError
 
@@ -18,8 +18,12 @@ def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
     return session.execute(select(_class).filter_by(id=_id)).unique().scalar_one_or_none()
 
 
-def get_all(session: Session, _class: Type[T]) -> Sequence[T]:
-    return session.execute(select(_class)).unique().scalars().all()
+def get_all(session: Session, _class: Type[T], filter_by: dict[InstrumentedAttribute, Any] = None) -> Sequence[T]:
+    query = select(_class)
+    if filter_by:
+        conditions = [key == value for key, value in filter_by.items()]
+        query = query.where(and_(*conditions))
+    return session.execute(query).unique().scalars().all()
 
 
 def update_entry(session: Session, _class: Type[T], _id: UUID, **kwargs) -> None:

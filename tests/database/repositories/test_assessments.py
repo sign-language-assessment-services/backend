@@ -6,7 +6,7 @@ from app.repositories.assessments import (
     add_assessment, delete_assessment, get_assessment, list_assessments, update_assessment
 )
 from database.data_inserts import insert_assessment
-from tests.database.utils import table_count
+from database.utils import table_count
 
 
 def test_add_assessment(db_session: Session) -> None:

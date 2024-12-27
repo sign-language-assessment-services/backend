@@ -4,8 +4,8 @@ from sqlalchemy import delete, update
 from sqlalchemy.orm import Session
 
 from app.database.tables.multiple_choices import DbMultipleChoice
-from tests.database.utils import table_count
-from tests.database.data_inserts import insert_multiple_choice
+from database.utils import table_count
+from database.data_inserts import insert_multiple_choice
 
 
 def test_insert_multiple_choice(db_session: Session) -> None:

@@ -5,12 +5,11 @@ from sqlalchemy import delete, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.models.media_types import MediaType
 from app.database.tables.bucket_objects import DbBucketObjects
 from app.database.tables.choices import DbChoice
-from tests.database.data_inserts import insert_bucket_object
-from tests.database.utils import table_count
-from tests.database.data_inserts import insert_choice
+from database.data_inserts import insert_bucket_object
+from database.utils import table_count
+from database.data_inserts import insert_choice
 
 
 def test_insert_choice(db_session):

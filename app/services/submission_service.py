@@ -5,13 +5,11 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.config import Settings
-from app.core.models.score import Score
 from app.core.models.submission import Submission
 from app.repositories.submissions import (
-    add_submission, get_submission_by_id, list_submissions
+    add_submission, get_submission, list_submissions
 )
 from app.settings import get_settings
-from app.type_hints import SubmissionAnswers
 
 
 class SubmissionService:
@@ -19,30 +17,18 @@ class SubmissionService:
         self.settings = settings
 
     @staticmethod
+    def add_submission(session: Session, submission: Submission) -> None:
+        add_submission(session=session, submission=submission)
+
+    @staticmethod
     def get_submission_by_id(session: Session, submission_id: UUID) -> Submission:
-        return get_submission_by_id(session=session, _id=str(submission_id))
+        return get_submission(session=session, _id=submission_id)
 
     @staticmethod
     def list_submissions(session: Session) -> list[Submission]:
-        return list_submissions(session)
+        return list_submissions(session=session)
 
-    def score_submission(
-            self,
-            assessment_id: UUID,
-            answers: SubmissionAnswers,
-            user_id: str,
-            session: Session
-    ) -> Score:
-        assessment = self.get_assessment_by_id(session=session, assessment_id=assessment_id)
-        score = assessment.score(answers=answers)
-        submission = Submission(
-            user_name=user_id,
-            assessment_id=assessment_id,
-            answers=answers,
-            points=score.points,
-            maximum_points=score.maximum_points,
-            percentage=score.percentage
-        )
-        add_submission(session=session, submission=submission)  # submission=DbExerciseSubmission.from_submission(submission))
-        return score
-
+    @staticmethod
+    def get_all_submissions_for_assessment_and_user(session: Session, user_name: UUID) -> list[Submission]:
+        # TODO ...
+        return list_submissions_for_user(session=session, user_name=user_name)

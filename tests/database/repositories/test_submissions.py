@@ -1,8 +1,5 @@
-from datetime import datetime, timezone
-from typing import Callable
 from uuid import uuid4
 
-import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer

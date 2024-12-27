@@ -1,15 +1,15 @@
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.models.media_types import MediaType
 from app.database.tables.choices import DbChoice
 from app.database.tables.multiple_choices import DbMultipleChoice
 from app.database.tables.multiple_choices_choices import DbMultipleChoicesChoices
-from tests.database.data_inserts import (
+from database.data_inserts import (
     connect_multiple_choice_with_choices, insert_bucket_object,
     insert_choice, insert_multiple_choice
 )
-from tests.database.utils import table_count
+from database.utils import table_count
 
 
 def test_multiple_choice_and_choice_connection(db_session: Session) -> None:
