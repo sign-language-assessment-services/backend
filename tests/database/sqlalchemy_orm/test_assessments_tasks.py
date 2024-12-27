@@ -6,8 +6,8 @@ from app.database.tables.assessments_tasks import assessments_tasks
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
 from tests.database.data_inserts import (
-    connect_assessment_with_tasks, insert_assessment, insert_bucket_object,
-    insert_exercise, insert_multiple_choice, insert_primer, insert_task
+    connect_assessment_with_tasks, insert_assessment, insert_bucket_object, insert_exercise,
+    insert_multiple_choice, insert_primer, insert_task
 )
 from tests.database.utils import table_count
 

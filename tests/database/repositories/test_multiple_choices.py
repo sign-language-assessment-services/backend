@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, UTC
 
 from sqlalchemy.orm import Session
 
@@ -11,7 +11,8 @@ from app.database.tables.choices import DbChoice
 from app.database.tables.multiple_choices import DbMultipleChoice
 from app.database.tables.multiple_choices_choices import DbMultipleChoicesChoices
 from app.repositories.multiple_choices import (
-    add_multiple_choice, delete_multiple_choice, get_multiple_choice, list_multiple_choices, update_multiple_choice
+    add_multiple_choice, delete_multiple_choice, get_multiple_choice, list_multiple_choices,
+    update_multiple_choice
 )
 from tests.database.data_inserts import insert_bucket_object, insert_multiple_choice
 from tests.database.utils import table_count

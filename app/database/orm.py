@@ -4,7 +4,7 @@ from urllib.parse import quote
 from alembic import command
 from alembic.config import Config
 from fastapi import Depends
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import Settings

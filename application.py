@@ -11,7 +11,6 @@ described here: https://fastapi.tiangolo.com/tutorial/debugging/ .
 
 from app.main import app
 
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.rest.main:create_app", host="0.0.0.0", port=8001, factory=True, log_level="trace")

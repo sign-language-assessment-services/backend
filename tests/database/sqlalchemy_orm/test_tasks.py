@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, UTC
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session

@@ -8,8 +8,8 @@ from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.database.tables.bucket_objects import DbBucketObjects
 from app.repositories.multimedia_files import (
-    add_multimedia_file, delete_multimedia_file,
-    get_multimedia_file, list_multimedia_files, update_multimedia_file
+    add_multimedia_file, delete_multimedia_file, get_multimedia_file, list_multimedia_files,
+    update_multimedia_file
 )
 from tests.database.data_inserts import insert_bucket_object
 from tests.database.utils import table_count
