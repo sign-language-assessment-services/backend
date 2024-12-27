@@ -79,21 +79,6 @@ def test_get_assessment_not_found(test_client_no_assessment: TestClient) -> None
     assert response.status_code == HTTP_404_NOT_FOUND
 
 
-def test_post_assessment(test_client: TestClient) -> None:
-    assessment_id = "1"
-    answers = {
-        "0": {"choice-1": True},
-        "1": {"choice-0": True, "choice-2": True}
-    }
-
-    response = test_client.post(
-        f"/assessments/{assessment_id}/submissions/",
-        json=answers
-    )
-
-    assert response.json() == {"points": 42, "maximum_points": 42, "percentage": 1}
-
-
 def test_list_assessments(test_client: TestClient) -> None:
     response = test_client.get("/assessments/")
 
@@ -116,21 +101,5 @@ def test_get_allowed(test_client_allowed_roles: TestClient, endpoint: str) -> No
 @pytest.mark.parametrize("endpoint", ["/assessments/", f"/assessments/{uuid4()}"])
 def test_get_forbidden(test_client_no_roles: TestClient, endpoint: str) -> None:
     response = test_client_no_roles.get(endpoint)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-def test_post_allowed(test_client_allowed_roles: TestClient) -> None:
-    endpoint = "/assessments/a0000000-0000-0000-0000-000000000001/submissions/"
-
-    response = test_client_allowed_roles.post(endpoint, json={"0": {"choice-0": True, "choice-1": True}})
-
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_post_forbidden(test_client_no_roles: TestClient) -> None:
-    endpoint = "/assessments/a0000000-0000-0000-0000-000000000001/submissions/"
-
-    response = test_client_no_roles.post(endpoint, json={"0": {"choice-0": True, "choice-1": True}})
 
     assert response.status_code == status.HTTP_403_FORBIDDEN

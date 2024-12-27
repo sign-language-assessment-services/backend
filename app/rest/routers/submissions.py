@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Annotated
 from uuid import UUID
 
@@ -11,7 +10,6 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
 from app.rest.routers.assessments import router
-from app.services.assessment_service import AssessmentService
 from app.services.submission_service import SubmissionService
 
 
