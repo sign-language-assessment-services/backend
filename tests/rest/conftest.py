@@ -1,5 +1,6 @@
+from typing import Callable
 from unittest.mock import Mock
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,7 +16,6 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.primer import Primer
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
-from app.core.models.score import Score
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.main import app
@@ -97,64 +97,69 @@ def assessment_service(assessments: list[Assessment]) -> Mock:
 
 
 @pytest.fixture
-def test_client(assessment_service: Mock) -> TestClient:
-    async def override_settings() -> Settings:
-        return Settings(
-            auth_enabled=False,
-            db_user="db_testuser",
-            db_password="db_testpassword",
-            db_host="db_testhost"
-        )
+def assessment_service_404() -> Mock:
+    assessment_service = Mock()
+    assessment_service.get_assessment_by_id.return_value = None
+    return assessment_service
 
+
+@pytest.fixture
+def test_client(assessment_service: Mock) -> TestClient:
     app.dependency_overrides[AssessmentService] = lambda: assessment_service
-    app.dependency_overrides[get_db_session] = lambda: Mock()  # pylint: disable=unnecessary-lambda
-    app.dependency_overrides[get_settings] = override_settings
+    app.dependency_overrides[get_db_session] = _get_override_db_session()
+    app.dependency_overrides[get_settings] = _get_override_settings(auth_enabled=False)
+    return TestClient(app)
+
+
+@pytest.fixture
+def test_client_no_assessment(assessment_service_404: Mock) -> TestClient:
+    app.dependency_overrides[AssessmentService] = lambda: assessment_service_404
+    app.dependency_overrides[get_db_session] = _get_override_db_session()
+    app.dependency_overrides[get_settings] = _get_override_settings(auth_enabled=False)
     return TestClient(app)
 
 
 @pytest.fixture
 def test_client_allowed_roles(assessment_service: Mock) -> TestClient:
-    async def overwrite_get_current_user() -> User:
-        return User(
-            id="testuser",
-            roles=["slas-frontend-user", "test-taker"]
-        )
-
-    async def overwrite_settings() -> Settings:
-        return Settings(
-            auth_enabled=False,
-            db_user="db_testuser",
-            db_password="db_testpassword",
-            db_host="db_testhost"
-        )
-
-    async def overwrite_db_session() -> Mock:
-        return Mock()
-
-    app.dependency_overrides[get_settings] = overwrite_settings
-    app.dependency_overrides[get_current_user] = overwrite_get_current_user
-    app.dependency_overrides[get_db_session] = overwrite_db_session
+    roles = ["slas-frontend-user", "test-taker"]
+    app.dependency_overrides[get_current_user] = _get_override_current_user(roles=roles)
+    app.dependency_overrides[get_db_session] = _get_override_db_session()
     app.dependency_overrides[AssessmentService] = lambda: assessment_service
     return TestClient(app)
 
 
 @pytest.fixture
 def test_client_no_roles(assessment_service: Mock) -> TestClient:
-    async def overwrite_get_current_user() -> User:
-        return User(
-            id="testuser",
-            roles=[]
-        )
+    app.dependency_overrides[get_settings] = _get_override_settings(auth_enabled=True)
+    app.dependency_overrides[get_current_user] = _get_override_current_user(roles=[])
+    app.dependency_overrides[AssessmentService] = lambda: assessment_service
+    return TestClient(app)
 
-    async def overwrite_settings() -> Settings:
+
+def _get_override_settings(auth_enabled: bool = False) -> Callable:
+    async def override_settings() -> Settings:
         return Settings(
-            auth_enabled=True,
+            auth_enabled=auth_enabled,
             db_user="db_testuser",
             db_password="db_testpassword",
             db_host="db_testhost"
         )
 
-    app.dependency_overrides[get_settings] = overwrite_settings
-    app.dependency_overrides[get_current_user] = overwrite_get_current_user
-    app.dependency_overrides[AssessmentService] = lambda: assessment_service
-    return TestClient(app)
+    return override_settings
+
+
+def _get_override_current_user(roles: list[str]) -> Callable:
+    async def override_get_current_user() -> User:
+        return User(
+            id="testuser",
+            roles=roles
+        )
+
+    return override_get_current_user
+
+
+def _get_override_db_session() -> Callable:
+    async def override_db_session() -> Mock:
+        return Mock()
+
+    return override_db_session

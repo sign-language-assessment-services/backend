@@ -71,10 +71,11 @@ def test_get_assessment(test_client: TestClient) -> None:
     ]
 
 
-def test_get_assessment_not_found(test_client: TestClient) -> None:
-    assessment_id = "ffffffff-eeee-dddd-cccc-bbbbbbbbbbbb"
+def test_get_assessment_not_found(test_client_no_assessment: TestClient) -> None:
+    assessment_id = uuid4()
 
-    response = test_client.get(f"/assessments/{assessment_id}")
+    response = test_client_no_assessment.get(f"/assessments/{assessment_id}")
+
     assert response.status_code == HTTP_404_NOT_FOUND
 
 
