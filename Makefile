@@ -45,7 +45,7 @@ help:	## List targets and description
 
 .PHONY: install
 install:	## Install dependencies as configured in pyproject.toml
-	poetry install
+	poetry install --no-root
 
 .PHONY: isort
 isort:	## Check if imports are in the right order
