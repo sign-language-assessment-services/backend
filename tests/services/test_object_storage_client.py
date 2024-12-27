@@ -1,9 +1,12 @@
+from unittest.mock import ANY
+
 import pytest
 from fastapi import HTTPException
 from minio.datatypes import Object as MinioObject
 from minio.error import MinioException
 
-from app.core.models.bucket_object import BucketObject
+from app.core.models.media_types import MediaType
+from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.minio_location import MinioLocation
 from app.services.object_storage_client import ObjectStorageClient
 
@@ -71,7 +74,17 @@ def test_list_files_returns_only_files(
 
     result = storage_client_minio.list_files("testbucket", "any")
 
-    assert result == [
-        BucketObject(name="file01", content_type="foo"),
-        BucketObject(name="file02", content_type="foo")
+    expected = [
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="file01"),
+            media_type=MediaType.VIDEO
+        ),
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="file02"),
+            media_type=MediaType.VIDEO
+        )
     ]
+    assert result[0].location == expected[0].location
+    assert result[0].media_type == expected[0].media_type
+    assert result[1].location == expected[1].location
+    assert result[1].media_type == expected[1].media_type

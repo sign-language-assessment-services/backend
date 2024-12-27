@@ -3,11 +3,11 @@ from unittest.mock import Mock
 import pytest
 from minio.datatypes import Object as MinioObject
 
-from app.core.models.bucket_object import BucketObject
+from app.core.models.media_types import MediaType
+from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia_file import MultimediaFile
 from app.services.assessment_service import AssessmentService
 from app.services.object_storage_client import ObjectStorageClient
-
-StorageFiles = list[list[BucketObject]]
 
 
 @pytest.fixture
@@ -16,33 +16,29 @@ def storage_folders() -> list[str]:
 
 
 @pytest.fixture
-def storage_files() -> StorageFiles:
+def storage_files() -> list[MultimediaFile]:
     return [
-        [
-            BucketObject(
-                name="frage",
-                content_type="video/mp4"
-            ),
-            BucketObject(
-                name="video_antwort_richtig",
-                content_type="video/mp4"
-            ),
-            BucketObject(
-                name="bild_antwort",
-                content_type="image/jpeg"
-            )
-        ],
-        [
-            BucketObject(
-                name="video",
-                content_type="video/mp4"
-            )
-        ]
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="00/question.mpg"),
+            media_type=MediaType.VIDEO
+        ),
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="00/right_answer.mpg"),
+            media_type=MediaType.VIDEO
+        ),
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="00/wrong_answer.mpg"),
+            media_type=MediaType.IMAGE
+        ),
+        MultimediaFile(
+            location=MinioLocation(bucket="testbucket", key="01/video.mpg"),
+            media_type=MediaType.IMAGE
+        )
     ]
 
 
 @pytest.fixture
-def storage_client(storage_files: StorageFiles, storage_folders: list[str]) -> Mock:
+def storage_client(storage_files: list[MultimediaFile], storage_folders: list[str]) -> Mock:
     object_storage_client = Mock()
     object_storage_client.get_presigned_url.return_value = "http://some-url"
     object_storage_client.list_files.side_effect = storage_files
@@ -67,7 +63,7 @@ def assessment_service(storage_client: Mock, settings: Mock) -> AssessmentServic
 def assessment_service_multiple_choice_only(
         storage_client: Mock,
         settings: Mock,
-        storage_files: StorageFiles
+        storage_files: list[MultimediaFile]
 ) -> AssessmentService:
     storage_client.list_files.side_effect = storage_files[:1] * 2
     assessment_service = AssessmentService(storage_client, settings)
@@ -82,11 +78,11 @@ def minio_data() -> list[MinioObject]:
         MinioObject(
             bucket_name="testbucket",
             object_name="file01",
-            metadata={"content-type": "foo"}
+            metadata={"content-type": "VIDEO"}
         ),
         MinioObject(
             bucket_name="testbucket",
             object_name="file02",
-            metadata={"content-type": "foo"}
+            metadata={"content-type": "VIDEO"}
         )
     ]

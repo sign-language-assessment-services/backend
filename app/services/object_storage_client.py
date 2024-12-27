@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException
 from minio import Minio
 
 from app.config import Settings
+from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.settings import get_settings
@@ -50,7 +51,7 @@ class ObjectStorageClient:
                     bucket=item.bucket_name,
                     key=item.object_name
                 ),
-                media_type=item.metadata["content-type"]
+                media_type=MediaType(item.metadata["content-type"])
             )
             for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True)
             if not item.is_dir
