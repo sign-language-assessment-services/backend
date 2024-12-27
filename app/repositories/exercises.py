@@ -18,6 +18,7 @@ def get_exercise(session: Session, _id: UUID) -> Exercise | None:
     result = get_by_id(session, DbExercise, _id)
     if result:
         return exercise_to_domain(result)
+    return None
 
 
 def list_exercises(session: Session) -> list[Exercise]:

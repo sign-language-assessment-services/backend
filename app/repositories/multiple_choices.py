@@ -21,6 +21,7 @@ def get_multiple_choice(session: Session, _id: UUID) -> MultipleChoice | None:
     result = get_by_id(session, DbMultipleChoice, _id)
     if result:
         return multiple_choice_to_domain(result)
+    return None
 
 
 def list_multiple_choices(session: Session) -> list[MultipleChoice]:

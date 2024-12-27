@@ -18,6 +18,7 @@ def get_choice(session: Session, _id: UUID) -> Choice | None:
     result = get_by_id(session, DbChoice, _id)
     if result:
         return choice_to_domain(result)
+    return None
 
 
 def list_choices(session: Session) -> list[Choice]:

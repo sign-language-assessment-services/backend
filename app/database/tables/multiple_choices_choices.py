@@ -10,11 +10,11 @@ class DbMultipleChoicesChoices(DbBase):
     __tablename__ = "multiple_choices_choices"
 
     @declared_attr
-    def id(cls):
+    def id(cls):  # pylint: disable=no-self-argument
         return None
 
     @declared_attr
-    def created_at(cls):
+    def created_at(cls):  # pylint: disable=no-self-argument
         return None
 
     # COLUMNS

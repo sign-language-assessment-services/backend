@@ -10,7 +10,7 @@ from app.rest.routers import assessments, root, submissions
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     run_migrations()
     yield
     print("Shutting down...")

@@ -21,6 +21,7 @@ def get_submission(session: Session, _id: UUID) -> Submission | None:
     result = get_by_id(session, DbSubmission, _id)
     if result:
         return submission_to_domain(result)
+    return None
 
 
 def list_submissions(session: Session) -> list[Submission]:

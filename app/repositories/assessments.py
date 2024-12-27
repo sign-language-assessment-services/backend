@@ -20,6 +20,7 @@ def get_assessment(session: Session, _id: UUID) -> Assessment | None:
     result = get_by_id(session, DbAssessment, _id)
     if result:
         return assessment_to_domain(result)
+    return None
 
 
 def list_assessments(session: Session) -> list[Assessment]:

@@ -18,6 +18,7 @@ def get_primer(session: Session, _id: UUID) -> Primer | None:
     result = get_by_id(session, DbPrimer, _id)
     if result:
         return primer_to_domain(result)
+    return None
 
 
 def list_primers(session: Session) -> list[Primer]:

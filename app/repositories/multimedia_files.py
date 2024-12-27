@@ -18,6 +18,7 @@ def get_multimedia_file(session: Session, _id: UUID) -> MultimediaFile | None:
     result = get_by_id(session, DbBucketObjects, _id)
     if result:
         return bucket_object_to_domain(result)
+    return None
 
 
 def list_multimedia_files(session: Session) -> list[MultimediaFile]:

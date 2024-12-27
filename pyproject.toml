@@ -83,6 +83,15 @@ max-line-length = 120
 [tool.pylint.master]
 extension-pkg-whitelist = "pydantic"
 
+[tool.pylint.similarities]
+min-similarity-lines = 10
+
+[tool.pylint.typecheck]
+# sessionmaker: https://github.com/pylint-dev/pylint/issues/7090
+ignored-classes = """
+    sqlalchemy.orm.session.sessionmaker,
+"""
+
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
