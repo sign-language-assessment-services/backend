@@ -1,13 +1,11 @@
-from unittest.mock import ANY
-
 import pytest
 from fastapi import HTTPException
 from minio.datatypes import Object as MinioObject
 from minio.error import MinioException
 
 from app.core.models.media_types import MediaType
-from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.minio_location import MinioLocation
+from app.core.models.multimedia_file import MultimediaFile
 from app.services.object_storage_client import ObjectStorageClient
 
 

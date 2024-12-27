@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import CheckConstraint, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.tables.tasks import DbTask

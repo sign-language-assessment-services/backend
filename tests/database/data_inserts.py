@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.core.models.media_types import MediaType
 
-
 DbData: TypeAlias = dict[str, Any]
 DbMixedData: TypeAlias = dict[str, dict[str, Any] | list[dict[str, Any]]]
 

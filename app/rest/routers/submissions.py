@@ -22,7 +22,7 @@ async def get_submission(
 ) -> Submission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
-    return submission_service.get_submission_by_id(session=db_session, submission_id=submission_id)
+    return submission_service.get_submission(session=db_session, submission_id=submission_id)
 
 
 @router.get("/submissions/")

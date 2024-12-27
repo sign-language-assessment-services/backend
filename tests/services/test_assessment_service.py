@@ -10,7 +10,7 @@ from app.services.assessment_service import AssessmentService
     return_value=Assessment(name="Test Assessment", id=uuid4())
 )
 def test_get_assessment_by_id(mocked_get_assessment, assessment_service: AssessmentService) -> None:
-    assessment_id = uuid4()
+    assessment_id = mocked_get_assessment.return_value.id
     mocked_session = Mock()
 
     assessment = assessment_service.get_assessment_by_id(mocked_session, assessment_id)
@@ -32,10 +32,10 @@ def test_list_assessments(mocked_list_assessment, assessment_service: Assessment
 
     assessments = assessment_service.list_assessments(mocked_session)
 
-    assert assessments == [
-        Assessment(id=uuid4(), name="00"),
-        Assessment(id=uuid4(), name="01")
-    ]
+    assert assessments[0].id == mocked_list_assessment.return_value[0].id
+    assert assessments[0].name == "00"
+    assert assessments[1].id == mocked_list_assessment.return_value[1].id
+    assert assessments[1].name == "01"
     mocked_list_assessment.assert_called_once_with(mocked_session)
 
 

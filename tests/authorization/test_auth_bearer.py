@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 from fastapi import HTTPException, status
 
-from app.authorization.auth_bearer import decode_jwt, JWTBearer
+from app.authorization.auth_bearer import JWTBearer, decode_jwt
 from app.authorization.exceptions import SettingsNotAvailableError
 from app.core.models.user import User
 
