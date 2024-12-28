@@ -29,22 +29,17 @@ async def get_submission(
 
 @router.get("/submissions/")
 async def list_submissions(
-        # user_name: str,
         submission_service: Annotated[SubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ) -> list[Submission]:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
-
-    # if current_user.id != user_name and "test-scorer" not in current_user.roles:
-    #     raise HTTPException(status.HTTP_403_FORBIDDEN)
-
     return submission_service.list_submissions(session=db_session)
 
 
 @router.get("/assessments/{assessment_id}/exercises/{exercise_id}/submissions/")
-async def list_submissions(
+async def list_assessment_exercise_submissions_for_user(
         assessment_id: UUID,
         exercise_id: UUID,
         submission_service: Annotated[SubmissionService, Depends()],
