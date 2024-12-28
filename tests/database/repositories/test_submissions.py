@@ -45,8 +45,10 @@ def test_get_submission_by_id(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     submission_id = insert_submission(
         db_session,
+        assessment_id,
         exercise_id,
         multiple_choice_id,
         choices=[choice_uuid],
@@ -68,8 +70,9 @@ def test_list_multiple_submissions(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     for i in range(100):
-        insert_submission(db_session, exercise_id, multiple_choice_id, choices=[])
+        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, choices=[])
 
     result = list_submissions(db_session)
 
@@ -81,8 +84,10 @@ def test_update_submission(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     submission_id = insert_submission(
         db_session,
+        assessment_id,
         exercise_id,
         multiple_choice_id,
         choices=[uuid4()],
@@ -100,8 +105,10 @@ def test_delete_submission(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     submission_id = insert_submission(
         db_session,
+        assessment_id,
         exercise_id,
         multiple_choice_id,
         choices=[uuid4()],
@@ -118,13 +125,15 @@ def test_delete_one_of_two_submissions(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     submission_id = insert_submission(
         db_session,
+        assessment_id,
         exercise_id,
         multiple_choice_id,
         choices=[uuid4()],
     ).get("id")
-    insert_submission(db_session, exercise_id, multiple_choice_id, choices=[])
+    insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, choices=[])
 
     delete_submission(db_session, submission_id)
 

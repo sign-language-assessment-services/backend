@@ -192,12 +192,19 @@ def insert_task(session: Session, task_type: str) -> DbData:
     return task
 
 
-def insert_submission(session: Session, exercise_id: UUID, multiple_choice_id: UUID, choices: list[UUID]) -> DbData:
+def insert_submission(
+        session: Session,
+        assessment_id: UUID,
+        exercise_id: UUID,
+        multiple_choice_id: UUID,
+        choices: list[UUID]
+) -> DbData:
     """Insert a submission into database"""
     submission = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
         "user_name": str(uuid4()),
+        "assessment_id": assessment_id,
         "choices": choices,
         "exercise_id": exercise_id,
         "multiple_choice_id": multiple_choice_id
@@ -205,8 +212,8 @@ def insert_submission(session: Session, exercise_id: UUID, multiple_choice_id: U
     session.execute(
         text(
             """
-            INSERT INTO submissions(id, created_at, user_name, choices, exercise_id, multiple_choice_id)
-            VALUES (:id, :created_at, :user_name, :choices, :exercise_id, :multiple_choice_id)
+            INSERT INTO submissions(id, created_at, user_name, assessment_id, exercise_id, multiple_choice_id, choices)
+            VALUES (:id, :created_at, :user_name, :assessment_id, :exercise_id, :multiple_choice_id, :choices)
             """
         ),
         submission
