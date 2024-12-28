@@ -9,8 +9,8 @@ from app.repositories.submissions import (
     add_submission, delete_submission, get_submission, list_submissions, update_submission
 )
 from tests.database.data_inserts import (
-    insert_assessment, insert_bucket_object, insert_exercise,
-    insert_multiple_choice, insert_submission
+    insert_assessment, insert_bucket_object, insert_exercise, insert_multiple_choice,
+    insert_submission
 )
 from tests.database.utils import table_count
 
