@@ -9,7 +9,8 @@ from app.repositories.submissions import (
     add_submission, delete_submission, get_submission, list_submissions, update_submission
 )
 from tests.database.data_inserts import (
-    insert_bucket_object, insert_exercise, insert_multiple_choice, insert_submission
+    insert_assessment, insert_bucket_object, insert_exercise,
+    insert_multiple_choice, insert_submission
 )
 from tests.database.utils import table_count
 
@@ -18,8 +19,10 @@ def test_add_submission(db_session: Session) -> None:
     video_id = insert_bucket_object(db_session).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
     submission = Submission(
         user_name=str(uuid4()),
+        assessment_id=assessment_id,
         exercise_id=exercise_id,
         multiple_choice_id=multiple_choice_id,
         answer=MultipleChoiceAnswer(choices=[uuid4(), uuid4(), uuid4()])
@@ -27,9 +30,10 @@ def test_add_submission(db_session: Session) -> None:
 
     add_submission(db_session, submission)
 
-    db_submission = db_session.get(DbSubmission, submission.id)  # execute(text("SELECT * FROM submissions")).fetchone()
+    db_submission = db_session.get(DbSubmission, submission.id)
     assert db_submission.id == submission.id
     assert db_submission.user_name == submission.user_name
+    assert db_submission.assessment_id == submission.assessment_id
     assert db_submission.exercise_id == submission.exercise_id
     assert db_submission.multiple_choice_id == submission.multiple_choice_id
     assert db_submission.choices == submission.answer.choices

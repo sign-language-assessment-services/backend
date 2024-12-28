@@ -24,6 +24,10 @@ class DbSubmission(DbBase):
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
+    assessment_id: Mapped[UUID] = mapped_column(
+        ForeignKey("assessments.id"),
+        nullable=False
+    )
     exercise_id: Mapped[UUID] = mapped_column(
         ForeignKey("exercises.id"),
         nullable=False
@@ -35,9 +39,13 @@ class DbSubmission(DbBase):
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
+    assessment: Mapped["DbAssessment"] = relationship(
+        back_populates="submissions"
+    )
     exercise: Mapped["DbExercise"] = relationship(
         back_populates="submissions"
     )
+    # adept join-inheritance table like primer|exercises for new question types
     multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="submissions"
     )

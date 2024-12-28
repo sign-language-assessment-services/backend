@@ -11,6 +11,7 @@ class Submission(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
 
     user_name: str
+    assessment_id: UUID
     exercise_id: UUID
     multiple_choice_id: UUID
     answer: MultipleChoiceAnswer

@@ -39,9 +39,8 @@ def list_assessment_submissions_for_user(session: Session, user_name: UUID, asse
     stmt = (
         select(DbSubmission)
         .join(DbExercise, DbExercise.id == DbSubmission.exercise_id)
-        .join(DbAssessment.tasks)
         .filter(DbAssessment.id == assessment_id)
-        .filter(DbSubmission.user_name == user_name)
+        .filter(DbSubmission.user_name == str(user_name))
     )
     results = session.execute(stmt).scalars().all()
     return [submission_to_domain(r) for r in results]

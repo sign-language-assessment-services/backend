@@ -271,9 +271,9 @@ def upgrade() -> None:
             nullable=False
         ),
         sa.Column(
-            "choices",
-            ARRAY(sa.Uuid(), dimensions=1),
-            nullable=True
+            "assessment_id",
+            sa.Uuid(),
+            nullable=False
         ),
         sa.Column(
             "exercise_id",
@@ -285,7 +285,12 @@ def upgrade() -> None:
             sa.Uuid(),
             nullable=False
         ),
-
+        sa.Column(
+            "choices",
+            ARRAY(sa.Uuid(), dimensions=1),
+            nullable=True
+        ),
+        sa.ForeignKeyConstraint(["assessment_id"], ["assessments.id"]),
         sa.ForeignKeyConstraint(["exercise_id"], ["exercises.id"]),
         sa.ForeignKeyConstraint(["multiple_choice_id"], ["multiple_choices.id"]),
         sa.PrimaryKeyConstraint("id")
