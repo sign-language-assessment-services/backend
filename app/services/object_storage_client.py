@@ -19,7 +19,7 @@ class ObjectStorageClient:
             secure=settings.data_secure,
             credentials=WebIdentityProvider(
                 jwt_provider_func=self._fetch_access_token,
-                sts_endpoint=settings.data_endpoint,
+                sts_endpoint=settings.data_sts_endpoint,
             )
         )
 

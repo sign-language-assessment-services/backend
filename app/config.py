@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     data_endpoint: str = "127.0.0.1:9030"
     data_bucket_name: str = "slportal"
     data_secure: bool = False
+    data_sts_endpoint: str = "http://127.0.0.1:9030"
 
     # Database
     db_user: str
