@@ -18,6 +18,7 @@ def settings() -> Mock:
     settings.data_endpoint = "127.0.0.1:4242"
     settings.data_bucket_name = "testbucket"
     settings.data_secure = False
+    settings.data_sts_endpoint = "http://127.0.0.1:4242"
     return settings
 
 
