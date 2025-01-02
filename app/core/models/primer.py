@@ -20,9 +20,9 @@ class PrimerResponse(BaseModel):
     @computed_field
     @property
     def media_type(self) -> str:
-        return self.content.media_type.value
+        return self.content.media_type.value  # pylint: disable=no-member
 
     @computed_field
     @property
     def multimedia_file_id(self) -> str:
-        return str(self.content.id)
+        return str(self.content.id)  # pylint: disable=no-member

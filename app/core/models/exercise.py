@@ -39,6 +39,6 @@ class ExerciseResponse(BaseModel):
                 "media_type": choice.content.media_type.value
             }
             for number, choice in enumerate(
-                self.question_type.content.choices, start=1
+                self.question_type.content.choices, start=1  # pylint: disable=no-member
             )
         ]
