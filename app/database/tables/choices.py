@@ -23,7 +23,8 @@ class DbChoice(DbBase):
     )
     multiple_choices: Mapped[list["DbMultipleChoice"]] = relationship(
         secondary="multiple_choices_choices",
-        back_populates="choices"
+        back_populates="choices",
+        viewonly=True
     )
     associations: Mapped[list["DbMultipleChoicesChoices"]] = relationship(
         back_populates="choice",

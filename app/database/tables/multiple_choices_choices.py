@@ -42,12 +42,10 @@ class DbMultipleChoicesChoices(DbBase):
     #  RELATIONSHIPS
     # ------------------------------------------------------------------------
     choice: Mapped["DbChoice"] = relationship(
-        back_populates="associations",
-        passive_deletes=True
+        back_populates="associations"
     )
     multiple_choice: Mapped["DbMultipleChoice"] = relationship(
-        back_populates="associations",
-        passive_deletes=True
+        back_populates="associations"
     )
 
     # CONSTRAINTS
