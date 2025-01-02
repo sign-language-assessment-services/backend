@@ -6,7 +6,7 @@ from fastapi.responses import ORJSONResponse
 from app.database.orm import import_tables, run_migrations
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
-from app.rest.routers import assessments, exercises, root, primers, submissions, object_storage
+from app.rest.routers import assessments, exercises, object_storage, primers, root, submissions
 
 
 @asynccontextmanager

@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, computed_field, Field
 
 from app.core.models.multimedia_file import MultimediaFile
 
