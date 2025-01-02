@@ -30,7 +30,7 @@ async def get_exercise(
     return exercise
 
 
-@router.get("/exercises/", response_model=ExerciseResponse)
+@router.get("/exercises/", response_model=list[ExerciseResponse])
 async def list_exercises(
         exercise_service: Annotated[ExerciseService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
