@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
-from app.core.models.exercise import Exercise
+from app.core.models.exercise import Exercise, ExerciseResponse
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
@@ -14,7 +14,7 @@ from app.services.exercise_service import ExerciseService
 router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
-@router.get("/exercises/{exercise_id}")
+@router.get("/exercises/{exercise_id}", response_model=ExerciseResponse)
 async def get_exercise(
         exercise_id: UUID,
         exercise_service: Annotated[ExerciseService, Depends()],
@@ -30,7 +30,7 @@ async def get_exercise(
     return exercise
 
 
-@router.get("/exercises/")
+@router.get("/exercises/", response_model=ExerciseResponse)
 async def list_exercises(
         exercise_service: Annotated[ExerciseService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
