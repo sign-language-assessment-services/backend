@@ -18,9 +18,15 @@ class Assessment(BaseModel):
 class AssessmentResponse(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     name: str
-    tasks: list[UUID]
+    tasks: list[dict[str, UUID | str]]
 
     @field_validator("tasks", mode="before")
     @classmethod
     def extract_task_ids(cls, value):
-        return [task.id for task in value]
+        return [
+            {
+                "id": task.id,
+                "task_type": task.__class__.__name__.lower()
+            }
+            for task in value
+        ]
