@@ -27,7 +27,8 @@ class ExerciseResponse(BaseModel):
     def compute_question_response(cls, value):
         return {
             "id": value.content.id,
-            "url": "http://example.com/question.mp4"
+            "url": "http://example.com/question.mp4",
+            "media_type": value.content.media_type.value
         }
 
     @computed_field
@@ -36,7 +37,8 @@ class ExerciseResponse(BaseModel):
         return [
             {
                 "id": choice.id,
-                "url": f"http://example.com/choice_{number}.mp4"
+                "url": f"http://example.com/choice_{number}.mp4",
+                "media_type": choice.content.media_type.value
             }
             for number, choice in enumerate(
                 self.question_type.content.choices, start=1
