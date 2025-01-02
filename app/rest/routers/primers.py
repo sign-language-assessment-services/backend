@@ -30,7 +30,7 @@ async def get_primer(
     return primer
 
 
-@router.get("/primers/", response_model=PrimerResponse)
+@router.get("/primers/", response_model=list[PrimerResponse])
 async def list_primers(
         primer_service: Annotated[PrimerService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],

@@ -26,8 +26,7 @@ class ExerciseResponse(BaseModel):
     @classmethod
     def compute_question_response(cls, value):
         return {
-            "id": value.content.id,
-            "url": "http://example.com/question.mp4",
+            "multimedia_file_id": value.content.id,
             "media_type": value.content.media_type.value
         }
 
@@ -36,8 +35,7 @@ class ExerciseResponse(BaseModel):
     def choices(self) -> list[dict[str, UUID | str]]:
         return [
             {
-                "id": choice.id,
-                "url": f"http://example.com/choice_{number}.mp4",
+                "multimedia_file_id": choice.content.id,
                 "media_type": choice.content.media_type.value
             }
             for number, choice in enumerate(

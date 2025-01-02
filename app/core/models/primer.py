@@ -19,10 +19,10 @@ class PrimerResponse(BaseModel):
 
     @computed_field
     @property
-    def url(self) -> str:
-        return "http://example.com/primer.mp4"
+    def media_type(self) -> str:
+        return self.content.media_type.value
 
     @computed_field
     @property
-    def media_type(self) -> str:
-        return self.content.media_type.value
+    def multimedia_file_id(self) -> str:
+        return str(self.content.id)
