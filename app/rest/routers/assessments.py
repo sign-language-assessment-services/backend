@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
-from app.core.models.assessment import Assessment, AssessmentResponse
+from app.core.models.assessment import Assessment, AssessmentResponse, AssessmentListResponse
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
@@ -30,7 +30,7 @@ async def get_assessment(
     return assessment
 
 
-@router.get("/assessments/", response_model=list[AssessmentResponse])
+@router.get("/assessments/", response_model=list[AssessmentListResponse])
 async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],

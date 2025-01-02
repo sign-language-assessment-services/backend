@@ -15,6 +15,11 @@ class Assessment(BaseModel):
     tasks: list[Primer | Exercise] = Field(default_factory=list)
 
 
+class AssessmentListResponse(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    name: str
+
+
 class AssessmentResponse(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     name: str
