@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
-from app.core.models.assessment import Assessment, AssessmentListResponse, AssessmentResponse
+from app.core.models.assessment import Assessment
+from app.rest.responses.assessments import AssessmentListResponse, AssessmentResponse
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user

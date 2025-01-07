@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
-from app.core.models.primer import Primer, PrimerResponse
+from app.core.models.primer import Primer
+from app.rest.responses.primers import PrimerResponse
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
