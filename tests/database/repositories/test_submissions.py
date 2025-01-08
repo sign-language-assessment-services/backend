@@ -61,6 +61,12 @@ def test_get_submission_by_id(db_session: Session) -> None:
     assert table_count(db_session, DbSubmission) == 1
 
 
+def test_get_submission_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_submission(db_session, uuid4())
+
+    assert result is None
+
+
 def test_list_no_submissions(db_session: Session) -> None:
     result = list_submissions(db_session)
     assert result == []

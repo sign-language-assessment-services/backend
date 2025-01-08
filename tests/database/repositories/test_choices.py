@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from sqlalchemy.orm import Session
 
 from app.core.models.choice import Choice
@@ -38,6 +40,12 @@ def test_get_choice_by_id(db_session: Session) -> None:
     assert result.id == choice_id
     assert result.content.id == video_id
     assert table_count(db_session, DbChoice) == 1
+
+
+def test_get_choice_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_choice(db_session, uuid4())
+
+    assert result is None
 
 
 def test_list_no_choices(db_session: Session) -> None:

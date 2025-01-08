@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from sqlalchemy.orm import Session
 
 from app.core.models.choice import Choice
@@ -74,6 +76,12 @@ def test_get_exercise_by_id(db_session: Session) -> None:
     assert result.question_type.content.id == mc_id
     assert table_count(db_session, DbExercise) == 1
     assert table_count(db_session, DbTask) == 1
+
+
+def test_get_exercise_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_exercise(db_session, uuid4())
+
+    assert result is None
 
 
 def test_list_no_exercises(db_session: Session) -> None:

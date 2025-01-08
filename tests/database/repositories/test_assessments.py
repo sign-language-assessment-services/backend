@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
@@ -28,6 +30,12 @@ def test_get_assessment_by_id(db_session: Session) -> None:
     assert result.id == assessment_id
     assert result.name == "Test Assessment"
     assert table_count(db_session, DbAssessment) == 1
+
+
+def test_get_assessment_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_assessment(db_session, uuid4())
+
+    assert result is None
 
 
 def test_list_no_assessments(db_session: Session) -> None:

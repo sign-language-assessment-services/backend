@@ -1,4 +1,5 @@
 from datetime import datetime, UTC
+from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
@@ -52,6 +53,12 @@ def test_get_multiple_choice_by_id(db_session: Session) -> None:
 
     assert result.id == multiple_choice_id
     assert table_count(db_session, DbMultipleChoice) == 1
+
+
+def test_get_multiple_choice_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_multiple_choice(db_session, uuid4())
+
+    assert result is None
 
 
 def test_list_no_multiple_choices(db_session: Session) -> None:

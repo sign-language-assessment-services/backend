@@ -42,6 +42,12 @@ def test_get_multimedia_file_by_id(db_session: Session) -> None:
     assert table_count(db_session, DbBucketObjects) == 1
 
 
+def test_get_multimedia_file_by_id_returns_none_if_not_found(db_session: Session) -> None:
+    result = get_multimedia_file(db_session, uuid4())
+
+    assert result is None
+
+
 def test_list_no_multimedia_files(db_session: Session) -> None:
     result = list_multimedia_files(db_session)
 
