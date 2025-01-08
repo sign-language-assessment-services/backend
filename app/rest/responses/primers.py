@@ -18,3 +18,7 @@ class PrimerResponse(BaseModel):
     @property
     def multimedia_file_id(self) -> str:
         return str(self.content.id)  # pylint: disable=no-member
+
+
+class PrimerListResponse(BaseModel):
+    id: UUID = Field(default_factory=uuid4)

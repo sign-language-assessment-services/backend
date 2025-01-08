@@ -9,7 +9,7 @@ from app.core.models.primer import Primer
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
-from app.rest.responses.primers import PrimerResponse
+from app.rest.responses.primers import PrimerListResponse, PrimerResponse
 from app.services.primer_service import PrimerService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])
@@ -31,7 +31,7 @@ async def get_primer(
     return primer
 
 
-@router.get("/primers/", response_model=list[PrimerResponse])
+@router.get("/primers/", response_model=list[PrimerListResponse])
 async def list_primers(
         primer_service: Annotated[PrimerService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],

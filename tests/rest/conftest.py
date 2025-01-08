@@ -62,7 +62,7 @@ def app_dependency_overrides_no_data(app_dependency_overrides_data: FastAPI) -> 
     app.dependency_overrides[ExerciseService] = _get_override_exercise_service()
     app.dependency_overrides[MultimediaFileService] = _get_override_multimedia_file_service()
     app.dependency_overrides[ObjectStorageClient] = _get_override_object_storage_client()
-    app.dependency_overrides[PrimerService] = _get_override_primer_service
+    app.dependency_overrides[PrimerService] = _get_override_primer_service()
     return app
 
 
@@ -166,9 +166,9 @@ def _get_override_primer_service(
         list_return: list[Primer] | None = None
 ) -> Callable:
     async def override_primer_service() -> Mock:
-        exercise_service = Mock()
-        exercise_service.get_primer_by_id.return_value = get_by_id_return
-        exercise_service.list_primers.return_value = list_return
-        return exercise_service
+        primer_service = Mock()
+        primer_service.get_primer_by_id.return_value = get_by_id_return
+        primer_service.list_primers.return_value = list_return
+        return primer_service
 
     return override_primer_service

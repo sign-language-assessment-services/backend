@@ -33,10 +33,8 @@ def test_get_403(endpoint: str, test_client_no_roles: TestClient) -> None:
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.parametrize("endpoint", [e.rpartition("/")[0] + f"/{uuid4()}" for e in GET_BY_ID_ENDPOINTS])
+@pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS)
 def test_get_not_found(endpoint: str, test_client_not_found: TestClient) -> None:
-    assessment_id = uuid4()
-
-    response = test_client_not_found.get(f"/assessments/{assessment_id}")
+    response = test_client_not_found.get(endpoint)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND

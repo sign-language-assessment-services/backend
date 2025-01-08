@@ -3,7 +3,7 @@ from sqlalchemy import Engine, inspect
 from app.config import Settings
 from app.database.orm import get_db_engine, get_db_session, import_tables, init_db
 from app.database.tables.base import DbBase
-from database.utils import get_all_table_names_from_tables_folder
+from tests.database.utils import get_all_table_names_from_tables_folder
 
 
 def test_get_db_engine_reflects_settings(settings: Settings) -> None:
