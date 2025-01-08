@@ -22,16 +22,19 @@ from tests.database.utils import table_count
 
 
 def test_add_exercise(db_session: Session) -> None:
-    question_video_id = insert_bucket_object(db_session).get("id")
-    choice_video_id = insert_bucket_object(db_session).get("id")
-    choice_id = insert_choice(db_session, choice_video_id).get("id")
+    question_video = insert_bucket_object(db_session)
+    choice_video = insert_bucket_object(db_session)
+    choice_id = insert_choice(db_session, choice_video.get("id")).get("id")
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise = Exercise(
         points=1,
         question=Question(
             content=MultimediaFile(
-                id=question_video_id,
-                location=MinioLocation(bucket="1", key="question"),
+                id=question_video.get("id"),
+                location=MinioLocation(
+                    bucket=question_video.get("bucket"),
+                    key=question_video.get("key")
+                ),
                 media_type=MediaType.VIDEO
             )
         ),
@@ -42,8 +45,11 @@ def test_add_exercise(db_session: Session) -> None:
                     Choice(
                         id=choice_id,
                         content=MultimediaFile(
-                            id=choice_video_id,
-                            location=MinioLocation(bucket="1", key="choice"),
+                            id=choice_video.get("id"),
+                            location=MinioLocation(
+                                bucket=choice_video.get("bucket"),
+                                key=choice_video.get("key")
+                            ),
                             media_type=MediaType.VIDEO
                         )
                     )

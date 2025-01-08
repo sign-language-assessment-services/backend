@@ -25,8 +25,8 @@ def test_add_multimedia_file(db_session: Session, _type: MediaType) -> None:
     add_multimedia_file(db_session, multimedia_file)
 
     result = db_session.get(DbBucketObjects, multimedia_file.id)
-    assert result.bucket == "testportal"
-    assert result.key == "1234"
+    assert result.bucket == multimedia_file.location.bucket
+    assert result.key == multimedia_file.location.key
     assert result.media_type == _type
     assert table_count(db_session, DbBucketObjects) == 1
 
