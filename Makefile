@@ -27,7 +27,7 @@ clean:	## delete caches, builds etc.
 .PHONY: coverage
 MIN_COVERAGE ?= 95
 coverage:	## Run test coverage
-	poetry run coverage run -m pytest tests
+	poetry run coverage run --source=app -m pytest tests
 	poetry run coverage report -m --fail-under=${MIN_COVERAGE}
 
 coverage-codacy: SHELL:=/bin/bash
