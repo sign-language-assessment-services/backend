@@ -3,8 +3,8 @@ from uuid import uuid4
 from app.core.models.choice import Choice
 from tests.data.models.multimedia_files import (
     multimedia_file_choice_1, multimedia_file_choice_2, multimedia_file_choice_3,
-    multimedia_file_choice_4, multimedia_file_choice_5, multimedia_file_choice_6, multimedia_file_choice_7,
-    multimedia_file_choice_8
+    multimedia_file_choice_4, multimedia_file_choice_5, multimedia_file_choice_6,
+    multimedia_file_choice_7, multimedia_file_choice_8
 )
 
 choice_1 = Choice(

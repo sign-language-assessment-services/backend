@@ -8,6 +8,7 @@ from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database.tables.assessments import DbAssessment
+from app.database.tables.base import DbBase
 
 
 def test_insert_assessment_with_wrong_uuid(db_session: Session) -> None:
@@ -77,6 +78,20 @@ def test_insert_assessment_with_different_timezone_saves_it_as_utc(db_session: S
     assert db_assessment.created_at == berlin_time
     assert db_assessment.created_at.tzinfo == timezone.utc
     assert db_assessment.created_at == datetime(2000, 1, 1, 11, tzinfo=UTC)
+
+
+def test_repr_of_base_class() -> None:
+    base = DbBase(
+        id=uuid4(),
+        created_at=datetime(2000, 1, 1, 12, tzinfo=UTC),
+    )
+
+    expected = (
+        f"<{base.__class__.__name__}[{id(base)}] "
+        f"(id={base.id!r}, created_at={base.created_at!r})>"
+    )
+    assert repr(base) == expected
+    assert str(base) == expected
 
 
 def _add_assessment_data(session: Session, **kwargs: dict[str, UUID | datetime | str]) -> None:

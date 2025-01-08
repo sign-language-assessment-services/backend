@@ -51,7 +51,7 @@ def import_tables() -> None:
     )
 
 
-def run_migrations():
+def run_migrations():  # pragma: no cover
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
 

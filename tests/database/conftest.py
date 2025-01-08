@@ -7,14 +7,23 @@ from app.database.orm import import_tables
 from app.database.tables.base import DbBase
 
 
-@pytest.fixture(scope="session")
-def db_engine() -> Engine:
+def _db_engine_fixture() -> Engine:
     with PostgresContainer("postgres:16.1") as postgres:
         engine = create_engine(postgres.get_connection_url(), pool_pre_ping=True)
         try:
             yield engine
         finally:
             engine.dispose()
+
+
+@pytest.fixture(scope="session")
+def db_engine() -> Engine:
+    yield from _db_engine_fixture()
+
+
+@pytest.fixture(scope="function")
+def db_engine_reset() -> Engine:
+    yield from _db_engine_fixture()
 
 
 @pytest.fixture(scope="function")

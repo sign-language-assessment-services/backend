@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
 from app.core.models.assessment import Assessment
-from app.rest.responses.assessments import AssessmentListResponse, AssessmentResponse
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
+from app.rest.responses.assessments import AssessmentListResponse, AssessmentResponse
 from app.services.assessment_service import AssessmentService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])

@@ -16,18 +16,7 @@ GET_BY_ID_ENDPOINTS = [
     f"/primers/{str(primer_1.id)}"
 ]
 
-GET_NOT_BY_ID_ENDPOINTS = [
-    f"/assessments/{uuid4()}",
-    f"/exercises/{uuid4()}",
-    f"/object-storage/{uuid4()}"
-    f"/primers/{uuid4()}"
-]
-
-LIST_ENDPOINTS = [
-    "/assessments/",
-    "/exercises/",
-    "/primers/"
-]
+LIST_ENDPOINTS = ["/assessments/", "/exercises/", "/primers/"]
 
 
 @pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + LIST_ENDPOINTS)
@@ -44,7 +33,7 @@ def test_get_403(endpoint: str, test_client_no_roles: TestClient) -> None:
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.parametrize("endpoint", GET_NOT_BY_ID_ENDPOINTS)
+@pytest.mark.parametrize("endpoint", [e.rpartition("/")[0] + f"/{uuid4()}" for e in GET_BY_ID_ENDPOINTS])
 def test_get_not_found(endpoint: str, test_client_not_found: TestClient) -> None:
     assessment_id = uuid4()
 
