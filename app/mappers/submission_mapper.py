@@ -7,7 +7,7 @@ def submission_to_domain(db_submission: DbSubmission) -> Submission:
     return Submission(
         id=db_submission.id,
         created_at=db_submission.created_at,
-        user_name=db_submission.user_name,
+        user_id=db_submission.user_id,
         assessment_id=db_submission.assessment_id,
         exercise_id=db_submission.exercise_id,
         multiple_choice_id=db_submission.multiple_choice_id,
@@ -19,7 +19,7 @@ def submission_to_db(submission: Submission) -> DbSubmission:
     return DbSubmission(
         id=submission.id,
         created_at=submission.created_at,
-        user_name=submission.user_name,
+        user_id=submission.user_id,
         assessment_id=submission.assessment_id,
         exercise_id=submission.exercise_id,
         multiple_choice_id=submission.multiple_choice_id,

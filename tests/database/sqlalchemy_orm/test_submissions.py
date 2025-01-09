@@ -39,7 +39,7 @@ def test_insert_submission(db_session):
     assert table_count(db_session, DbSubmission) == 1
     assert db_submission.id == submission_data.get("id")
     assert db_submission.created_at == submission_data.get("created_at")
-    assert db_submission.user_name == submission_data.get("user_name")
+    assert db_submission.user_id == submission_data.get("user_id")
     assert db_submission.choices == [choice for choice in submission_data.get("choices")]
     assert db_submission.exercise_id == exercise_data.get("id")
     assert db_submission.multiple_choice_id == multiple_choice_data.get("id")

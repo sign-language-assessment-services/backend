@@ -21,7 +21,7 @@ class SubmissionService:
         add_submission(session=session, submission=submission)
 
     @staticmethod
-    def get_submission(session: Session, submission_id: UUID) -> Submission:
+    def get_submission_by_id(session: Session, submission_id: UUID) -> Submission:
         return get_submission(session=session, _id=submission_id)
 
     @staticmethod
@@ -31,11 +31,11 @@ class SubmissionService:
     @staticmethod
     def get_all_submissions_for_assessment_and_user(
             session: Session,
-            user_name: UUID,
+            user_id: UUID,
             assessment_id: UUID
     ) -> list[Submission]:
         return list_assessment_submissions_for_user(
             session=session,
-            user_name=user_name,
+            user_id=user_id,
             assessment_id=assessment_id
         )

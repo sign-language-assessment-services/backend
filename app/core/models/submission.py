@@ -10,7 +10,7 @@ class Submission(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=datetime.now)
 
-    user_name: str
+    user_id: UUID
     assessment_id: UUID
     exercise_id: UUID
     multiple_choice_id: UUID

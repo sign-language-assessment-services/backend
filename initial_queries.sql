@@ -106,13 +106,13 @@ BEGIN
         SELECT choice_id INTO var_choice_id FROM multiple_choices_choices WHERE multiple_choice_id = var_multiple_choice_id ORDER BY random() LIMIT 1;
 
         RAISE NOTICE 'submission id: %', var_submission_id;
-        RAISE NOTICE 'user_name: %', var_user_id;
+        RAISE NOTICE 'user_id: %', var_user_id;
         RAISE NOTICE 'assessment_id: %', var_assessment_id;
         RAISE NOTICE 'exercise id: %', var_exercise_id;
         RAISE NOTICE 'multiple choice id: %', var_multiple_choice_id;
         RAISE NOTICE 'choice id: %', var_choice_id;
 
-        INSERT INTO submissions (id, created_at, user_name, assessment_id, exercise_id, multiple_choice_id, choices)
+        INSERT INTO submissions (id, created_at, user_id, assessment_id, exercise_id, multiple_choice_id, choices)
         VALUES
             (var_submission_id, now(), var_user_id, var_assessment_id, var_exercise_id, var_multiple_choice_id, ARRAY[var_choice_id]);
     END LOOP;

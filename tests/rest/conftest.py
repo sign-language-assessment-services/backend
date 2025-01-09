@@ -10,6 +10,7 @@ from app.core.models.assessment import Assessment
 from app.core.models.exercise import Exercise
 from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.primer import Primer
+from app.core.models.submission import Submission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.main import app
@@ -19,11 +20,13 @@ from app.services.exercise_service import ExerciseService
 from app.services.multimedia_file_service import MultimediaFileService
 from app.services.object_storage_client import ObjectStorageClient
 from app.services.primer_service import PrimerService
+from app.services.submission_service import SubmissionService
 from app.settings import get_settings
 from tests.data.models.assessments import assessment_1, assessment_2
 from tests.data.models.exercises import exercise_1, exercise_2
 from tests.data.models.multimedia_files import multimedia_file_choice_1, multimedia_file_choice_2
 from tests.data.models.primers import primer_1, primer_2
+from tests.data.models.submissions import submission_1, submission_2
 
 
 @pytest.fixture
@@ -53,6 +56,10 @@ def app_dependency_overrides_data() -> FastAPI:
         get_by_id_return=primer_1,
         list_return=[primer_1, primer_2]
     )
+    app.dependency_overrides[SubmissionService] = _get_override_submission_service(
+        get_by_id_return=submission_1,
+        list_return=[submission_1, submission_2]
+    )
     return app
 
 
@@ -63,6 +70,7 @@ def app_dependency_overrides_no_data(app_dependency_overrides_data: FastAPI) -> 
     app.dependency_overrides[MultimediaFileService] = _get_override_multimedia_file_service()
     app.dependency_overrides[ObjectStorageClient] = _get_override_object_storage_client()
     app.dependency_overrides[PrimerService] = _get_override_primer_service()
+    app.dependency_overrides[SubmissionService] = _get_override_submission_service()
     return app
 
 
@@ -172,3 +180,16 @@ def _get_override_primer_service(
         return primer_service
 
     return override_primer_service
+
+
+def _get_override_submission_service(
+        get_by_id_return: Submission | None = None,
+        list_return: list[Submission] | None = None
+) -> Callable:
+    async def override_submission_service() -> Mock:
+        submission_service = Mock()
+        submission_service.get_submission_by_id.return_value = get_by_id_return
+        submission_service.list_submissions.return_value = list_return
+        return submission_service
+
+    return override_submission_service

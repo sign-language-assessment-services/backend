@@ -26,16 +26,16 @@ def list_submissions(session: Session) -> list[Submission]:
     return [submission_to_domain(r) for r in result]
 
 
-def list_submissions_for_user(session: Session, user_name: UUID) -> list[Submission]:
-    filter_conditions = {DbSubmission.user_name: str(user_name)}
+def list_submissions_for_user(session: Session, user_id: UUID) -> list[Submission]:
+    filter_conditions = {DbSubmission.user_id: user_id}
     result = get_all(session, DbSubmission, filter_by=filter_conditions)
     return [submission_to_domain(r) for r in result]
 
 
-def list_assessment_submissions_for_user(session: Session, user_name: UUID, assessment_id: UUID) -> list[Submission]:
+def list_assessment_submissions_for_user(session: Session, user_id: UUID, assessment_id: UUID) -> list[Submission]:
     filter_conditions = {
         DbSubmission.assessment_id: assessment_id,
-        DbSubmission.user_name: str(user_name)
+        DbSubmission.user_id: user_id
     }
     result = get_all(session, DbSubmission, filter_by=filter_conditions)
     return [submission_to_domain(r) for r in result]

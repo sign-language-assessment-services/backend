@@ -266,8 +266,8 @@ def upgrade() -> None:
             nullable=False
         ),
         sa.Column(
-            "user_name",
-            sa.String(length=36),
+            "user_id",
+            sa.Uuid(),
             nullable=False
         ),
         sa.Column(

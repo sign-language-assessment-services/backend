@@ -1,21 +1,24 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from app.authorization.auth_bearer import JWTBearer
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.core.models.submission import Submission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
-from app.rest.routers.assessments import router
+from app.rest.responses.submissions import SubmissionListResponse, SubmissionResponse
 from app.services.exercise_service import ExerciseService
 from app.services.submission_service import SubmissionService
 
+router = APIRouter(dependencies=[Depends(JWTBearer())])
 
-@router.get("/submissions/{submission_id}")
+
+@router.get("/submissions/{submission_id}", response_model=SubmissionResponse)
 async def get_submission(
         submission_id: UUID,
         submission_service: Annotated[SubmissionService, Depends()],
@@ -24,10 +27,14 @@ async def get_submission(
 ) -> Submission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
-    return submission_service.get_submission(session=db_session, submission_id=submission_id)
+
+    submission = submission_service.get_submission_by_id(db_session, submission_id)
+    if not submission:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    return submission
 
 
-@router.get("/submissions/")
+@router.get("/submissions/", response_model=list[SubmissionListResponse])
 async def list_submissions(
         submission_service: Annotated[SubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
@@ -38,7 +45,10 @@ async def list_submissions(
     return submission_service.list_submissions(session=db_session)
 
 
-@router.get("/assessments/{assessment_id}/exercises/{exercise_id}/submissions/")
+@router.get(
+    "/assessments/{assessment_id}/exercises/{exercise_id}/submissions/",
+    response_model=list[SubmissionListResponse],
+)
 async def list_assessment_exercise_submissions_for_user(
         assessment_id: UUID,
         exercise_id: UUID,
@@ -51,13 +61,16 @@ async def list_assessment_exercise_submissions_for_user(
 
     submissions = submission_service.get_all_submissions_for_assessment_and_user(
         session=db_session,
-        user_name=UUID(current_user.id),
+        user_id=UUID(current_user.id),
         assessment_id=assessment_id
     )
     return [s for s in submissions if s.exercise_id == exercise_id]
 
 
-@router.post("/assessments/{assessment_id}/exercises/{exercise_id}/submissions/")
+@router.post(
+    "/assessments/{assessment_id}/exercises/{exercise_id}/submissions/",
+    response_model=SubmissionResponse,
+)
 async def post_submission(
         assessment_id: UUID,
         exercise_id: UUID,
@@ -75,7 +88,7 @@ async def post_submission(
     ).question_type.content.id
 
     submission = Submission(
-        user_name=current_user.id,
+        user_id=UUID(current_user.id),
         assessment_id=assessment_id,
         exercise_id=exercise_id,
         multiple_choice_id=multiple_choice_id,

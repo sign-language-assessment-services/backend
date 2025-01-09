@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, Uuid
+from sqlalchemy import ForeignKey, Uuid
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -13,8 +13,7 @@ class DbSubmission(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    user_name: Mapped[str] = mapped_column(
-        String(length=36),
+    user_id: Mapped[UUID] = mapped_column(
         nullable=False
     )
     choices: Mapped[list[UUID]] = mapped_column(

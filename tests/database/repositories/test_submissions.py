@@ -22,7 +22,7 @@ def test_add_submission(db_session: Session) -> None:
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
     assessment_id = insert_assessment(db_session).get("id")
     submission = Submission(
-        user_name=str(uuid4()),
+        user_id=str(uuid4()),
         assessment_id=assessment_id,
         exercise_id=exercise_id,
         multiple_choice_id=multiple_choice_id,
@@ -33,7 +33,7 @@ def test_add_submission(db_session: Session) -> None:
 
     db_submission = db_session.get(DbSubmission, submission.id)
     assert db_submission.id == submission.id
-    assert db_submission.user_name == submission.user_name
+    assert db_submission.user_id == submission.user_id
     assert db_submission.assessment_id == submission.assessment_id
     assert db_submission.exercise_id == submission.exercise_id
     assert db_submission.multiple_choice_id == submission.multiple_choice_id

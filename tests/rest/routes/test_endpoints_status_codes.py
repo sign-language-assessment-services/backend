@@ -6,15 +6,22 @@ from tests.data.models.assessments import assessment_1
 from tests.data.models.exercises import exercise_1
 from tests.data.models.multimedia_files import multimedia_file_choice_1
 from tests.data.models.primers import primer_1
+from tests.data.models.submissions import submission_1
 
 GET_BY_ID_ENDPOINTS = [
     f"/assessments/{str(assessment_1.id)}",
     f"/exercises/{str(exercise_1.id)}",
     f"/object-storage/{str(multimedia_file_choice_1.id)}",
-    f"/primers/{str(primer_1.id)}"
+    f"/primers/{str(primer_1.id)}",
+    f"/submissions/{str(submission_1.id)}"
 ]
 
-LIST_ENDPOINTS = ["/assessments/", "/exercises/", "/primers/"]
+LIST_ENDPOINTS = [
+    "/assessments/",
+    "/exercises/",
+    "/primers/",
+    "/submissions/"
+]
 
 
 @pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + LIST_ENDPOINTS)
