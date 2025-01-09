@@ -197,13 +197,14 @@ def insert_submission(
         assessment_id: UUID,
         exercise_id: UUID,
         multiple_choice_id: UUID,
-        choices: list[UUID]
+        choices: list[UUID],
+        user_name: str = str(uuid4())
 ) -> DbData:
     """Insert a submission into database"""
     submission = {
         "id": uuid4(),
         "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
-        "user_name": str(uuid4()),
+        "user_name": user_name,
         "assessment_id": assessment_id,
         "choices": choices,
         "exercise_id": exercise_id,

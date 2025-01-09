@@ -10,7 +10,7 @@ from app.database.tables.tasks import DbTask
 from app.repositories.primers import (
     add_primer, delete_primer, get_primer, list_primers, update_primer
 )
-from tests.database.data_inserts import insert_bucket_object, insert_multiple_choice, insert_primer
+from tests.database.data_inserts import insert_bucket_object, insert_primer
 from tests.database.utils import table_count
 
 

@@ -6,7 +6,8 @@ from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.core.models.submission import Submission
 from app.database.tables.submissions import DbSubmission
 from app.repositories.submissions import (
-    add_submission, delete_submission, get_submission, list_submissions, update_submission
+    add_submission, delete_submission, get_submission, list_assessment_submissions_for_user,
+    list_submissions, list_submissions_for_user, update_submission
 )
 from tests.database.data_inserts import (
     insert_assessment, insert_bucket_object, insert_exercise, insert_multiple_choice,
@@ -146,3 +147,45 @@ def test_delete_one_of_two_submissions(db_session: Session) -> None:
     result = db_session.get(DbSubmission, submission_id)
     assert result is None
     assert table_count(db_session, DbSubmission) == 1
+
+
+def test_list_submissions_for_user(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
+    user_1, user_2= uuid4(), uuid4()
+    for i in range(100):
+        user = user_1 if i % 2 else user_2
+        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], str(user))
+
+    result_1 = list_submissions_for_user(db_session, user_1)
+    result_2 = list_submissions_for_user(db_session, user_2)
+
+    assert len(result_1) == 50
+    assert len(result_2) == 50
+    assert table_count(db_session, DbSubmission) == 100
+
+
+def test_list_assessment_submissions_for_user(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id_1 = insert_assessment(db_session).get("id")
+    assessment_id_2 = insert_assessment(db_session).get("id")
+    user_1, user_2= uuid4(), uuid4()
+    for i in range(100):
+        user = user_1 if i % 2 else user_2
+        assessment_id = assessment_id_1 if i < 50 else assessment_id_2
+        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], str(user))
+
+    result_1 = list_assessment_submissions_for_user(db_session, user_1, assessment_id_1)
+    result_2 = list_assessment_submissions_for_user(db_session, user_1, assessment_id_2)
+    result_3 = list_assessment_submissions_for_user(db_session, user_2, assessment_id_1)
+    result_4 = list_assessment_submissions_for_user(db_session, user_2, assessment_id_2)
+
+    assert len(result_1) == 25
+    assert len(result_2) == 25
+    assert len(result_3) == 25
+    assert len(result_4) == 25
+    assert table_count(db_session, DbSubmission) == 100
