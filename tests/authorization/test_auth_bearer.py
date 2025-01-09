@@ -7,6 +7,7 @@ from fastapi import HTTPException, status
 from app.authorization.auth_bearer import decode_jwt, JWTBearer
 from app.authorization.exceptions import SettingsNotAvailableError
 from app.core.models.user import User
+from tests.data.models.users import test_taker_1
 
 
 @patch("app.authorization.auth_bearer.jwt")
@@ -31,14 +32,14 @@ def test_decode_jwt(jwt: Mock, jwk_client: Mock, settings: Mock) -> None:
 async def test_jwt_bearer_returns_user(settings: Mock, bearer_credentials: JWTBearer) -> None:
     bearer_credentials.verify_jwt = Mock(  # type: ignore[method-assign]
         return_value={
-            "realm_access": {"roles": ["slas-frontend-user", "test-taker"]},
-            "sub": "testuser_id"
+            "realm_access": {"roles": test_taker_1.roles},
+            "sub": str(test_taker_1.id)
         }
     )
 
     result = await bearer_credentials(settings=settings, request=mock.ANY)
 
-    assert result == User(id="testuser_id", roles=["slas-frontend-user", "test-taker"])
+    assert result == User(id=test_taker_1.id, roles=test_taker_1.roles)
 
 
 @pytest.mark.asyncio
@@ -48,7 +49,7 @@ async def test_jwt_bearer_auth_disabled_returns_user(settings: Mock) -> None:
 
     result = await bearer(settings=settings, request=mock.ANY)
 
-    assert result == User(id="anonymous", roles=["slas-frontend-user", "test-taker"])
+    assert result == User(id=None, roles=["slas-frontend-user", "test-taker"])
 
 
 @pytest.mark.asyncio

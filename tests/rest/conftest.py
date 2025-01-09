@@ -1,5 +1,6 @@
 from typing import Callable
 from unittest.mock import Mock
+from uuid import UUID
 
 import pytest
 from fastapi import FastAPI
@@ -26,13 +27,17 @@ from tests.data.models.assessments import assessment_1, assessment_2
 from tests.data.models.exercises import exercise_1, exercise_2
 from tests.data.models.multimedia_files import multimedia_file_choice_1, multimedia_file_choice_2
 from tests.data.models.primers import primer_1, primer_2
-from tests.data.models.submissions import submission_1, submission_2
+from tests.data.models.submissions import (
+    submission_1, submission_2, submission_3, submission_4, submission_5, submission_6
+)
+from tests.data.models.users import test_taker_1
 
 
 @pytest.fixture
 def app_dependency_overrides_data() -> FastAPI:
     app.dependency_overrides[get_current_user] = _get_override_current_user(
-        roles=["slas-frontend-user", "test-taker"]
+        user_id=test_taker_1.id,
+        roles=test_taker_1.roles
     )
     app.dependency_overrides[get_db_session] = _get_override_db_session()
     app.dependency_overrides[get_settings] = _get_override_settings()
@@ -58,7 +63,13 @@ def app_dependency_overrides_data() -> FastAPI:
     )
     app.dependency_overrides[SubmissionService] = _get_override_submission_service(
         get_by_id_return=submission_1,
-        list_return=[submission_1, submission_2]
+        post_return=submission_1,
+        list_return=[
+            submission_1, submission_2, submission_3, submission_4, submission_5, submission_6
+        ],
+        list_user_exercise_return=[
+            submission_1, submission_2
+        ]
     )
     return app
 
@@ -86,7 +97,7 @@ def test_client_not_found(app_dependency_overrides_no_data: FastAPI) -> TestClie
 
 @pytest.fixture
 def test_client_no_roles(app_dependency_overrides_no_data: FastAPI) -> TestClient:
-    app.dependency_overrides[get_current_user] = _get_override_current_user(roles=[])
+    app.dependency_overrides[get_current_user] = _get_override_current_user(user_id=test_taker_1.id, roles=[])
     return TestClient(app)
 
 
@@ -102,10 +113,10 @@ def _get_override_settings(auth_enabled: bool = False) -> Callable:
     return override_settings
 
 
-def _get_override_current_user(roles: list[str]) -> Callable:
+def _get_override_current_user(user_id: UUID, roles: list[str]) -> Callable:
     async def override_get_current_user() -> User:
         return User(
-            id="testuser",
+            id=user_id,
             roles=roles
         )
 
@@ -184,12 +195,16 @@ def _get_override_primer_service(
 
 def _get_override_submission_service(
         get_by_id_return: Submission | None = None,
-        list_return: list[Submission] | None = None
+        post_return: Submission | None = None,
+        list_return: list[Submission] | None = None,
+        list_user_exercise_return: list[Submission] | None = None
 ) -> Callable:
     async def override_submission_service() -> Mock:
         submission_service = Mock()
         submission_service.get_submission_by_id.return_value = get_by_id_return
         submission_service.list_submissions.return_value = list_return
+        submission_service.add_submission.return_value = post_return
+        submission_service.get_all_submissions_for_assessment_and_user.return_value = list_user_exercise_return
         return submission_service
 
     return override_submission_service

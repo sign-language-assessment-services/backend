@@ -32,7 +32,7 @@ class JWTBearer:
         self.settings = settings
 
         if not self.settings.auth_enabled:
-            return User(id="anonymous", roles=["slas-frontend-user", "test-taker"])
+            return User(id=None, roles=["slas-frontend-user", "test-taker"])
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:

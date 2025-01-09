@@ -16,22 +16,27 @@ GET_BY_ID_ENDPOINTS = [
     f"/submissions/{str(submission_1.id)}"
 ]
 
+POST_ENDPOINTS = [
+    f"/assessments/{str(assessment_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
+]
+
 LIST_ENDPOINTS = [
     "/assessments/",
     "/exercises/",
     "/primers/",
-    "/submissions/"
+    "/submissions/",
+    f"/assessments/{str(assessment_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
 ]
 
 
-@pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + LIST_ENDPOINTS)
+@pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + POST_ENDPOINTS + LIST_ENDPOINTS)
 def test_get_200(endpoint: str, test_client: TestClient) -> None:
     response = test_client.get(endpoint)
 
     assert response.status_code == status.HTTP_200_OK
 
 
-@pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + LIST_ENDPOINTS)
+@pytest.mark.parametrize("endpoint", GET_BY_ID_ENDPOINTS + POST_ENDPOINTS + LIST_ENDPOINTS)
 def test_get_403(endpoint: str, test_client_no_roles: TestClient) -> None:
     response = test_client_no_roles.get(endpoint)
 

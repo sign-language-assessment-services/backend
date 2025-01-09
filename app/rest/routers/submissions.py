@@ -1,9 +1,8 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from starlette import status
 
 from app.authorization.auth_bearer import JWTBearer
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
@@ -61,7 +60,7 @@ async def list_assessment_exercise_submissions_for_user(
 
     submissions = submission_service.get_all_submissions_for_assessment_and_user(
         session=db_session,
-        user_id=UUID(current_user.id),
+        user_id=current_user.id,
         assessment_id=assessment_id
     )
     return [s for s in submissions if s.exercise_id == exercise_id]
@@ -88,7 +87,7 @@ async def post_submission(
     ).question_type.content.id
 
     submission = Submission(
-        user_id=UUID(current_user.id),
+        user_id=current_user.id,
         assessment_id=assessment_id,
         exercise_id=exercise_id,
         multiple_choice_id=multiple_choice_id,

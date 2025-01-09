@@ -11,6 +11,7 @@ from app.services.exercise_service import ExerciseService
 from app.services.multimedia_file_service import MultimediaFileService
 from app.services.object_storage_client import ObjectStorageClient
 from app.services.primer_service import PrimerService
+from app.services.submission_service import SubmissionService
 
 
 @pytest.fixture
@@ -74,6 +75,11 @@ def multimedia_file_service(settings: Mock) -> MultimediaFileService:
 @pytest.fixture
 def primer_service(settings: Mock) -> PrimerService:
     yield PrimerService(settings)
+
+
+@pytest.fixture
+def submission_service(settings: Mock) -> SubmissionService:
+    yield SubmissionService(settings)
 
 
 @pytest.fixture
