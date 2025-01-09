@@ -3,7 +3,6 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.core.models.choice import Choice
 from app.core.models.multiple_choice import MultipleChoice
 from app.database.tables.multiple_choices import DbMultipleChoice
 from app.mappers.multiple_choice_mapper import multiple_choice_to_db, multiple_choice_to_domain
@@ -35,15 +34,3 @@ def update_multiple_choice(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 def delete_multiple_choice(session: Session, _id: UUID) -> None:
     delete_entry(session, DbMultipleChoice, _id)
-
-
-def append_choice(session: Session, multiple_choice: MultipleChoice, choice: Choice) -> None:
-    multiple_choice.choices.append(choice)
-    session.add(multiple_choice)
-    session.commit()
-
-
-def append_choices(session: Session, multiple_choice: MultipleChoice, choices: list[Choice]) -> None:
-    multiple_choice.choices.extend(choices)
-    session.add(multiple_choice)
-    session.commit()
