@@ -1,6 +1,7 @@
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from app.core.models.submission import Submission
@@ -38,6 +39,39 @@ def list_assessment_submissions_for_user(session: Session, user_id: UUID, assess
         DbSubmission.user_id: user_id
     }
     result = get_all(session, DbSubmission, filter_by=filter_conditions)
+    return [submission_to_domain(r) for r in result]
+
+
+def list_latest_assessment_submissions_for_user(
+        session: Session,
+        user_id: UUID,
+        assessment_id: UUID
+) -> list[Submission]:
+    subquery = (
+        select(
+            DbSubmission.exercise_id,
+            func.max(DbSubmission.created_at).label("max_created_at")
+        )
+        .where(
+            and_(
+                DbSubmission.assessment_id == assessment_id,
+                DbSubmission.user_id == user_id
+            )
+        )
+        .group_by(DbSubmission.exercise_id)
+    ).subquery("latest_submissions")
+
+    query = (
+        select(DbSubmission)
+        .join(
+            subquery,
+            and_(
+                DbSubmission.exercise_id == subquery.c.exercise_id,
+                DbSubmission.created_at == subquery.c.max_created_at
+            )
+        )
+    )
+    result = session.execute(query).unique().scalars().all()
     return [submission_to_domain(r) for r in result]
 
 

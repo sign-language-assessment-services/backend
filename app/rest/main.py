@@ -6,7 +6,9 @@ from fastapi.responses import ORJSONResponse
 from app.database.orm import import_tables, run_migrations
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
-from app.rest.routers import assessments, exercises, object_storage, primers, root, submissions
+from app.rest.routers import (
+    assessments, exercises, object_storage, primers, root, scores, submissions
+)
 
 
 @asynccontextmanager
@@ -41,4 +43,5 @@ def create_app() -> FastAPI:
     app.include_router(object_storage.router)
     app.include_router(primers.router)
     app.include_router(submissions.router)
+    app.include_router(scores.router)
     return app

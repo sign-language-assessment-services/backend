@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.core.models.submission import Submission
 from app.repositories.submissions import (
-    add_submission, get_submission, list_assessment_submissions_for_user, list_submissions
+    add_submission, get_submission, list_assessment_submissions_for_user,
+    list_latest_assessment_submissions_for_user, list_submissions
 )
 from app.settings import get_settings
 
@@ -35,6 +36,18 @@ class SubmissionService:
             assessment_id: UUID
     ) -> list[Submission]:
         return list_assessment_submissions_for_user(
+            session=session,
+            user_id=user_id,
+            assessment_id=assessment_id
+        )
+
+    @staticmethod
+    def get_latest_submissions_for_assessment_and_user(
+            session: Session,
+            user_id: UUID,
+            assessment_id: UUID,
+    ) -> list[Submission]:
+        return list_latest_assessment_submissions_for_user(
             session=session,
             user_id=user_id,
             assessment_id=assessment_id

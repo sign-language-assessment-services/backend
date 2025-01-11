@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy.orm import Session
@@ -7,7 +8,8 @@ from app.core.models.submission import Submission
 from app.database.tables.submissions import DbSubmission
 from app.repositories.submissions import (
     add_submission, delete_submission, get_submission, list_assessment_submissions_for_user,
-    list_submissions, list_submissions_for_user, update_submission
+    list_latest_assessment_submissions_for_user, list_submissions, list_submissions_for_user,
+    update_submission
 )
 from tests.database.data_inserts import (
     insert_assessment, insert_bucket_object, insert_exercise, insert_multiple_choice,
@@ -22,7 +24,7 @@ def test_add_submission(db_session: Session) -> None:
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
     assessment_id = insert_assessment(db_session).get("id")
     submission = Submission(
-        user_id=str(uuid4()),
+        user_id=uuid4(),
         assessment_id=assessment_id,
         exercise_id=exercise_id,
         multiple_choice_id=multiple_choice_id,
@@ -154,13 +156,13 @@ def test_list_submissions_for_user(db_session: Session) -> None:
     multiple_choice_id = insert_multiple_choice(db_session).get("id")
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
     assessment_id = insert_assessment(db_session).get("id")
-    user_1, user_2= uuid4(), uuid4()
+    user_id_1, user_id_2 = uuid4(), uuid4()
     for i in range(100):
-        user = user_1 if i % 2 else user_2
-        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], str(user))
+        user_id = user_id_1 if i % 2 else user_id_2
+        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], user_id)
 
-    result_1 = list_submissions_for_user(db_session, user_1)
-    result_2 = list_submissions_for_user(db_session, user_2)
+    result_1 = list_submissions_for_user(db_session, user_id_1)
+    result_2 = list_submissions_for_user(db_session, user_id_2)
 
     assert len(result_1) == 50
     assert len(result_2) == 50
@@ -173,19 +175,47 @@ def test_list_assessment_submissions_for_user(db_session: Session) -> None:
     exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
     assessment_id_1 = insert_assessment(db_session).get("id")
     assessment_id_2 = insert_assessment(db_session).get("id")
-    user_1, user_2= uuid4(), uuid4()
+    user_id_1, user_id_2 = uuid4(), uuid4()
     for i in range(100):
-        user = user_1 if i % 2 else user_2
+        user_id = user_id_1 if i % 2 else user_id_2
         assessment_id = assessment_id_1 if i < 50 else assessment_id_2
-        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], str(user))
+        insert_submission(db_session, assessment_id, exercise_id, multiple_choice_id, [], user_id)
 
-    result_1 = list_assessment_submissions_for_user(db_session, user_1, assessment_id_1)
-    result_2 = list_assessment_submissions_for_user(db_session, user_1, assessment_id_2)
-    result_3 = list_assessment_submissions_for_user(db_session, user_2, assessment_id_1)
-    result_4 = list_assessment_submissions_for_user(db_session, user_2, assessment_id_2)
+    result_1 = list_assessment_submissions_for_user(db_session, user_id_1, assessment_id_1)
+    result_2 = list_assessment_submissions_for_user(db_session, user_id_1, assessment_id_2)
+    result_3 = list_assessment_submissions_for_user(db_session, user_id_2, assessment_id_1)
+    result_4 = list_assessment_submissions_for_user(db_session, user_id_2, assessment_id_2)
 
     assert len(result_1) == 25
     assert len(result_2) == 25
     assert len(result_3) == 25
     assert len(result_4) == 25
+    assert table_count(db_session, DbSubmission) == 100
+
+
+def test_list_latest_assessment_submissions_for_user(db_session: Session) -> None:
+    video_id = insert_bucket_object(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    exercise_id = insert_exercise(db_session, video_id, multiple_choice_id).get("id")
+    assessment_id = insert_assessment(db_session).get("id")
+    user_1, user_2= uuid4(), uuid4()
+    for i in range(100):
+        user_id = user_1 if i % 2 else user_2
+        insert_submission(
+            session=db_session,
+            assessment_id=assessment_id,
+            exercise_id=exercise_id,
+            multiple_choice_id=multiple_choice_id,
+            choices=[],
+            user_id=user_id,
+            created_at=datetime(1900 + i, 1, 1)
+        )
+
+    result_1 = list_latest_assessment_submissions_for_user(db_session, user_1, assessment_id)
+    result_2 = list_latest_assessment_submissions_for_user(db_session, user_2, assessment_id)
+
+    assert len(result_1) == 1
+    assert result_1[0].created_at.year == 1999
+    assert len(result_2) == 1
+    assert result_2[0].created_at.year == 1998
     assert table_count(db_session, DbSubmission) == 100
