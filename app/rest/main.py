@@ -34,8 +34,6 @@ def create_app() -> FastAPI:
             "email": "tbd@not-yet-available.zzz"
         },
         default_response_class=ORJSONResponse,
-        # pylint: disable=fixme
-        # TODO: exceptions are not printed to console if lifespan is activated
         lifespan=lifespan
     )
     import_tables()
