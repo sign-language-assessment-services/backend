@@ -2,9 +2,11 @@ from pathlib import Path
 
 import alembic.command
 import alembic.config
+import pytest
 from alembic import script
 from alembic.runtime.migration import MigrationContext
 from dotenv import load_dotenv
+from sqlalchemy.exc import OperationalError
 
 from app.database.orm import get_db_engine
 from app.settings import get_settings
@@ -24,8 +26,11 @@ def test_database_has_the_latest_migration_applied():
     load_dotenv(dotenv_path=root_path / ".env")
     engine = get_db_engine(settings=get_settings())
 
-    with engine.connect() as connection:
-        db_migrations_context = MigrationContext.configure(connection=connection)
-        current_revision = db_migrations_context.get_current_revision()
+    try:
+        with engine.connect() as connection:
+            db_migrations_context = MigrationContext.configure(connection=connection)
+            current_revision = db_migrations_context.get_current_revision()
+    except OperationalError:
+        pytest.skip("Database is not available")
 
     assert current_revision == migrations_folder.get_current_head()
