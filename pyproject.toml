@@ -6,7 +6,7 @@ authors = ["Danny Rehl", "Dustin Heckmann"]
 license = "GPLv3"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 fastapi = {version = "^0.115", extras = ["all"]}
 minio = "^7.2"
 psycopg2-binary = "^2.9"
