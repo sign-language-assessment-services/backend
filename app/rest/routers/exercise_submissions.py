@@ -44,22 +44,6 @@ async def list_submissions(
     return submission_service.list_submissions(session=db_session)
 
 
-@router.get("/exercise_submissions/{exercise_submission_id}", response_model=ExerciseSubmissionResponse)
-async def temporary_endpoint(
-        exercise_submission_id: UUID,
-        submission_service: Annotated[ExerciseSubmissionService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
-) -> ExerciseSubmission:
-    if "slas-frontend-user" not in current_user.roles:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
-
-    submission = submission_service.get_submission_by_id(db_session, exercise_submission_id)
-    if not submission:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
-    return submission
-
-
 @router.post(
     "/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
     response_model=ExerciseSubmissionResponse

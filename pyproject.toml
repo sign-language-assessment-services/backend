@@ -7,29 +7,25 @@ license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-alembic = "^1.13.3"
 fastapi = {version = "^0.115", extras = ["all"]}
-minio = "^7.2"
-psycopg2-binary = "^2.9"
-pydantic-settings = "^2.6"
 pyjwt = {version = "^2.8", extras = ["crypto"]}
-python-multipart = "^0.0, >=0.0.18"
+minio = "^7.1"
+python-multipart = "^0.0"
+pydantic-settings = "^2.0"
 sqlalchemy = "^2.0"
-anyio = "4.6.2.post1"  # https://github.com/agronholm/anyio/issues/840
+psycopg2-binary = "^2.9"
+requests = "^2.32"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7"
 coverage = "^7.3"
-freezegun = "^1.2"
-gevent = "^24.11"
-isort = "^5.13"
+isort = "^5.12"
 mypy = "^1.5"
-pylint = "^3.3"
-pytest = "^8.3"
+pylint = "^2.17"
+pytest = "^7.4"
 pytest-asyncio = "^0.21"
-pytz = "^2024.2"
-ruff = "^0.8"
-testcontainers = "^4.8.1"
+gevent = "^23.9"
+freezegun = "^1.2"
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
@@ -39,8 +35,6 @@ concurrency = ["thread", "gevent"]
 
 [tool.isort]
 line_length = 100
-order_by_type = false
-multi_line_output=5
 
 [[tool.mypy.overrides]]
 module = "fastapi_auth_middleware"
@@ -70,14 +64,11 @@ good-names= """
 
 [tool.pylint."MESSAGES CONTROL"]
 disable= """
-    fixme,
     missing-class-docstring,
     missing-function-docstring,
     missing-module-docstring,
     too-few-public-methods,
     too-many-instance-attributes,
-    too-many-arguments,
-    too-many-positional-arguments,
 """
 
 [tool.pylint.format]
@@ -85,15 +76,6 @@ max-line-length = 120
 
 [tool.pylint.master]
 extension-pkg-whitelist = "pydantic"
-
-[tool.pylint.similarities]
-min-similarity-lines = 10
-
-[tool.pylint.typecheck]
-# sessionmaker: https://github.com/pylint-dev/pylint/issues/7090
-ignored-classes = """
-    sqlalchemy.orm.session.sessionmaker,
-"""
 
 [tool.pytest.ini_options]
 addopts = [
@@ -104,9 +86,6 @@ addopts = [
 ]
 console_output_style = "count"
 junit_family = "xunit2"
-
-[tool.pytest_env]
-SLPORTAL_ENV = "testing"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

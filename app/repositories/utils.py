@@ -14,11 +14,6 @@ def add_entry(session: Session, db: T) -> None:
     session.commit()
 
 
-def add_entries(session: Session, dbs: Iterable[T]) -> None:
-    session.add_all(dbs)
-    session.commit()
-
-
 def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
     return session.execute(select(_class).filter_by(id=_id)).unique().scalar_one_or_none()
 

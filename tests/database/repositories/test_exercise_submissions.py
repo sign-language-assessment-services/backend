@@ -1,14 +1,17 @@
 from uuid import uuid4
 
+import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.exercise_submissions import DbExerciseSubmission
 from app.repositories.exercise_submissions import (
     add_exercise_submission, delete_exercise_submission, get_exercise_submission,
     list_exercise_submissions, list_exercise_submissions_for_user, update_exercise_submission
 )
+from tests.data.models.users import test_taker_1, test_taker_2
 from tests.database.data_inserts import (
     insert_assessment, insert_assessment_submission, insert_bucket_object,
     insert_exercise, insert_exercise_submission, insert_multiple_choice
@@ -215,6 +218,11 @@ def test_delete_one_of_two_exercise_submissions(db_session: Session) -> None:
     assert table_count(db_session, DbExerciseSubmission) == 1
 
 
+def test_delete_not_existing_exercise_submission_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_exercise_submission(session=db_session, _id=uuid4())
+
+
 def test_list_exercise_submissions_for_user(db_session: Session) -> None:
     video_id = insert_bucket_object(session=db_session).get("id")
     multiple_choice_id = insert_multiple_choice(session=db_session).get("id")
@@ -228,7 +236,7 @@ def test_list_exercise_submissions_for_user(db_session: Session) -> None:
         session=db_session,
         assessment_id=assessment_id
     ).get("id")
-    user_id_1, user_id_2 = uuid4(), uuid4()
+    user_id_1, user_id_2 = test_taker_1.id, test_taker_2.id
     for i in range(100):
         user_id = user_id_1 if i % 2 else user_id_2
         insert_exercise_submission(

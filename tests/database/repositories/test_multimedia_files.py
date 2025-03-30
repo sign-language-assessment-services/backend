@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.bucket_objects import DbBucketObjects
 from app.repositories.multimedia_files import (
     add_multimedia_file, delete_multimedia_file, get_multimedia_file, list_multimedia_files,
@@ -108,3 +109,8 @@ def test_delete_one_of_two_multimedia_files(db_session: Session) -> None:
     result = db_session.get(DbBucketObjects, video_id)
     assert result is None
     assert table_count(db_session, DbBucketObjects) == 1
+
+
+def test_delete_not_existing_multimedia_file_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_multimedia_file(session=db_session, _id=uuid4())

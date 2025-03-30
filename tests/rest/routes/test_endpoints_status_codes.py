@@ -67,3 +67,19 @@ def test_post_exercise_submission_403(test_client_no_roles: TestClient) -> None:
     response = test_client_no_roles.post(endpoint, json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_post_assessment_submission_200(test_client: TestClient) -> None:
+    endpoint = f"/assessments/{str(assessment_1.id)}/submissions/"
+
+    response = test_client.post(endpoint)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_post_assessment_submission_403(test_client_no_roles: TestClient) -> None:
+    endpoint = f"/assessments/{str(assessment_1.id)}/submissions/"
+
+    response = test_client_no_roles.post(endpoint)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

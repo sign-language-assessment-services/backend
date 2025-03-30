@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.choice import Choice
@@ -10,6 +11,7 @@ from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.exercises import DbExercise
 from app.database.tables.tasks import DbTask
 from app.repositories.exercises import (
@@ -186,3 +188,8 @@ def test_delete_one_of_two_exercises(db_session: Session) -> None:
     assert result is None
     assert table_count(db_session, DbExercise) == 1
     assert table_count(db_session, DbTask) == 1
+
+
+def test_delete_not_existing_exercise_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_exercise(session=db_session, _id=uuid4())

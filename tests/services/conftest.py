@@ -7,6 +7,7 @@ from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.services.assessment_service import AssessmentService
+from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.exercise_service import ExerciseService
 from app.services.exercise_submission_service import ExerciseSubmissionService
 from app.services.multimedia_file_service import MultimediaFileService
@@ -80,6 +81,11 @@ def primer_service(settings: Mock) -> PrimerService:
 @pytest.fixture
 def exercise_submission_service(settings: Mock) -> ExerciseSubmissionService:
     return ExerciseSubmissionService(settings)
+
+
+@pytest.fixture
+def assessment_submission_service(settings: Mock) -> AssessmentSubmissionService:
+    return AssessmentSubmissionService(settings)
 
 
 @pytest.fixture

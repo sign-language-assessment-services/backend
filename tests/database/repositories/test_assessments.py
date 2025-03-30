@@ -13,6 +13,7 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.primer import Primer
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.exercises import DbExercise
 from app.database.tables.primers import DbPrimer
@@ -208,3 +209,8 @@ def test_delete_one_of_two_assessments(db_session: Session) -> None:
     result = db_session.get(DbAssessment, assessment_id)
     assert result is None
     assert table_count(db_session, DbAssessment) == 1
+
+
+def test_delete_not_existing_assessment_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_assessment(session=db_session, _id=uuid4())

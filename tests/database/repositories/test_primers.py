@@ -1,10 +1,12 @@
 from uuid import uuid4
 
+import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.primer import Primer
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
 from app.repositories.primers import (
@@ -115,3 +117,8 @@ def test_delete_one_of_two_primers(db_session: Session) -> None:
     assert result is None
     assert table_count(db_session, DbPrimer) == 1
     assert table_count(db_session, DbTask) == 1
+
+
+def test_delete_not_existing_primer_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_primer(session=db_session, _id=uuid4())

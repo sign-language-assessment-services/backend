@@ -1,6 +1,5 @@
 from typing import Callable
 from unittest.mock import Mock
-from uuid import UUID
 
 import pytest
 from fastapi import FastAPI
@@ -39,10 +38,7 @@ from tests.data.models.users import test_taker_1
 
 @pytest.fixture
 def app_dependency_overrides_data() -> FastAPI:
-    app.dependency_overrides[get_current_user] = _get_override_current_user(
-        user_id=test_taker_1.id,
-        roles=test_taker_1.roles
-    )
+    app.dependency_overrides[get_current_user] = _get_override_current_user()
     app.dependency_overrides[get_db_session] = _get_override_db_session()
     app.dependency_overrides[get_settings] = _get_override_settings()
 
@@ -104,7 +100,7 @@ def test_client_not_found(app_dependency_overrides_no_data: FastAPI) -> TestClie
 
 @pytest.fixture
 def test_client_no_roles(app_dependency_overrides_no_data: FastAPI) -> TestClient:
-    app.dependency_overrides[get_current_user] = _get_override_current_user(user_id=test_taker_1.id, roles=[])
+    app.dependency_overrides[get_current_user] = _get_override_current_user(User(id=test_taker_1.id, roles=[]))
     return TestClient(app)
 
 
@@ -120,12 +116,9 @@ def _get_override_settings(auth_enabled: bool = False) -> Callable:
     return override_settings
 
 
-def _get_override_current_user(user_id: UUID, roles: list[str]) -> Callable:
+def _get_override_current_user(user: User = test_taker_1) -> Callable:
     async def override_get_current_user() -> User:
-        return User(
-            id=user_id,
-            roles=roles
-        )
+        return user
 
     return override_get_current_user
 

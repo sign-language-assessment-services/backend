@@ -1,11 +1,13 @@
 from uuid import uuid4
 
+import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.choice import Choice
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
+from app.database.exceptions import EntryNotFoundError
 from app.database.tables.choices import DbChoice
 from app.repositories.choices import (
     add_choice, delete_choice, get_choice, list_choices, update_choice
@@ -107,3 +109,8 @@ def test_delete_one_of_two_choices(db_session: Session) -> None:
     result = db_session.get(DbChoice, choice_id)
     assert result is None
     assert table_count(db_session, DbChoice) == 1
+
+
+def test_delete_not_existing_choice_should_fail(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        delete_choice(session=db_session, _id=uuid4())
