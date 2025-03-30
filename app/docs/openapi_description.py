@@ -19,10 +19,10 @@ video that tells a story before questions. The format of the questions
 and answers (text, images, videos, etc.) is not important for the
 assessment itself.
 
-#### Submission
+#### ExerciseSubmission
 A submission is the result of an assessment after the learner or person
 being assessed has gone through an assessment and given the choice of
-possible answers. Submission therefore contains the answers to a
+possible answers. ExerciseSubmission therefore contains the answers to a
 particular assessment in a structured form so that it can then be
 scored or evaluated.
 

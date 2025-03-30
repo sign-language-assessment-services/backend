@@ -1,11 +1,12 @@
 from unittest.mock import Mock, patch
 
-from app.services.primer_service import PrimerService
+from app.services import primer_service as primer_service_module
+from app.services.primer_service import get_primer, list_primers, PrimerService
 from tests.data.models.primers import primer_1, primer_2
 
 
-@patch(
-    "app.services.primer_service.get_primer",
+@patch.object(
+    primer_service_module, get_primer.__name__,
     return_value=primer_1
 )
 def test_get_primer_by_id(mocked_get_primer, primer_service: PrimerService) -> None:
@@ -19,8 +20,8 @@ def test_get_primer_by_id(mocked_get_primer, primer_service: PrimerService) -> N
     mocked_get_primer.assert_called_once_with(session=mocked_session, _id=primer_id)
 
 
-@patch(
-    "app.services.primer_service.list_primers",
+@patch.object(
+    primer_service_module, list_primers.__name__,
     return_value=[primer_1, primer_2]
 )
 def test_list_primers(mocked_list_primer, primer_service: PrimerService) -> None:

@@ -1,11 +1,12 @@
 from unittest.mock import Mock, patch
 
-from app.services.multimedia_file_service import MultimediaFileService
+from app.services import multimedia_file_service as multimedia_file_service_module
+from app.services.multimedia_file_service import get_multimedia_file, MultimediaFileService
 from tests.data.models.multimedia_files import multimedia_file_choice_1
 
 
-@patch(
-    "app.services.multimedia_file_service.get_multimedia_file",
+@patch.object(
+    multimedia_file_service_module, get_multimedia_file.__name__,
     return_value=multimedia_file_choice_1
 )
 def test_get_multimedia_file_by_id(mocked_get_multimedia_file, multimedia_file_service: MultimediaFileService) -> None:

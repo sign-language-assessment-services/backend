@@ -16,9 +16,6 @@ class DbMultipleChoice(DbBase):
         back_populates="multiple_choices",
         viewonly=True
     )
-    submissions: Mapped[list["DbSubmission"]] = relationship(
-        back_populates="multiple_choice"
-    )
     associations: Mapped[list["DbMultipleChoicesChoices"]] = relationship(
         back_populates="multiple_choice",
         passive_deletes=True

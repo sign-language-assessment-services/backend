@@ -17,7 +17,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "app.rest.main:create_app",
         host="0.0.0.0",  # nosec B104
-        port=8001,
+        port=8000,
         factory=True,
         log_level="trace"
     )

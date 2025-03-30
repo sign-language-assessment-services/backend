@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -6,12 +6,11 @@ from pydantic import BaseModel, Field
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 
 
-class Submission(BaseModel):
+class ExerciseSubmission(BaseModel):
     id: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user_id: UUID
-    assessment_id: UUID
-    exercise_id: UUID
-    multiple_choice_id: UUID
     answer: MultipleChoiceAnswer
+    assessment_submission_id: UUID
+    exercise_id: UUID

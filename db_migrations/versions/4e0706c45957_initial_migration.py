@@ -1,18 +1,18 @@
-"""initial migration
+"""Initial migration
 
-Revision ID: 95430add6996
+Revision ID: 4e0706c45957
 Revises: 
-Create Date: 2024-12-18 14:23:39.932122+00:00
+Create Date: 2025-03-24 16:28:50.879748+00:00
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects.postgresql import ARRAY
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "95430add6996"
+revision: str = "4e0706c45957"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,6 +38,16 @@ def upgrade() -> None:
             "name",
             sa.Unicode(length=100),
             nullable=False
+        ),
+        sa.Column(
+            "deadline",
+            sa.TIMESTAMP(timezone=True),
+            nullable=True
+        ),
+        sa.Column(
+            "max_attempts",
+            sa.Integer(),
+            nullable=True
         ),
 
         sa.PrimaryKeyConstraint("id")
@@ -122,7 +132,47 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        "assessments_tasks",
+        "assessment_submissions",
+
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False
+        ),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False
+        ),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False
+        ),
+        sa.Column(
+            "score",
+            sa.Float(),
+            nullable=True
+        ),
+        sa.Column(
+            "finished_at",
+            sa.TIMESTAMP(timezone=True),
+            nullable=True
+        ),
+        sa.Column(
+            "assessment_id",
+            sa.Uuid(),
+            nullable=False
+        ),
+
+        sa.ForeignKeyConstraint(["assessment_id"], ["assessments.id"]),
+        sa.PrimaryKeyConstraint("id")
+    )
+
+    op.create_table(
+        "DbAssessmentsTasks",
 
         sa.Column(
             "position",
@@ -221,6 +271,48 @@ def upgrade() -> None:
     )
 
     op.create_table(
+        "exercise_submissions",
+
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False
+        ),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False
+        ),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False
+        ),
+        sa.Column(
+            "choices",
+            postgresql.ARRAY(sa.Uuid(), dimensions=1),
+            nullable=True
+        ),
+        sa.Column(
+            "assessment_submission_id",
+            sa.Uuid(),
+            nullable=False
+        ),
+        sa.Column(
+            "exercise_id",
+            sa.Uuid(),
+            nullable=False
+        ),
+
+        sa.ForeignKeyConstraint(["assessment_submission_id"], ["assessment_submissions.id"]),
+        sa.ForeignKeyConstraint(["exercise_id"], ["exercises.id"]),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("exercise_id", "assessment_submission_id", "user_id")
+    )
+
+    op.create_table(
         "multiple_choices_choices",
 
         sa.Column(
@@ -250,60 +342,15 @@ def upgrade() -> None:
         sa.UniqueConstraint("multiple_choice_id", "position")
     )
 
-    op.create_table(
-        "submissions",
-
-        sa.Column(
-            "id",
-            sa.Uuid(),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False
-        ),
-        sa.Column(
-            "created_at",
-            sa.TIMESTAMP(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False
-        ),
-        sa.Column(
-            "user_id",
-            sa.Uuid(),
-            nullable=False
-        ),
-        sa.Column(
-            "assessment_id",
-            sa.Uuid(),
-            nullable=False
-        ),
-        sa.Column(
-            "exercise_id",
-            sa.Uuid(),
-            nullable=False
-        ),
-        sa.Column(
-            "multiple_choice_id",
-            sa.Uuid(),
-            nullable=False
-        ),
-        sa.Column(
-            "choices",
-            ARRAY(sa.Uuid(), dimensions=1),
-            nullable=True
-        ),
-        sa.ForeignKeyConstraint(["assessment_id"], ["assessments.id"]),
-        sa.ForeignKeyConstraint(["exercise_id"], ["exercises.id"]),
-        sa.ForeignKeyConstraint(["multiple_choice_id"], ["multiple_choices.id"]),
-        sa.PrimaryKeyConstraint("id")
-    )
-
 
 def downgrade() -> None:
-    op.drop_table("submissions")
     op.drop_table("multiple_choices_choices")
+    op.drop_table("exercise_submissions")
     op.drop_table("primers")
     op.drop_table("exercises")
     op.drop_table("choices")
-    op.drop_table("assessments_tasks")
+    op.drop_table("DbAssessmentsTasks")
+    op.drop_table("assessment_submissions")
     op.drop_table("tasks")
     op.drop_table("multiple_choices")
     op.drop_table("bucket_objects")

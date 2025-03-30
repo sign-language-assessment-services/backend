@@ -5,25 +5,24 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
+from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
-from app.core.models.submission import Submission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
-from app.rest.responses.submissions import SubmissionListResponse, SubmissionResponse
-from app.services.exercise_service import ExerciseService
-from app.services.submission_service import SubmissionService
+from app.rest.responses.exercise_submissions import ExerciseSubmissionListResponse, ExerciseSubmissionResponse
+from app.services.exercise_submission_service import ExerciseSubmissionService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
-@router.get("/submissions/{submission_id}", response_model=SubmissionResponse)
+@router.get("/exercise_submissions/{submission_id}", response_model=ExerciseSubmissionResponse)
 async def get_submission(
         submission_id: UUID,
-        submission_service: Annotated[SubmissionService, Depends()],
+        submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> Submission:
+) -> ExerciseSubmission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
@@ -33,65 +32,54 @@ async def get_submission(
     return submission
 
 
-@router.get("/submissions/", response_model=list[SubmissionListResponse])
+@router.get("/exercise_submissions/", response_model=list[ExerciseSubmissionListResponse])
 async def list_submissions(
-        submission_service: Annotated[SubmissionService, Depends()],
+        submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> list[Submission]:
+) -> list[ExerciseSubmission]:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
+
     return submission_service.list_submissions(session=db_session)
 
 
-@router.get(
-    "/assessments/{assessment_id}/exercises/{exercise_id}/submissions/",
-    response_model=list[SubmissionListResponse],
-)
-async def list_assessment_exercise_submissions_for_user(
-        assessment_id: UUID,
-        exercise_id: UUID,
-        submission_service: Annotated[SubmissionService, Depends()],
+@router.get("/exercise_submissions/{exercise_submission_id}", response_model=ExerciseSubmissionResponse)
+async def temporary_endpoint(
+        exercise_submission_id: UUID,
+        submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session),
-) -> list[Submission]:
+        db_session: Session = Depends(get_db_session)
+) -> ExerciseSubmission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    submissions = submission_service.get_all_submissions_for_assessment_and_user(
-        session=db_session,
-        user_id=current_user.id,
-        assessment_id=assessment_id
-    )
-    return [s for s in submissions if s.exercise_id == exercise_id]
+    submission = submission_service.get_submission_by_id(db_session, exercise_submission_id)
+    if not submission:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    return submission
 
 
 @router.post(
-    "/assessments/{assessment_id}/exercises/{exercise_id}/submissions/",
-    response_model=SubmissionResponse,
+    "/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
+    response_model=ExerciseSubmissionResponse
 )
 async def post_submission(
-        assessment_id: UUID,
+        assessment_submission_id: UUID,
         exercise_id: UUID,
         answers: MultipleChoiceAnswer,
-        submission_service: Annotated[SubmissionService, Depends()],
-        exercise_service: Annotated[ExerciseService, Depends()],
+        submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session),
-):
+) -> ExerciseSubmission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
-    multiple_choice_id = exercise_service.get_exercise_by_id(
-        session=db_session, exercise_id=exercise_id
-    ).question_type.content.id
-
-    submission = Submission(
+    submission = ExerciseSubmission(
         user_id=current_user.id,
-        assessment_id=assessment_id,
-        exercise_id=exercise_id,
-        multiple_choice_id=multiple_choice_id,
-        answer=answers
+        answer=answers,
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id
     )
     submission_service.add_submission(session=db_session, submission=submission)
     return submission

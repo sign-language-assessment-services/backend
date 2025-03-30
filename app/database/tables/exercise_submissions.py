@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.tables.base import DbBase
 
 
-class DbSubmission(DbBase):
-    __tablename__ = "submissions"
+class DbExerciseSubmission(DbBase):
+    __tablename__ = "exercise_submissions"
 
     # COLUMNS
     # ------------------------------------------------------------------------
@@ -23,28 +23,21 @@ class DbSubmission(DbBase):
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
-    assessment_id: Mapped[UUID] = mapped_column(
-        ForeignKey("assessments.id"),
+    assessment_submission_id: Mapped[UUID] = mapped_column(
+        ForeignKey("assessment_submissions.id"),
         nullable=False
     )
     exercise_id: Mapped[UUID] = mapped_column(
         ForeignKey("exercises.id"),
         nullable=False
     )
-    multiple_choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("multiple_choices.id"),
-        nullable=False
-    )
 
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
-    assessment: Mapped["DbAssessment"] = relationship(
-        back_populates="submissions"
+    assessment_submission: Mapped["DbAssessmentSubmission"] = relationship(
+        back_populates="exercise_submissions"
     )
     exercise: Mapped["DbExercise"] = relationship(
-        back_populates="submissions"
+        back_populates="exercise_submissions"
     )
-    # adept join-inheritance table like primer|exercises for new question types
-    multiple_choice: Mapped["DbMultipleChoice"] = relationship(
-        back_populates="submissions"
-    )
+

@@ -20,7 +20,7 @@ from tests.database.utils import table_count
 
 
 def test_add_multiple_choice(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session).get("id")
+    video_id = insert_bucket_object(session=db_session).get("id")
     choice_content = MultimediaFile(
         id=video_id,
         location=MinioLocation(bucket="1", key="test.mpg"),
@@ -31,10 +31,11 @@ def test_add_multiple_choice(db_session: Session) -> None:
     choice_3 = Choice(content=choice_content, is_correct=False)
     multiple_choice = MultipleChoice(choices=[choice_1, choice_2, choice_3])
 
-    add_multiple_choice(db_session, multiple_choice)
+    add_multiple_choice(session=db_session, multiple_choice=multiple_choice)
 
     result = db_session.get(DbMultipleChoice, multiple_choice.id)
     assert result.id == multiple_choice.id
+    assert result.created_at == multiple_choice.created_at
     for index, choice in enumerate([choice_1, choice_2, choice_3]):
         assert result.choices[index].id == choice.id
         assert result.associations[index].choice_id == choice.id
@@ -47,22 +48,23 @@ def test_add_multiple_choice(db_session: Session) -> None:
 
 
 def test_get_multiple_choice_by_id(db_session: Session) -> None:
-    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    multiple_choice = insert_multiple_choice(session=db_session)
 
-    result = get_multiple_choice(db_session, multiple_choice_id)
+    result = get_multiple_choice(session=db_session, _id=multiple_choice.get("id"))
 
-    assert result.id == multiple_choice_id
+    assert result.id == multiple_choice.get("id")
+    assert result.created_at == multiple_choice.get("created_at")
     assert table_count(db_session, DbMultipleChoice) == 1
 
 
 def test_get_multiple_choice_by_id_returns_none_if_not_found(db_session: Session) -> None:
-    result = get_multiple_choice(db_session, uuid4())
+    result = get_multiple_choice(session=db_session, _id=uuid4())
 
     assert result is None
 
 
 def test_list_no_multiple_choices(db_session: Session) -> None:
-    result = list_multiple_choices(db_session)
+    result = list_multiple_choices(session=db_session)
 
     assert result == []
     assert table_count(db_session, DbMultipleChoice) == 0
@@ -70,29 +72,34 @@ def test_list_no_multiple_choices(db_session: Session) -> None:
 
 def test_list_multiple_multiple_choices(db_session: Session) -> None:
     for _ in range(100):
-        insert_multiple_choice(db_session)
+        insert_multiple_choice(session=db_session)
 
-    result = list_multiple_choices(db_session)
+    result = list_multiple_choices(session=db_session)
 
     assert len(result) == 100
     assert table_count(db_session, DbMultipleChoice) == 100
 
 
 def test_update_multiple_choice(db_session: Session) -> None:
-    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    multiple_choice = insert_multiple_choice(session=db_session)
 
     updated_time = datetime(2001, 1, 1, 1, tzinfo=UTC)
-    update_multiple_choice(db_session, multiple_choice_id, **{"created_at": updated_time})
+    update_multiple_choice(
+        session=db_session,
+        _id=multiple_choice.get("id"),
+        **{"created_at": updated_time}
+    )
 
-    result = db_session.get(DbMultipleChoice, multiple_choice_id)
+    result = db_session.get(DbMultipleChoice, multiple_choice.get("id"))
+    assert result.id == multiple_choice.get("id")
     assert result.created_at == updated_time
     assert table_count(db_session, DbMultipleChoice) == 1
 
 
 def test_delete_multiple_choice(db_session: Session) -> None:
-    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(session=db_session).get("id")
 
-    delete_multiple_choice(db_session, multiple_choice_id)
+    delete_multiple_choice(session=db_session, _id=multiple_choice_id)
 
     result = db_session.get(DbMultipleChoice, multiple_choice_id)
     assert result is None
@@ -100,10 +107,10 @@ def test_delete_multiple_choice(db_session: Session) -> None:
 
 
 def test_delete_one_of_two_multiple_choices(db_session: Session) -> None:
-    multiple_choice_id = insert_multiple_choice(db_session).get("id")
-    insert_multiple_choice(db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(session=db_session).get("id")
+    insert_multiple_choice(session=db_session).get("id")
 
-    delete_multiple_choice(db_session, multiple_choice_id)
+    delete_multiple_choice(session=db_session, _id=multiple_choice_id)
 
     result = db_session.get(DbMultipleChoice, multiple_choice_id)
     assert result is None

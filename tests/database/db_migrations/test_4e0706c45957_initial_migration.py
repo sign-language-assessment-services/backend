@@ -8,7 +8,7 @@ def test_upgrade(migration_config: Config, migration_session: Session) -> None:
     has_no_tables_in_public_schema(db_session=migration_session)
     has_not_enum_mediatype(db_session=migration_session)
 
-    command.upgrade(migration_config, "95430add6996")
+    command.upgrade(migration_config, "4e0706c45957")
 
     has_right_alembic_version(db_session=migration_session)
     has_defined_tables(db_session=migration_session)
@@ -28,7 +28,7 @@ def test_downgrade(migration_config: Config, migration_session: Session)-> None:
 
 def test_multiple_walkings_from_base_works(migration_config: Config) -> None:
     for _ in range(3):
-        command.upgrade(migration_config, "95430add6996")
+        command.upgrade(migration_config, "4e0706c45957")
         command.downgrade(migration_config, "base")
 
 
@@ -39,16 +39,16 @@ def has_no_tables_in_public_schema(db_session: Session) -> None:
 
 
 def has_right_alembic_version(db_session: Session) -> None:
-    stmt = "SELECT * FROM alembic_version WHERE version_num = '95430add6996'"
+    stmt = "SELECT * FROM alembic_version WHERE version_num = '4e0706c45957'"
     result = db_session.execute(text(stmt))
-    assert result.scalar_one() == "95430add6996"
+    assert result.scalar_one() == "4e0706c45957"
 
 
 def has_defined_tables(db_session: Session) -> None:
     expected_tables = {
-        "alembic_version", "assessments", "assessments_tasks",
+        "alembic_version", "assessments", "DbAssessmentsTasks",
         "bucket_objects", "choices", "multiple_choices_choices", "exercises",
-        "multiple_choices", "primers", "submissions", "tasks",
+        "multiple_choices", "primers", "exercise_submissions", "tasks",
     }
     stmt = "SELECT * FROM information_schema.tables"
     tables = db_session.execute(text(stmt)).fetchall()

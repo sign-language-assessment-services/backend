@@ -13,7 +13,7 @@ class DbExercise(DbTask):
     # ------------------------------------------------------------------------
     points: Mapped[int] = mapped_column(
         nullable=False,
-        default="1"
+        default=1
     )
 
     # FOREIGN_KEYS
@@ -39,7 +39,7 @@ class DbExercise(DbTask):
     multiple_choice: Mapped["DbMultipleChoice"] = relationship(
         back_populates="exercises"
     )
-    submissions: Mapped[list["DbSubmission"]] = relationship(
+    exercise_submissions: Mapped[list["DbExerciseSubmission"]] = relationship(
         back_populates="exercise"
     )
 

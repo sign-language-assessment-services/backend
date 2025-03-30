@@ -101,7 +101,8 @@ def insert_exercise(session: Session, bucket_object_id: UUID, multiple_choice_id
         "points": points,
         "id": task.get("id"),
         "bucket_object_id": bucket_object_id,
-        "multiple_choice_id": multiple_choice_id
+        "multiple_choice_id": multiple_choice_id,
+        "created_at": task.get("created_at")
     }
     session.execute(
         text(
@@ -158,7 +159,7 @@ def insert_primer(session: Session, bucket_object_id: UUID) -> DbData:
         
     primer = {
         "id": task.get("id"),
-        "created_at": datetime(2000, 1, 1, 12, tzinfo=UTC),
+        "created_at": task.get("created_at"),
         "bucket_object_id": bucket_object_id
     }
     session.execute(
@@ -192,32 +193,57 @@ def insert_task(session: Session, task_type: str) -> DbData:
     return task
 
 
-def insert_submission(
+def insert_assessment_submission(
         session: Session,
         assessment_id: UUID,
-        exercise_id: UUID,
-        multiple_choice_id: UUID,
-        choices: list[UUID],
         user_id: UUID = uuid4(),
         created_at: datetime = datetime(2000, 1, 1, 12, tzinfo=UTC),
 ) -> DbData:
-    """Insert a submission into database"""
-    submission = {
+    """Insert an assessment submission into database"""
+    assessment_submission = {
         "id": uuid4(),
         "created_at": created_at,
         "user_id": user_id,
+        "score": None,
+        "finished_at": None,
         "assessment_id": assessment_id,
-        "choices": choices,
-        "exercise_id": exercise_id,
-        "multiple_choice_id": multiple_choice_id
     }
     session.execute(
         text(
             """
-            INSERT INTO submissions(id, created_at, user_id, assessment_id, exercise_id, multiple_choice_id, choices)
-            VALUES (:id, :created_at, :user_id, :assessment_id, :exercise_id, :multiple_choice_id, :choices)
+            INSERT INTO assessment_submissions(id, created_at, user_id, score, finished_at, assessment_id)
+            VALUES (:id, :created_at, :user_id, :score, :finished_at, :assessment_id)
             """
         ),
-        submission
+        assessment_submission
     )
-    return submission
+    return assessment_submission
+
+
+def insert_exercise_submission(
+        session: Session,
+        assessment_submission_id: UUID,
+        exercise_id: UUID,
+        choices: list[UUID],
+        user_id: UUID = uuid4(),
+        created_at: datetime = datetime(2000, 1, 1, 12, tzinfo=UTC),
+) -> DbData:
+    """Insert an exercise submission into database"""
+    exercise_submission = {
+        "id": uuid4(),
+        "created_at": created_at,
+        "user_id": user_id,
+        "choices": choices,
+        "assessment_submission_id": assessment_submission_id,
+        "exercise_id": exercise_id,
+    }
+    session.execute(
+        text(
+            """
+            INSERT INTO exercise_submissions(id, created_at, user_id, choices, assessment_submission_id, exercise_id)
+            VALUES (:id, :created_at, :user_id, :choices, :assessment_submission_id, :exercise_id)
+            """
+        ),
+        exercise_submission
+    )
+    return exercise_submission

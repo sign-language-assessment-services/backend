@@ -26,5 +26,5 @@ def exercise_to_db(exercise: Exercise) -> DbExercise:
         created_at=exercise.created_at,
         points=exercise.points,
         bucket_object_id=exercise.question.content.id,
-        multiple_choice_id=exercise.question_type.content.id,
+        multiple_choice_id=exercise.question_type.content.id
     )

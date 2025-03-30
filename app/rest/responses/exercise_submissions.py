@@ -6,12 +6,11 @@ from pydantic.fields import computed_field
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 
 
-class SubmissionResponse(BaseModel):
+class ExerciseSubmissionResponse(BaseModel):
     id: UUID
     user_id: UUID
-    assessment_id: UUID
+    assessment_submission_id: UUID
     exercise_id: UUID
-    multiple_choice_id: UUID
     answer: MultipleChoiceAnswer = Field(exclude=True)
 
     @computed_field
@@ -20,5 +19,5 @@ class SubmissionResponse(BaseModel):
         return self.answer.choices  # pylint: disable=no-member
 
 
-class SubmissionListResponse(BaseModel):
+class ExerciseSubmissionListResponse(BaseModel):
     id: UUID

@@ -18,6 +18,8 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
         id=db_assessment.id,
         created_at=db_assessment.created_at,
         name=db_assessment.name,
+        deadline=db_assessment.deadline,
+        max_attempts=db_assessment.max_attempts,
         tasks=tasks
     )
 
@@ -34,5 +36,7 @@ def assessment_to_db(assessment: Assessment) -> DbAssessment:
         id=assessment.id,
         created_at=assessment.created_at,
         name=assessment.name,
-        tasks=tasks
+        deadline=assessment.deadline,
+        max_attempts=assessment.max_attempts,
+        tasks=tasks,
     )

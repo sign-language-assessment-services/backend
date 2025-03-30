@@ -1,11 +1,12 @@
 from unittest.mock import Mock, patch
 
-from app.services.assessment_service import AssessmentService
+from app.services import assessment_service as assesment_service_module
+from app.services.assessment_service import AssessmentService, get_assessment, list_assessments
 from tests.data.models.assessments import assessment_1, assessment_2
 
 
-@patch(
-    "app.services.assessment_service.get_assessment",
+@patch.object(
+    assesment_service_module, get_assessment.__name__,
     return_value=assessment_1
 )
 def test_get_assessment_by_id(mocked_get_assessment, assessment_service: AssessmentService) -> None:
@@ -19,8 +20,8 @@ def test_get_assessment_by_id(mocked_get_assessment, assessment_service: Assessm
     mocked_get_assessment.assert_called_once_with(session=mocked_session, _id=assessment_id)
 
 
-@patch(
-    "app.services.assessment_service.list_assessments",
+@patch.object(
+    assesment_service_module, list_assessments.__name__,
     return_value=[assessment_1, assessment_2]
 )
 def test_list_assessments(mocked_list_assessment, assessment_service: AssessmentService) -> None:

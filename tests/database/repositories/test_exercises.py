@@ -22,10 +22,13 @@ from tests.database.utils import table_count
 
 
 def test_add_exercise(db_session: Session) -> None:
-    question_video = insert_bucket_object(db_session)
-    choice_video = insert_bucket_object(db_session)
-    choice_id = insert_choice(db_session, choice_video.get("id")).get("id")
-    multiple_choice_id = insert_multiple_choice(db_session).get("id")
+    question_video = insert_bucket_object(session=db_session)
+    choice_video = insert_bucket_object(session=db_session)
+    choice_id = insert_choice(
+        session=db_session,
+        bucket_object_id=choice_video.get("id")
+    ).get("id")
+    multiple_choice_id = insert_multiple_choice(session=db_session).get("id")
     exercise = Exercise(
         points=1,
         question=Question(
@@ -58,7 +61,7 @@ def test_add_exercise(db_session: Session) -> None:
         )
     )
 
-    add_exercise(db_session, exercise)
+    add_exercise(session=db_session, exercise=exercise)
 
     result = db_session.get(DbExercise, exercise.id)
     assert result.id == exercise.id
@@ -70,11 +73,15 @@ def test_add_exercise(db_session: Session) -> None:
 
 
 def test_get_exercise_by_id(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session).get("id")
-    mc_id = insert_multiple_choice(db_session).get("id")
-    exercise_id = insert_exercise(db_session, video_id, mc_id).get("id")
+    video_id = insert_bucket_object(session=db_session).get("id")
+    mc_id = insert_multiple_choice(session=db_session).get("id")
+    exercise_id = insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=mc_id,
+    ).get("id")
 
-    result = get_exercise(db_session, exercise_id)
+    result = get_exercise(session=db_session, _id=exercise_id)
 
     assert result.id == exercise_id
     assert result.points == 1
@@ -85,13 +92,13 @@ def test_get_exercise_by_id(db_session: Session) -> None:
 
 
 def test_get_exercise_by_id_returns_none_if_not_found(db_session: Session) -> None:
-    result = get_exercise(db_session, uuid4())
+    result = get_exercise(session=db_session, _id=uuid4())
 
     assert result is None
 
 
 def test_list_no_exercises(db_session: Session) -> None:
-    result = list_exercises(db_session)
+    result = list_exercises(session=db_session)
 
     assert result == []
     assert table_count(db_session, DbExercise) == 0
@@ -100,11 +107,15 @@ def test_list_no_exercises(db_session: Session) -> None:
 
 def test_list_multiple_exercises(db_session: Session) -> None:
     for i in range(100):
-        video_id = insert_bucket_object(db_session).get("id")
-        mc_id = insert_multiple_choice(db_session).get("id")
-        insert_exercise(db_session, video_id, mc_id).get("id")
+        video_id = insert_bucket_object(session=db_session).get("id")
+        mc_id = insert_multiple_choice(session=db_session).get("id")
+        insert_exercise(
+            session=db_session,
+            bucket_object_id=video_id,
+            multiple_choice_id=mc_id
+        )
 
-    result = list_exercises(db_session)
+    result = list_exercises(session=db_session)
 
     assert len(result) == 100
     assert table_count(db_session, DbExercise) == 100
@@ -112,25 +123,42 @@ def test_list_multiple_exercises(db_session: Session) -> None:
 
 
 def test_update_exercise(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session).get("id")
-    mc_id = insert_multiple_choice(db_session).get("id")
-    exercise_id = insert_exercise(db_session, video_id, mc_id).get("id")
+    video_id = insert_bucket_object(session=db_session).get("id")
+    mc_id = insert_multiple_choice(session=db_session).get("id")
+    exercise_id = insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=mc_id,
+    ).get("id")
+
 
     updated_points = 2
-    update_exercise(db_session, exercise_id, **{"points": updated_points})
+    update_exercise(
+        session=db_session,
+        _id=exercise_id,
+        **{"points": updated_points}
+    )
 
     result = db_session.get(DbExercise, exercise_id)
+    assert result.id == exercise_id
     assert result.points == updated_points
+    assert result.bucket_object_id == video_id
+    assert result.multiple_choice_id == mc_id
     assert table_count(db_session, DbExercise) == 1
     assert table_count(db_session, DbTask) == 1
 
 
 def test_delete_exercise(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session).get("id")
-    mc_id = insert_multiple_choice(db_session).get("id")
-    exercise_id = insert_exercise(db_session, video_id, mc_id).get("id")
+    video_id = insert_bucket_object(session=db_session).get("id")
+    mc_id = insert_multiple_choice(session=db_session).get("id")
+    exercise_id = insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=mc_id,
+    ).get("id")
 
-    delete_exercise(db_session, exercise_id)
+
+    delete_exercise(session=db_session, _id=exercise_id)
 
     result = db_session.get(DbExercise, exercise_id)
     assert result is None
@@ -139,12 +167,20 @@ def test_delete_exercise(db_session: Session) -> None:
 
 
 def test_delete_one_of_two_exercises(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session).get("id")
-    mc_id = insert_multiple_choice(db_session).get("id")
-    exercise_id = insert_exercise(db_session, video_id, mc_id).get("id")
-    insert_exercise(db_session, video_id, mc_id).get("id")
+    video_id = insert_bucket_object(session=db_session).get("id")
+    mc_id = insert_multiple_choice(session=db_session).get("id")
+    exercise_id = insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=mc_id,
+    ).get("id")
+    insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=mc_id
+    ).get("id")
 
-    delete_exercise(db_session, exercise_id)
+    delete_exercise(session=db_session, _id=exercise_id)
 
     result = db_session.get(DbExercise, exercise_id)
     assert result is None

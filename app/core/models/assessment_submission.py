@@ -3,12 +3,12 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from app.core.models.multimedia_file import MultimediaFile
 
-
-class Choice(BaseModel):
+class AssessmentSubmission(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    is_correct: bool = Field(default=False)
-    content: MultimediaFile
+    user_id: UUID
+    assessment_id: UUID
+    score: float | None = None
+    finished_at: datetime | None = None

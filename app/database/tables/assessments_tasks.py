@@ -1,33 +1,39 @@
-from sqlalchemy import Column, ForeignKey, Integer, Table, UniqueConstraint
+from uuid import UUID
+
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import declared_attr, Mapped, mapped_column
 
 from app.database.tables.base import DbBase
 
-assessments_tasks = Table(
-    "assessments_tasks",
-    DbBase.metadata,
+
+class DbAssessmentsTasks(DbBase):
+    __tablename__ = "assessments_tasks"
+
+    @declared_attr
+    def id(cls):  # pylint: disable=no-self-argument
+        return None
+
+    @declared_attr
+    def created_at(cls):  # pylint: disable=no-self-argument
+        return None
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    Column(
-        "position",
-        Integer,
-        nullable=False,
-    ),
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    # FOREIGN KEYS
+    # FOREIGN COLUMNS
     # ------------------------------------------------------------------------
-    Column(
-        "assessment_id",
+    assessment_id: Mapped[UUID] = mapped_column(
         ForeignKey("assessments.id", ondelete="CASCADE"),
         primary_key=True
-    ),
-    Column(
-        "task_id",
+    )
+    task_id: Mapped[UUID] = mapped_column(
         ForeignKey("tasks.id", ondelete="CASCADE"),
         primary_key=True
-    ),
+    )
 
     # CONSTRAINTS
     # ------------------------------------------------------------------------
-    UniqueConstraint("assessment_id", "position")
-)
+    __table_args__ = (
+        UniqueConstraint("assessment_id", "position"),
+    )

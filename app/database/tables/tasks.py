@@ -1,7 +1,6 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.database.tables.assessments_tasks import assessments_tasks
 from app.database.tables.base import DbBase
 
 
@@ -18,7 +17,7 @@ class DbTask(DbBase):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     assessments: Mapped[list["DbAssessment"]] = relationship(
-        secondary=assessments_tasks,
+        secondary="assessments_tasks",
         back_populates="tasks"
     )
 

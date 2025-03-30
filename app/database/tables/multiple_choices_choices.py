@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import declared_attr, Mapped, relationship
+from sqlalchemy import Boolean, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import declared_attr, Mapped, mapped_column, relationship
 
 from app.database.tables.base import DbBase
 
@@ -19,22 +19,22 @@ class DbMultipleChoicesChoices(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    position: Mapped[int] = Column(
+    position: Mapped[int] = mapped_column(
         Integer,
         nullable=False
     )
-    is_correct: Mapped[bool] = Column(
+    is_correct: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False
     )
 
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
-    choice_id: Mapped[UUID] = Column(
+    choice_id: Mapped[UUID] = mapped_column(
         ForeignKey("choices.id", ondelete="CASCADE"),
         primary_key=True
     )
-    multiple_choice_id: Mapped[UUID] = Column(
+    multiple_choice_id: Mapped[UUID] = mapped_column(
         ForeignKey("multiple_choices.id", ondelete="CASCADE"),
         primary_key=True
     )

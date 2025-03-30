@@ -22,9 +22,11 @@ def test_add_multimedia_file(db_session: Session, _type: MediaType) -> None:
         media_type=_type
     )
 
-    add_multimedia_file(db_session, multimedia_file)
+    add_multimedia_file(session=db_session, multimedia_file=multimedia_file)
 
     result = db_session.get(DbBucketObjects, multimedia_file.id)
+    assert result.id == multimedia_file.id
+    assert result.created_at == multimedia_file.created_at
     assert result.bucket == multimedia_file.location.bucket
     assert result.key == multimedia_file.location.key
     assert result.media_type == _type
@@ -33,23 +35,26 @@ def test_add_multimedia_file(db_session: Session, _type: MediaType) -> None:
 
 def test_get_multimedia_file_by_id(db_session: Session) -> None:
     name = f"{uuid4()}.mpg"
-    video_id = insert_bucket_object(db_session, filename=name).get("id")
+    video = insert_bucket_object(session=db_session, filename=name)
     
-    result = get_multimedia_file(db_session, video_id)
+    result = get_multimedia_file(session=db_session, _id=video.get("id"))
 
-    assert result.id == video_id
-    assert result.location.key == name
+    assert result.id == video.get("id")
+    assert result.created_at == video.get("created_at")
+    assert result.location.bucket == video.get("bucket")
+    assert result.location.key == video.get("key")
+    assert result.media_type.value == video.get("media_type")
     assert table_count(db_session, DbBucketObjects) == 1
 
 
 def test_get_multimedia_file_by_id_returns_none_if_not_found(db_session: Session) -> None:
-    result = get_multimedia_file(db_session, uuid4())
+    result = get_multimedia_file(session=db_session, _id=uuid4())
 
     assert result is None
 
 
 def test_list_no_multimedia_files(db_session: Session) -> None:
-    result = list_multimedia_files(db_session)
+    result = list_multimedia_files(session=db_session)
 
     assert result == []
     assert table_count(db_session, DbBucketObjects) == 0
@@ -57,29 +62,37 @@ def test_list_no_multimedia_files(db_session: Session) -> None:
 
 def test_list_multiple_multimedia_files(db_session: Session) -> None:
     for i in range(100):
-        insert_bucket_object(db_session, filename=f"{i}.mpg")
+        insert_bucket_object(session=db_session, filename=f"{i}.mpg")
 
-    result = list_multimedia_files(db_session)
+    result = list_multimedia_files(session=db_session)
 
     assert len(result) == 100
     assert table_count(db_session, DbBucketObjects) == 100
 
 
 def test_update_multimedia_file(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session, filename="1.mpg").get("id")
+    video = insert_bucket_object(session=db_session, filename="1.mpg")
     
     updated_filename = "2.mpg"
-    update_multimedia_file(db_session, video_id, **{"key": updated_filename})
+    update_multimedia_file(
+        session=db_session,
+        _id=video.get("id"),
+        **{"key": updated_filename}
+    )
     
-    result = db_session.get(DbBucketObjects, video_id)
+    result = db_session.get(DbBucketObjects, video.get("id"))
+    assert result.id == video.get("id")
+    assert result.created_at == video.get("created_at")
+    assert result.bucket == video.get("bucket")
     assert result.key == updated_filename
+    assert result.media_type.value == video.get("media_type")
     assert table_count(db_session, DbBucketObjects) == 1
 
 
 def test_delete_multimedia_file(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session, filename="1.mpg").get("id")
+    video_id = insert_bucket_object(session=db_session, filename="1.mpg").get("id")
     
-    delete_multimedia_file(db_session, video_id)
+    delete_multimedia_file(session=db_session, _id=video_id)
     
     result = db_session.get(DbBucketObjects, video_id)
     assert result is None
@@ -87,10 +100,10 @@ def test_delete_multimedia_file(db_session: Session) -> None:
 
 
 def test_delete_one_of_two_multimedia_files(db_session: Session) -> None:
-    video_id = insert_bucket_object(db_session, filename="1.mpg").get("id")
-    insert_bucket_object(db_session, filename="2.mpg")
+    video_id = insert_bucket_object(session=db_session, filename="1.mpg").get("id")
+    insert_bucket_object(session=db_session, filename="2.mpg")
 
-    delete_multimedia_file(db_session, video_id)
+    delete_multimedia_file(session=db_session, _id=video_id)
 
     result = db_session.get(DbBucketObjects, video_id)
     assert result is None
