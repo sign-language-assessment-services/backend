@@ -3,12 +3,15 @@ from alembic.config import Config
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+VERSION = "4e0706c45957"
+
 
 def test_upgrade(migration_config: Config, migration_session: Session) -> None:
+    command.downgrade(migration_config, "base")
     has_no_tables_in_public_schema(db_session=migration_session)
     has_not_enum_mediatype(db_session=migration_session)
 
-    command.upgrade(migration_config, "4e0706c45957")
+    command.upgrade(migration_config, VERSION)
 
     has_right_alembic_version(db_session=migration_session)
     has_defined_tables(db_session=migration_session)
@@ -16,6 +19,7 @@ def test_upgrade(migration_config: Config, migration_session: Session) -> None:
 
 
 def test_downgrade(migration_config: Config, migration_session: Session)-> None:
+    command.upgrade(migration_config, VERSION)
     has_right_alembic_version(db_session=migration_session)
     has_defined_tables(db_session=migration_session)
     has_enum_mediatype(db_session=migration_session)
@@ -28,7 +32,7 @@ def test_downgrade(migration_config: Config, migration_session: Session)-> None:
 
 def test_multiple_walkings_from_base_works(migration_config: Config) -> None:
     for _ in range(3):
-        command.upgrade(migration_config, "4e0706c45957")
+        command.upgrade(migration_config, VERSION)
         command.downgrade(migration_config, "base")
 
 
@@ -39,20 +43,21 @@ def has_no_tables_in_public_schema(db_session: Session) -> None:
 
 
 def has_right_alembic_version(db_session: Session) -> None:
-    stmt = "SELECT * FROM alembic_version WHERE version_num = '4e0706c45957'"
+    stmt = f"SELECT * FROM alembic_version WHERE version_num = '{VERSION}'"
     result = db_session.execute(text(stmt))
-    assert result.scalar_one() == "4e0706c45957"
+    assert result.scalar_one() == VERSION
 
 
 def has_defined_tables(db_session: Session) -> None:
     expected_tables = {
-        "alembic_version", "assessments", "DbAssessmentsTasks",
-        "bucket_objects", "choices", "multiple_choices_choices", "exercises",
-        "multiple_choices", "primers", "exercise_submissions", "tasks",
+        "alembic_version", "assessment_submissions", "assessments",
+        "assessments_tasks", "bucket_objects", "choices",
+        "exercise_submissions", "exercises", "multiple_choices",
+        "multiple_choices_choices", "primers", "tasks"
     }
-    stmt = "SELECT * FROM information_schema.tables"
+    stmt = "SELECT * FROM information_schema.tables WHERE table_schema = 'public'"
     tables = db_session.execute(text(stmt)).fetchall()
-    assert all(et in {t.table_name for t in tables} for et in expected_tables)
+    assert {t.table_name for t in tables} == expected_tables
 
 
 def has_enum_mediatype(db_session: Session) -> None:
