@@ -308,8 +308,7 @@ def upgrade() -> None:
 
         sa.ForeignKeyConstraint(["assessment_submission_id"], ["assessment_submissions.id"]),
         sa.ForeignKeyConstraint(["exercise_id"], ["exercises.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("exercise_id", "assessment_submission_id", "user_id")
+        sa.PrimaryKeyConstraint("id")
     )
 
     op.create_table(
