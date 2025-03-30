@@ -2,12 +2,12 @@ from unittest.mock import Mock, patch
 
 from app.services import exercise_submission_service as exercise_submission_service_module
 from app.services.exercise_submission_service import (
-    add_exercise_submission, ExerciseSubmissionService,
-    get_exercise_submission, list_exercise_submissions
+    ExerciseSubmissionService, add_exercise_submission, get_exercise_submission,
+    list_exercise_submissions
 )
 from tests.data.models.exercise_submissions import (
-    exercise_submission_1, exercise_submission_2, exercise_submission_3,
-    exercise_submission_4, exercise_submission_5, exercise_submission_6
+    exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
+    exercise_submission_5, exercise_submission_6
 )
 
 

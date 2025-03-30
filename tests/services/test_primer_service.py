@@ -1,7 +1,7 @@
 from unittest.mock import Mock, patch
 
 from app.services import primer_service as primer_service_module
-from app.services.primer_service import get_primer, list_primers, PrimerService
+from app.services.primer_service import PrimerService, get_primer, list_primers
 from tests.data.models.primers import primer_1, primer_2
 
 

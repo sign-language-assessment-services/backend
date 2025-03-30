@@ -13,8 +13,8 @@ from app.repositories.exercise_submissions import (
 )
 from tests.data.models.users import test_taker_1, test_taker_2
 from tests.database.data_inserts import (
-    insert_assessment, insert_assessment_submission, insert_bucket_object,
-    insert_exercise, insert_exercise_submission, insert_multiple_choice
+    insert_assessment, insert_assessment_submission, insert_bucket_object, insert_exercise,
+    insert_exercise_submission, insert_multiple_choice
 )
 from tests.database.utils import table_count
 

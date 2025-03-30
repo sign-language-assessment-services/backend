@@ -10,7 +10,9 @@ from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
-from app.rest.responses.assessment_submissions import AssessmentSubmissionListResponse, AssessmentSubmissionResponse
+from app.rest.responses.assessment_submissions import (
+    AssessmentSubmissionListResponse, AssessmentSubmissionResponse
+)
 from app.services.assessment_submission_service import AssessmentSubmissionService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])

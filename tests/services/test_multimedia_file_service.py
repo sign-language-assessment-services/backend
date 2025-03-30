@@ -1,7 +1,7 @@
 from unittest.mock import Mock, patch
 
 from app.services import multimedia_file_service as multimedia_file_service_module
-from app.services.multimedia_file_service import get_multimedia_file, MultimediaFileService
+from app.services.multimedia_file_service import MultimediaFileService, get_multimedia_file
 from tests.data.models.multimedia_files import multimedia_file_choice_1
 
 

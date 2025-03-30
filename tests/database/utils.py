@@ -2,7 +2,7 @@ import inspect
 import pkgutil
 from typing import Type
 
-from sqlalchemy import func, select, Table
+from sqlalchemy import Table, func, select
 from sqlalchemy.orm import Session
 
 import app.database.tables

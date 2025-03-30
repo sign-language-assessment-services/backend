@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.core.models.assessment_submission import AssessmentSubmission
 from app.database.tables.assessment_submissions import DbAssessmentSubmission
-from app.mappers.assessment_submission_mapper import assessment_submission_to_db, assessment_submission_to_domain
+from app.mappers.assessment_submission_mapper import (
+    assessment_submission_to_db, assessment_submission_to_domain
+)
 from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
 
 

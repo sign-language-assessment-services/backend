@@ -10,9 +10,7 @@ from app.repositories.assessment_submissions import (
     add_assessment_submission, delete_assessment_submission, get_assessment_submission,
     list_assessment_submissions, update_assessment_submission
 )
-from tests.database.data_inserts import (
-    insert_assessment, insert_assessment_submission
-)
+from tests.database.data_inserts import insert_assessment, insert_assessment_submission
 from tests.database.utils import table_count
 
 

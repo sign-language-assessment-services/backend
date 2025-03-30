@@ -11,8 +11,8 @@ from app.database.tables.exercise_submissions import DbExerciseSubmission
 from app.database.tables.exercises import DbExercise
 from app.database.tables.multiple_choices import DbMultipleChoice
 from tests.database.data_inserts import (
-    insert_assessment, insert_assessment_submission, insert_bucket_object,
-    insert_exercise, insert_exercise_submission, insert_multiple_choice
+    insert_assessment, insert_assessment_submission, insert_bucket_object, insert_exercise,
+    insert_exercise_submission, insert_multiple_choice
 )
 from tests.database.utils import table_count
 

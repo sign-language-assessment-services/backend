@@ -3,8 +3,8 @@ from unittest.mock import ANY
 from fastapi.testclient import TestClient
 
 from tests.data.models.exercise_submissions import (
-    exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4, exercise_submission_5,
-    exercise_submission_6
+    exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
+    exercise_submission_5, exercise_submission_6
 )
 
 

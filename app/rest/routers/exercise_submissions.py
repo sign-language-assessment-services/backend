@@ -10,7 +10,9 @@ from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
-from app.rest.responses.exercise_submissions import ExerciseSubmissionListResponse, ExerciseSubmissionResponse
+from app.rest.responses.exercise_submissions import (
+    ExerciseSubmissionListResponse, ExerciseSubmissionResponse
+)
 from app.services.exercise_submission_service import ExerciseSubmissionService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])

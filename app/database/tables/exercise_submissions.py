@@ -40,4 +40,3 @@ class DbExerciseSubmission(DbBase):
     exercise: Mapped["DbExercise"] = relationship(
         back_populates="exercise_submissions"
     )
-

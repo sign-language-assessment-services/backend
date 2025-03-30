@@ -2,8 +2,8 @@ from unittest.mock import Mock, patch
 
 from app.services import assessment_submission_service as assessment_submission_service_module
 from app.services.assessment_submission_service import (
-    add_assessment_submission, AssessmentSubmissionService,
-    get_assessment_submission, list_assessment_submissions
+    AssessmentSubmissionService, add_assessment_submission, get_assessment_submission,
+    list_assessment_submissions
 )
 from tests.data.models.assessment_submissions import (
     assessment_submission_1, assessment_submission_2

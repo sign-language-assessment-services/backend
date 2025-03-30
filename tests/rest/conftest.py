@@ -24,11 +24,13 @@ from app.services.multimedia_file_service import MultimediaFileService
 from app.services.object_storage_client import ObjectStorageClient
 from app.services.primer_service import PrimerService
 from app.settings import get_settings
-from tests.data.models.assessment_submissions import assessment_submission_1, assessment_submission_2
+from tests.data.models.assessment_submissions import (
+    assessment_submission_1, assessment_submission_2
+)
 from tests.data.models.assessments import assessment_1, assessment_2
 from tests.data.models.exercise_submissions import (
-    exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4, exercise_submission_5,
-    exercise_submission_6
+    exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
+    exercise_submission_5, exercise_submission_6
 )
 from tests.data.models.exercises import exercise_1, exercise_2
 from tests.data.models.multimedia_files import multimedia_file_choice_1, multimedia_file_choice_2

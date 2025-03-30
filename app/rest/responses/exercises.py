@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, computed_field, Field, field_validator
+from pydantic import BaseModel, Field, computed_field, field_validator
 
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType

@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
 from app.database.tables.base import DbBase
 

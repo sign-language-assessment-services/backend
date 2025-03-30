@@ -22,8 +22,8 @@ from app.repositories.assessments import (
     add_assessment, delete_assessment, get_assessment, list_assessments, update_assessment
 )
 from tests.database.data_inserts import (
-    connect_assessment_with_tasks, insert_assessment, insert_bucket_object,
-    insert_choice, insert_exercise, insert_multiple_choice, insert_primer
+    connect_assessment_with_tasks, insert_assessment, insert_bucket_object, insert_choice,
+    insert_exercise, insert_multiple_choice, insert_primer
 )
 from tests.database.utils import table_count
 

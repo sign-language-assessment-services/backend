@@ -7,8 +7,8 @@ from app.database.orm import import_tables, run_migrations
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
 from app.rest.routers import (
-    assessment_submissions, assessments, exercise_submissions, exercises,
-    object_storage, primers, root
+    assessment_submissions, assessments, exercise_submissions, exercises, object_storage, primers,
+    root
 )
 
 
@@ -34,9 +34,11 @@ def create_app() -> FastAPI:
             "email": "tbd@not-yet-available.zzz"
         },
         default_response_class=ORJSONResponse,
-        # lifespan=lifespan  # TODO: exceptions are not printed to console if lifespan is activated
+        # pylint: disable=fixme
+        # TODO: exceptions are not printed to console if lifespan is activated
+        lifespan=lifespan
     )
-    import_tables()  # TODO: can be deleted after lifespan is permanently activated
+    import_tables()
 
     app.include_router(root.router)
     app.include_router(assessment_submissions.router)

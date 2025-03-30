@@ -4,7 +4,7 @@ from urllib.parse import quote
 from alembic import command
 from alembic.config import Config
 from fastapi import Depends
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import Settings
@@ -28,7 +28,7 @@ def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engin
 
 def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterator[Session]:
     session_factory = sessionmaker(bind=engine)
-    with session_factory.begin() as session:
+    with session_factory.begin() as session:  # pylint: disable=no-member
         yield session
 
 
@@ -36,8 +36,8 @@ def import_tables() -> None:
     """Tables have to be imported in declarative mapping style"""
     # pylint: disable=wrong-import-position,import-outside-toplevel
     from app.database.tables.assessment_submissions import DbAssessmentSubmission
-    from app.database.tables.assessments_tasks import DbAssessmentsTasks
     from app.database.tables.assessments import DbAssessment
+    from app.database.tables.assessments_tasks import DbAssessmentsTasks
     from app.database.tables.bucket_objects import DbBucketObjects
     from app.database.tables.choices import DbChoice
     from app.database.tables.exercise_submissions import DbExerciseSubmission

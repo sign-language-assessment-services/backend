@@ -8,24 +8,27 @@ license = "GPLv3"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {version = "^0.115", extras = ["all"]}
-pyjwt = {version = "^2.8", extras = ["crypto"]}
-minio = "^7.1"
-python-multipart = "^0.0"
-pydantic-settings = "^2.0"
-sqlalchemy = "^2.0"
+minio = "^7.2"
 psycopg2-binary = "^2.9"
+pydantic-settings = "^2.8"
+pyjwt = {version = "^2.10", extras = ["crypto"]}
+python-multipart = "^0.0"
 requests = "^2.32"
+sqlalchemy = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
-bandit = "^1.7"
-coverage = "^7.3"
-isort = "^5.12"
-mypy = "^1.5"
-pylint = "^2.17"
-pytest = "^7.4"
-pytest-asyncio = "^0.21"
-gevent = "^23.9"
-freezegun = "^1.2"
+alembic = "^1.15, !=1.15.0"
+bandit = "^1.8"
+coverage = "^7.7"
+freezegun = "^1.5"
+gevent = "^24.11"
+isort = "^6.0"
+mypy = "^1.15"
+pylint = "^3.3"
+pytest = "^8.3"
+pytest-asyncio = "^0.26"
+pytz = "^2025.2"
+testcontainers = "^4.9"
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
@@ -35,6 +38,7 @@ concurrency = ["thread", "gevent"]
 
 [tool.isort]
 line_length = 100
+multi_line_output=5
 
 [[tool.mypy.overrides]]
 module = "fastapi_auth_middleware"
@@ -69,6 +73,9 @@ disable= """
     missing-module-docstring,
     too-few-public-methods,
     too-many-instance-attributes,
+    too-many-arguments,
+    too-many-positional-arguments,
+    duplicate-code,
 """
 
 [tool.pylint.format]
@@ -86,6 +93,7 @@ addopts = [
 ]
 console_output_style = "count"
 junit_family = "xunit2"
+asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
