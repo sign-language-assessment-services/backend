@@ -172,7 +172,7 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        "DbAssessmentsTasks",
+        "assessments_tasks",
 
         sa.Column(
             "position",
@@ -348,7 +348,7 @@ def downgrade() -> None:
     op.drop_table("primers")
     op.drop_table("exercises")
     op.drop_table("choices")
-    op.drop_table("DbAssessmentsTasks")
+    op.drop_table("assessments_tasks")
     op.drop_table("assessment_submissions")
     op.drop_table("tasks")
     op.drop_table("multiple_choices")
