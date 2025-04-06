@@ -1,4 +1,5 @@
 from typing import Annotated, Any
+from uuid import UUID
 
 import jwt
 from fastapi import Depends, HTTPException, Request, status
@@ -32,7 +33,8 @@ class JWTBearer:
         self.settings = settings
 
         if not self.settings.auth_enabled:
-            return User(id=None, roles=["slas-frontend-user", "test-taker"])
+            fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
+            return User(id=fake_user_id, roles=["slas-frontend-user", "test-taker"])
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:

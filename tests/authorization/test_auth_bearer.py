@@ -1,5 +1,6 @@
 from unittest import mock
 from unittest.mock import Mock, patch
+from uuid import UUID
 
 import pytest
 from fastapi import HTTPException, status
@@ -49,7 +50,8 @@ async def test_jwt_bearer_auth_disabled_returns_user(settings: Mock) -> None:
 
     result = await bearer(settings=settings, request=mock.ANY)
 
-    assert result == User(id=None, roles=["slas-frontend-user", "test-taker"])
+    fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
+    assert result == User(id=fake_user_id, roles=["slas-frontend-user", "test-taker"])
 
 
 @pytest.mark.asyncio
