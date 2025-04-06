@@ -12,5 +12,9 @@ class AssessmentSubmissionResponse(BaseModel):
     finished_at: datetime | None
 
 
+class AssessmentSubmissionCreatedResponse(BaseModel):
+    id: UUID
+
+
 class AssessmentSubmissionListResponse(BaseModel):
     id: UUID

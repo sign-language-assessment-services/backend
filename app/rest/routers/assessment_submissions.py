@@ -10,7 +10,8 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
 from app.rest.responses.assessment_submissions import (
-    AssessmentSubmissionListResponse, AssessmentSubmissionResponse
+    AssessmentSubmissionCreatedResponse, AssessmentSubmissionListResponse,
+    AssessmentSubmissionResponse
 )
 from app.services.assessment_submission_service import AssessmentSubmissionService
 
@@ -44,7 +45,7 @@ async def list_submissions(
     return assessment_submission_service.list_submissions(session=db_session)
 
 
-@router.post("/assessments/{assessment_id}/submissions/", response_model=AssessmentSubmissionResponse)
+@router.post("/assessments/{assessment_id}/submissions/", response_model=AssessmentSubmissionCreatedResponse)
 async def create_assessment_submission(
         assessment_id: UUID,
         submission_service: Annotated[AssessmentSubmissionService, Depends()],
