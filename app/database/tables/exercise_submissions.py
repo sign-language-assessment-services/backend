@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, Uuid
+from sqlalchemy import Float, ForeignKey, Uuid
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,6 +18,10 @@ class DbExerciseSubmission(DbBase):
     )
     choices: Mapped[list[UUID]] = mapped_column(
         MutableList.as_mutable(ARRAY(Uuid, dimensions=1)),
+        nullable=True
+    )
+    score: Mapped[float] = mapped_column(
+        Float,
         nullable=True
     )
 
