@@ -7,6 +7,10 @@ def choice_to_domain(db_choice: DbChoice) -> Choice:
     return Choice(
         id=db_choice.id,
         created_at=db_choice.created_at,
+        is_correct=next(
+            choice for choice in db_choice.associations
+            if choice.choice_id == db_choice.id
+        ).is_correct,
         content=bucket_object_to_domain(db_choice.bucket_object)
     )
 

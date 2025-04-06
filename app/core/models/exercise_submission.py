@@ -12,5 +12,6 @@ class ExerciseSubmission(BaseModel):
 
     user_id: UUID
     answer: MultipleChoiceAnswer
+    score: float | None = Field(default=None)
     assessment_submission_id: UUID
     exercise_id: UUID

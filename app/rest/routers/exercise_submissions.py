@@ -1,5 +1,5 @@
 from typing import Annotated
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -13,7 +13,9 @@ from app.rest.dependencies import get_current_user
 from app.rest.responses.exercise_submissions import (
     ExerciseSubmissionListResponse, ExerciseSubmissionResponse
 )
+from app.services.exercise_service import ExerciseService
 from app.services.exercise_submission_service import ExerciseSubmissionService
+from app.services.scoring_service import ScoringService
 
 router = APIRouter(dependencies=[Depends(JWTBearer())])
 
@@ -55,6 +57,8 @@ async def post_submission(
         exercise_id: UUID,
         answers: MultipleChoiceAnswer,
         submission_service: Annotated[ExerciseSubmissionService, Depends()],
+        exercise_service: Annotated[ExerciseService, Depends()],
+        scoring_service: Annotated[ScoringService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session),
 ) -> ExerciseSubmission:
@@ -62,10 +66,12 @@ async def post_submission(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     submission = ExerciseSubmission(
-        user_id=current_user.id,
+        user_id=current_user.id if current_user.id else uuid4(),  # TODO: temporary activate uuid for user
         answer=answers,
         assessment_submission_id=assessment_submission_id,
-        exercise_id=exercise_id
+        exercise_id=exercise_id,
     )
+    exercise = exercise_service.get_exercise_by_id(db_session, exercise_id)
+    scoring_service.score(exercise_submission=submission, exercise=exercise)
     submission_service.add_submission(session=db_session, submission=submission)
     return submission
