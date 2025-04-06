@@ -4,10 +4,11 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 VERSION = "4e0706c45957"
+CHILD_VERSION = "base"
 
 
 def test_upgrade(migration_config: Config, migration_session: Session) -> None:
-    command.downgrade(migration_config, "base")
+    command.upgrade(migration_config, CHILD_VERSION)
     has_no_tables_in_public_schema(db_session=migration_session)
     has_not_enum_mediatype(db_session=migration_session)
 
@@ -24,7 +25,7 @@ def test_downgrade(migration_config: Config, migration_session: Session)-> None:
     has_defined_tables(db_session=migration_session)
     has_enum_mediatype(db_session=migration_session)
 
-    command.downgrade(migration_config, "base")
+    command.downgrade(migration_config, CHILD_VERSION)
 
     has_no_tables_in_public_schema(db_session=migration_session)
     has_not_enum_mediatype(db_session=migration_session)
@@ -37,7 +38,10 @@ def test_multiple_walkings_from_base_works(migration_config: Config) -> None:
 
 
 def has_no_tables_in_public_schema(db_session: Session) -> None:
-    stmt = "SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name != 'alembic_version'"
+    stmt = """
+        SELECT * FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name != 'alembic_version'
+    """
     tables = db_session.execute(text(stmt)).fetchall()
     assert len(tables) == 0
 
