@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.authorization.auth_bearer import JWTBearer
 from app.core.models.assessment_submission import AssessmentSubmission
-from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
@@ -39,7 +38,7 @@ async def list_submissions(
         assessment_submission_service: Annotated[AssessmentSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
-) -> list[ExerciseSubmission]:
+) -> list[AssessmentSubmission]:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
     return assessment_submission_service.list_submissions(session=db_session)
