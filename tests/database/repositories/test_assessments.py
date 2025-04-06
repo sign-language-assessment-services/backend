@@ -92,7 +92,7 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
     assert result.deadline == assessment.deadline
     assert result.max_attempts == assessment.max_attempts
     assert table_count(db_session, DbAssessment) == 1
-    # TODO: make following asserts work
+    # TODO: make following asserts work (https://stackoverflow.com/q/79544866/2648551)
     assert result.tasks[0].id == assessment.tasks[0].id
     assert result.tasks[0].created_at == assessment.tasks[0].created_at
     assert result.tasks[0].task_type == "primer"
