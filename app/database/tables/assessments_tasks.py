@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from app.database.tables.base import DbBase
 
@@ -19,7 +19,10 @@ class DbAssessmentsTasks(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    position: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
 
     # FOREIGN COLUMNS
     # ------------------------------------------------------------------------
@@ -30,6 +33,15 @@ class DbAssessmentsTasks(DbBase):
     task_id: Mapped[UUID] = mapped_column(
         ForeignKey("tasks.id", ondelete="CASCADE"),
         primary_key=True
+    )
+
+    # RELATIONSHIPS
+    # ------------------------------------------------------------------------
+    assessment: Mapped["DbAssessment"] = relationship(
+        back_populates="tasks_link",
+    )
+    task: Mapped["DbTask"] = relationship(
+        back_populates="assessment_links"
     )
 
     # CONSTRAINTS

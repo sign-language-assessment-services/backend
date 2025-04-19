@@ -42,11 +42,6 @@ def test_add_assessment(db_session: Session) -> None:
     assert table_count(db_session, DbAssessment) == 1
 
 
-@pytest.mark.skip(
-    reason="Adding assessment with tasks is not working as intended. "
-           "The test should work with the asserts at the end of the test. "
-           "Also think about ommitting the inserts at the beginning."
-)
 def test_add_assessment_with_tasks(db_session: Session) -> None:
     bucket_object = insert_bucket_object(session=db_session, filename="testfile.mpg")
     choice_object = insert_choice(session=db_session, bucket_object_id=bucket_object.get("id"))
@@ -92,7 +87,6 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
     assert result.deadline == assessment.deadline
     assert result.max_attempts == assessment.max_attempts
     assert table_count(db_session, DbAssessment) == 1
-    # TODO: make following asserts work (https://stackoverflow.com/q/79544866/2648551)
     assert result.tasks[0].id == assessment.tasks[0].id
     assert result.tasks[0].created_at == assessment.tasks[0].created_at
     assert result.tasks[0].task_type == "primer"

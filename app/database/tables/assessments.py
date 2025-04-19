@@ -32,5 +32,9 @@ class DbAssessment(DbBase):
     )
     tasks: Mapped[list["DbTask"]] = relationship(
         secondary="assessments_tasks",
-        back_populates="assessments"
+        viewonly=True
+    )
+    tasks_link: Mapped[list["DbAssessmentsTasks"]] = relationship(
+        back_populates="assessment",
+        cascade="all, delete-orphan"
     )
