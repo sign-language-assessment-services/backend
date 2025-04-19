@@ -1,4 +1,6 @@
 from app.core.models.assessment import Assessment
+from app.core.models.exercise import Exercise
+from app.core.models.primer import Primer
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.exercises import DbExercise
 from app.database.tables.primers import DbPrimer
@@ -27,9 +29,9 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
 def assessment_to_db(assessment: Assessment) -> DbAssessment:
     tasks = []
     for task in assessment.tasks:
-        if isinstance(task, DbPrimer):
+        if isinstance(task, Primer):
             tasks.append(primer_to_db(task))
-        elif isinstance(task, DbExercise):
+        elif isinstance(task, Exercise):
             tasks.append(exercise_to_db(task))
 
     return DbAssessment(
