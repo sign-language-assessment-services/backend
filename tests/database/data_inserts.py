@@ -27,6 +27,7 @@ def insert_assessment(session: Session, name: str = "") -> DbData:
         ),
         assessment
     )
+    session.commit()
     return assessment
 
 
@@ -46,6 +47,7 @@ def connect_assessment_with_tasks(session: Session, assessment_id: UUID, task_id
                 "task_id": task_id
             }
         )
+    session.commit()
 
 
 def insert_bucket_object(
@@ -71,6 +73,7 @@ def insert_bucket_object(
         ),
         bucket_object
     )
+    session.commit()
     return bucket_object
 
 
@@ -90,6 +93,7 @@ def insert_choice(session: Session, bucket_object_id: UUID) -> DbData:
         ),
         choice
     )
+    session.commit()
     return choice
 
 
@@ -113,6 +117,7 @@ def insert_exercise(session: Session, bucket_object_id: UUID, multiple_choice_id
         ),
         exercise
     )
+    session.commit()
     return exercise
 
 
@@ -131,6 +136,7 @@ def insert_multiple_choice(session: Session) -> DbData:
         ),
         multiple_choice
     )
+    session.commit()
     return multiple_choice
 
 
@@ -151,6 +157,7 @@ def connect_multiple_choice_with_choices(session: Session, multiple_choice_id: U
                 "multiple_choice_id": multiple_choice_id
             }
         )
+    session.commit()
 
 
 def insert_primer(session: Session, bucket_object_id: UUID) -> DbData:
@@ -171,6 +178,7 @@ def insert_primer(session: Session, bucket_object_id: UUID) -> DbData:
         ),
         primer
     )
+    session.commit()
     return primer
 
 
@@ -190,6 +198,7 @@ def insert_task(session: Session, task_type: str) -> DbData:
         ),
         task
     )
+    session.commit()
     return task
 
 
@@ -217,6 +226,7 @@ def insert_assessment_submission(
         ),
         assessment_submission
     )
+    session.commit()
     return assessment_submission
 
 
@@ -246,4 +256,5 @@ def insert_exercise_submission(
         ),
         exercise_submission
     )
+    session.commit()
     return exercise_submission
