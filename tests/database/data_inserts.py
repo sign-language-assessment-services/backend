@@ -207,6 +207,8 @@ def insert_assessment_submission(
         assessment_id: UUID,
         user_id: UUID = uuid4(),
         created_at: datetime = datetime(2000, 1, 1, 12, tzinfo=UTC),
+        finished: bool = False,
+        finished_at: datetime | None = None
 ) -> DbData:
     """Insert an assessment submission into database"""
     assessment_submission = {
@@ -214,14 +216,15 @@ def insert_assessment_submission(
         "created_at": created_at,
         "user_id": user_id,
         "score": None,
-        "finished_at": None,
+        "finished": finished,
+        "finished_at": finished_at,
         "assessment_id": assessment_id,
     }
     session.execute(
         text(
             """
-            INSERT INTO assessment_submissions(id, created_at, user_id, score, finished_at, assessment_id)
-            VALUES (:id, :created_at, :user_id, :score, :finished_at, :assessment_id)
+            INSERT INTO assessment_submissions(id, created_at, user_id, score, finished, finished_at, assessment_id)
+            VALUES (:id, :created_at, :user_id, :score, :finished, :finished_at, :assessment_id)
             """
         ),
         assessment_submission

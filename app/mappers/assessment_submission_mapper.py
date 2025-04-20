@@ -8,6 +8,7 @@ def assessment_submission_to_domain(db_submission: DbAssessmentSubmission) -> As
         created_at=db_submission.created_at,
         user_id=db_submission.user_id,
         score=db_submission.score,
+        finished=db_submission.finished,
         finished_at=db_submission.finished_at,
         assessment_id=db_submission.assessment_id
     )
@@ -19,6 +20,7 @@ def assessment_submission_to_db(submission: AssessmentSubmission) -> DbAssessmen
         created_at=submission.created_at,
         user_id=submission.user_id,
         score=submission.score,
+        finished=submission.finished,
         finished_at=submission.finished_at,
         assessment_id=submission.assessment_id
     )

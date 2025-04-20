@@ -11,4 +11,5 @@ class AssessmentSubmission(BaseModel):
     user_id: UUID
     assessment_id: UUID
     score: float | None = None
+    finished: bool = Field(default=False)
     finished_at: datetime | None = None

@@ -1,6 +1,8 @@
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment_submission import AssessmentSubmission
@@ -137,3 +139,46 @@ def test_delete_one_of_two_assessment_submissions(db_session: Session) -> None:
 def test_delete_not_existing_assessment_submission_should_fail(db_session: Session) -> None:
     with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
         delete_assessment_submission(session=db_session, _id=uuid4())
+
+
+def test_add_finished_assessment_submission_is_possible(db_session: Session) -> None:
+    user_id = uuid4()
+    assessment = insert_assessment(session=db_session)
+    assessment_submission = AssessmentSubmission(
+        user_id=user_id,
+        assessment_id=assessment.get("id"),
+        finished=True,
+        finished_at=datetime(2000, 1, 1, 13, tzinfo=UTC)
+    )
+
+    db_assessment_submission = insert_assessment_submission(
+        session=db_session,
+        assessment_id=assessment.get("id"),
+        finished=assessment_submission.finished,
+        finished_at=assessment_submission.finished_at
+    )
+
+    result = db_session.get(DbAssessmentSubmission, db_assessment_submission.get("id"))
+    assert result.id == db_assessment_submission.get("id")
+    assert result.finished is True
+    assert result.finished_at == assessment_submission.finished_at
+
+
+def test_add_finished_assessment_submission_fails_if_finished_at_not_given(db_session: Session) -> None:
+    user_id = uuid4()
+    assessment = insert_assessment(session=db_session)
+    assessment_submission = AssessmentSubmission(
+        user_id=user_id,
+        assessment_id=assessment.get("id"),
+        finished=True
+    )
+
+    with pytest.raises(
+            IntegrityError,
+            match=r'violates check constraint "check_finished_at_only_when_finished"'
+    ):
+        insert_assessment_submission(
+            session=db_session,
+            assessment_id=assessment.get("id"),
+            finished=assessment_submission.finished,
+        )

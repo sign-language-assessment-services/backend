@@ -28,6 +28,7 @@ def test_get_assessment_submission(test_client: TestClient) -> None:
         "user_id": str(test_taker_1.id),
         "assessment_id": str(assessment_submission_1.assessment_id),
         "score": None,
+        "finished": False,
         "finished_at": None
     }
 
