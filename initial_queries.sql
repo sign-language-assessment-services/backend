@@ -104,9 +104,9 @@ BEGIN
 
     SELECT id INTO var_assessment_id FROM assessments WHERE name = 'Initial Queries Test Assessment' LIMIT 1;
 
-    INSERT INTO assessment_submissions (id, created_at, user_id, score, finished_at, assessment_id)
+    INSERT INTO assessment_submissions (id, created_at, user_id, score, finished, finished_at, assessment_id)
     VALUES
-        (var_assessment_submission_id, now(), var_user_id, null, null, var_assessment_id);
+        (var_assessment_submission_id, now(), var_user_id, null, false, null, var_assessment_id);
 
     -- Insert multiple choice submissions (with random answers) for one user for all exercises
     ----------------------------------------------------------------------------------------------
