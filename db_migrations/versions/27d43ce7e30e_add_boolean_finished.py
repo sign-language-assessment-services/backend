@@ -22,7 +22,8 @@ def upgrade() -> None:
         sa.Column(
             "finished",
             sa.Boolean(),
-            nullable=False
+            nullable=False,
+            server_default="false"
         )
     )
 
