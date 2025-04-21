@@ -46,6 +46,7 @@ exercise_submission_5 = ExerciseSubmission(
     assessment_submission_id=assessment_submission_1.id,
     exercise_id=exercise_1.id,
     answer=multiple_choice_answer_1,
+    score=1,
 )
 
 exercise_submission_6 = ExerciseSubmission(
@@ -54,4 +55,5 @@ exercise_submission_6 = ExerciseSubmission(
     assessment_submission_id=assessment_submission_1.id,
     exercise_id=exercise_2.id,
     answer=multiple_choice_answer_2,
+    score=0
 )

@@ -1,10 +1,9 @@
 from copy import deepcopy
 from uuid import uuid4
 
-from data.models.exercise_submissions import exercise_submission_1, exercise_submission_2
-from data.models.exercises import exercise_1
-
 from app.services.scoring_service import ScoringService
+from tests.data.models.exercise_submissions import exercise_submission_1, exercise_submission_2
+from tests.data.models.exercises import exercise_1
 
 
 def test_correct_single_multiple_choice_answer_scores_exercise_points() -> None:

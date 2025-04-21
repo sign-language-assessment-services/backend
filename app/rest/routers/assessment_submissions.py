@@ -9,6 +9,7 @@ from app.core.models.assessment_submission import AssessmentSubmission
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.rest.dependencies import get_current_user
+from app.rest.requests.assessment_submissions import AssessmentSubmissionUpdateFinishedRequest
 from app.rest.responses.assessment_submissions import (
     AssessmentSubmissionCreatedResponse, AssessmentSubmissionListResponse,
     AssessmentSubmissionResponse
@@ -61,3 +62,30 @@ async def create_assessment_submission(
     )
     submission_service.add_submission(session=db_session, submission=submission)
     return submission
+
+
+@router.put("/assessment_submissions/{submission_id}", response_model=AssessmentSubmissionResponse)
+async def update_assessment_submission(
+        submission_id: UUID,
+        update_data: AssessmentSubmissionUpdateFinishedRequest,
+        submission_service: Annotated[AssessmentSubmissionService, Depends()],
+        current_user: Annotated[User, Depends(get_current_user)],
+        db_session: Session = Depends(get_db_session)
+):
+    if "slas-frontend-user" not in current_user.roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    submission = submission_service.get_submission_by_id(
+        session=db_session,
+        submission_id=submission_id
+    )
+    if not submission:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    update_dict = update_data.model_dump(exclude_unset=True, exclude_none=True)
+    updated_submission = submission_service.update_submission(
+        session=db_session,
+        submission_id=submission_id,
+        **update_dict
+    )
+    return updated_submission

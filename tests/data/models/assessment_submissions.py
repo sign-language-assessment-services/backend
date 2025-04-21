@@ -1,3 +1,4 @@
+from datetime import timedelta
 from uuid import uuid4
 
 from app.core.models.assessment_submission import AssessmentSubmission
@@ -16,4 +17,13 @@ assessment_submission_2 = AssessmentSubmission(
     assessment_id=assessment_2.id,
     user_id=test_taker_1.id,
     score=None
+)
+
+assessment_submission_1_updated = AssessmentSubmission(
+    **{
+        **assessment_submission_1.__dict__,
+        "finished": True,
+        "finished_at": assessment_1.created_at + timedelta(hours=1),
+        "score": 42
+    }
 )

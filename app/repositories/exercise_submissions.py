@@ -23,6 +23,15 @@ def get_exercise_submission(session: Session, _id: UUID) -> ExerciseSubmission |
     return None
 
 
+def get_exercise_submissions_for_assessment_submission(
+        session: Session,
+        assessment_submission_id: UUID
+) -> list[ExerciseSubmission]:
+    filter_conditions = {DbExerciseSubmission.assessment_submission_id: assessment_submission_id}
+    result = get_all(session, DbExerciseSubmission, filter_by=filter_conditions)
+    return [exercise_submission_to_domain(r) for r in result]
+
+
 def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
     result = get_all(session, DbExerciseSubmission)
     return [exercise_submission_to_domain(r) for r in result]

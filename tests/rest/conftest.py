@@ -16,6 +16,7 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.main import app
 from app.rest.dependencies import get_current_user
+from app.rest.requests.assessment_submissions import AssessmentSubmissionUpdateFinishedRequest
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.exercise_service import ExerciseService
@@ -25,7 +26,7 @@ from app.services.object_storage_client import ObjectStorageClient
 from app.services.primer_service import PrimerService
 from app.settings import get_settings
 from tests.data.models.assessment_submissions import (
-    assessment_submission_1, assessment_submission_2
+    assessment_submission_1, assessment_submission_1_updated, assessment_submission_2
 )
 from tests.data.models.assessments import assessment_1, assessment_2
 from tests.data.models.exercise_submissions import (
@@ -50,6 +51,7 @@ def app_dependency_overrides_data() -> FastAPI:
     )
     app.dependency_overrides[AssessmentSubmissionService] = _get_override_assessment_submission_service(
         get_by_id_return=assessment_submission_1,
+        update_submission=assessment_submission_1_updated,
         list_return=[assessment_submission_1, assessment_submission_2]
     )
     app.dependency_overrides[ExerciseService] = _get_override_exercise_service(
@@ -147,12 +149,14 @@ def _get_override_assessment_service(
 
 def _get_override_assessment_submission_service(
         get_by_id_return: AssessmentSubmission | None = None,
-        list_return: list[AssessmentSubmission] | None = None
+        list_return: list[AssessmentSubmission] | None = None,
+        update_submission: AssessmentSubmissionUpdateFinishedRequest | None = None
 ) -> Callable:
     async def override_assessment_submission_service() -> Mock:
         assessment_submission_service = Mock()
         assessment_submission_service.get_submission_by_id.return_value = get_by_id_return
         assessment_submission_service.list_submissions.return_value = list_return
+        assessment_submission_service.update_submission.return_value = update_submission
         return assessment_submission_service
 
     return override_assessment_submission_service

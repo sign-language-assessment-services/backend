@@ -83,3 +83,27 @@ def test_post_assessment_submission_403(test_client_no_roles: TestClient) -> Non
     response = test_client_no_roles.post(endpoint)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_put_assessment_submission_200(test_client: TestClient) -> None:
+    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}"
+
+    response = test_client.put(endpoint, json={"finished": True})
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_put_assessment_submission_403(test_client_no_roles: TestClient) -> None:
+    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}"
+
+    response = test_client_no_roles.put(endpoint, json={"finished": True})
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_put_assessment_submission_404(test_client_not_found: TestClient) -> None:
+    endpoint = f"/assessment_submissions/{str(uuid4())}"
+
+    response = test_client_not_found.put(endpoint, json={"finished": True})
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from app.services import primer_service as primer_service_module
 from app.services.primer_service import PrimerService, get_primer, list_primers
@@ -9,7 +9,10 @@ from tests.data.models.primers import primer_1, primer_2
     primer_service_module, get_primer.__name__,
     return_value=primer_1
 )
-def test_get_primer_by_id(mocked_get_primer, primer_service: PrimerService) -> None:
+def test_get_primer_by_id(
+        mocked_get_primer: MagicMock,
+        primer_service: PrimerService
+) -> None:
     primer_id = mocked_get_primer.return_value.id
     mocked_session = Mock()
 
@@ -24,7 +27,10 @@ def test_get_primer_by_id(mocked_get_primer, primer_service: PrimerService) -> N
     primer_service_module, list_primers.__name__,
     return_value=[primer_1, primer_2]
 )
-def test_list_primers(mocked_list_primer, primer_service: PrimerService) -> None:
+def test_list_primers(
+        mocked_list_primer: MagicMock,
+        primer_service: PrimerService
+) -> None:
     mocked_session = Mock()
 
     primers = primer_service.list_primers(mocked_session)

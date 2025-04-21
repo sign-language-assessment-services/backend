@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from app.services import exercise_submission_service as exercise_submission_service_module
 from app.services.exercise_submission_service import (
@@ -12,7 +12,10 @@ from tests.data.models.exercise_submissions import (
 
 
 @patch.object(exercise_submission_service_module, add_exercise_submission.__name__)
-def test_add_subission(mocked_add_submission, exercise_submission_service: ExerciseSubmissionService) -> None:
+def test_add_subission(
+        mocked_add_submission: MagicMock,
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
     mocked_session = Mock()
 
     exercise_submission_service.add_submission(mocked_session, exercise_submission_1)
@@ -24,7 +27,10 @@ def test_add_subission(mocked_add_submission, exercise_submission_service: Exerc
     exercise_submission_service_module, get_exercise_submission.__name__,
     return_value=exercise_submission_1
 )
-def test_get_submission_by_id(mocked_get_submission, exercise_submission_service: ExerciseSubmissionService) -> None:
+def test_get_submission_by_id(
+        mocked_get_submission: MagicMock,
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
     submission_id = mocked_get_submission.return_value.id
     mocked_session = Mock()
 
@@ -41,7 +47,10 @@ def test_get_submission_by_id(mocked_get_submission, exercise_submission_service
         exercise_submission_4, exercise_submission_5, exercise_submission_6
     ]
 )
-def test_list_submissions(mocked_list_submission, exercise_submission_service: ExerciseSubmissionService) -> None:
+def test_list_submissions(
+        mocked_list_submission: MagicMock,
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
     mocked_session = Mock()
 
     submissions = exercise_submission_service.list_submissions(mocked_session)

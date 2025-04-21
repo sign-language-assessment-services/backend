@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from app.services import exercise_service as exercise_service_module
 from app.services.exercise_service import ExerciseService, get_exercise, list_exercises
@@ -9,7 +9,10 @@ from tests.data.models.exercises import exercise_1, exercise_2
     exercise_service_module, get_exercise.__name__,
     return_value=exercise_1
 )
-def test_get_exercise_by_id(mocked_get_exercise, exercise_service: ExerciseService) -> None:
+def test_get_exercise_by_id(
+        mocked_get_exercise: MagicMock,
+        exercise_service: ExerciseService
+) -> None:
     exercise_id = mocked_get_exercise.return_value.id
     mocked_session = Mock()
 
@@ -26,7 +29,10 @@ def test_get_exercise_by_id(mocked_get_exercise, exercise_service: ExerciseServi
     exercise_service_module, list_exercises.__name__,
     return_value=[exercise_1, exercise_2]
 )
-def test_list_exercises(mocked_list_exercise, exercise_service: ExerciseService) -> None:
+def test_list_exercises(
+        mocked_list_exercise: MagicMock,
+        exercise_service: ExerciseService
+) -> None:
     mocked_session = Mock()
 
     exercises = exercise_service.list_exercises(mocked_session)

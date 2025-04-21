@@ -44,3 +44,15 @@ def test_list_assessment_submissions(test_client: TestClient) -> None:
             "id": str(assessment_submission_2.id)
         }
     ]
+
+
+def test_update_assessment_submission_finished(test_client: TestClient) -> None:
+    response = test_client.put(
+        f"/assessment_submissions/{assessment_submission_1.id}",
+        json={"finished": True}
+    ).json()
+
+    assert response["id"] == str(assessment_submission_1.id)
+    assert response["finished"] is True
+    assert response["score"] == 42
+    assert response["finished_at"] is not None
