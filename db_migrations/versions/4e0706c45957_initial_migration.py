@@ -3,15 +3,15 @@
 Revision ID: 4e0706c45957
 Revises: 
 Create Date: 2025-03-24 16:28:50.879748+00:00
-
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-# revision identifiers, used by Alembic.
+# Revision identifiers used by Alembic
 revision: str = "4e0706c45957"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
