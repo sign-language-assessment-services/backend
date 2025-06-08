@@ -10,6 +10,7 @@ from app.core.models.primer import Primer
 class Assessment(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified_at: datetime | None = Field(default=None)
 
     name: str
     deadline: datetime | None = Field(default=None)
