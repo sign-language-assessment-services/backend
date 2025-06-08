@@ -8,7 +8,7 @@ from app.services.assessment_submission_service import (
     update_assessment_submission
 )
 from tests.data.models.assessment_submissions import (
-    assessment_submission_1, assessment_submission_1_updated, assessment_submission_2
+    assessment_submission_1, assessment_submission_2
 )
 from tests.data.models.exercise_submissions import exercise_submission_5, exercise_submission_6
 
