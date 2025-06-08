@@ -10,7 +10,6 @@ from app.repositories.exercise_submissions import (
     add_exercise_submission, get_exercise_submission, list_exercise_submissions,
     upsert_exercise_submission
 )
-from app.services.exceptions import ExerciseSubmissionNotExistsException
 from app.settings import get_settings
 
 
@@ -29,17 +28,6 @@ class ExerciseSubmissionService:
     @staticmethod
     def list_submissions(session: Session) -> list[ExerciseSubmission]:
         return list_exercise_submissions(session=session)
-
-    def update_submission(self, session: Session, submission_id: UUID, **kwargs: str) -> ExerciseSubmission:
-        exercise_submission = self.get_submission_by_id(session, submission_id)
-        if not exercise_submission:
-            raise ExerciseSubmissionNotExistsException(
-                f"No exercise submission found with id {submission_id}."
-            )
-        for key, value in kwargs.items():
-            setattr(exercise_submission, key, value)
-        session.commit()
-        return exercise_submission
 
     @staticmethod
     def upsert_submission(session: Session, submission: ExerciseSubmission) -> None:
