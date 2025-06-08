@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, Mock, patch
 from app.services import exercise_submission_service as exercise_submission_service_module
 from app.services.exercise_submission_service import (
     ExerciseSubmissionService, add_exercise_submission, get_exercise_submission,
-    list_exercise_submissions
+    list_exercise_submissions, upsert_exercise_submission
 )
 from tests.data.models.exercise_submissions import (
     exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
@@ -59,3 +59,15 @@ def test_list_submissions(
     for result, expected in zip(submissions, mocked_list_submission.return_value):
         assert result == expected
     mocked_list_submission.assert_called_once_with(session=mocked_session)
+
+
+@patch.object(exercise_submission_service_module, upsert_exercise_submission.__name__)
+def test_upsert_submission(
+        mocked_upsert_submission: MagicMock,
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
+    mocked_session = Mock()
+
+    exercise_submission_service.upsert_submission(mocked_session, exercise_submission_1)
+
+    mocked_upsert_submission.assert_called_once_with(session=mocked_session, submission=exercise_submission_1)

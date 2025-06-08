@@ -31,6 +31,11 @@ def update_entry(session: Session, _class: Type[T], _id: UUID, **kwargs) -> None
     session.commit()
 
 
+def upsert_entry(session: Session, db: T) -> None:
+    session.merge(db)
+    session.commit()
+
+
 def delete_entry(session: Session, _class: Type[T], _id: UUID) -> None:
     entry = session.get(_class, _id)
     if entry is None:

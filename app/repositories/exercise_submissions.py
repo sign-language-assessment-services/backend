@@ -8,7 +8,9 @@ from app.database.tables.exercise_submissions import DbExerciseSubmission
 from app.mappers.exercise_submission_mapper import (
     exercise_submission_to_db, exercise_submission_to_domain
 )
-from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
+from app.repositories.utils import (
+    add_entry, delete_entry, get_all, get_by_id, update_entry, upsert_entry
+)
 
 
 def add_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
@@ -45,6 +47,11 @@ def list_exercise_submissions_for_user(session: Session, user_id: UUID) -> list[
 
 def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
     update_entry(session, DbExerciseSubmission, _id, **kwargs)
+
+
+def upsert_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
+    db_model = exercise_submission_to_db(submission)
+    upsert_entry(session, db_model)
 
 
 def delete_exercise_submission(session: Session, _id: UUID) -> None:

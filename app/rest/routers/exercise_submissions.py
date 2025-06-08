@@ -73,5 +73,5 @@ async def post_submission(
     )
     exercise = exercise_service.get_exercise_by_id(db_session, exercise_id)
     scoring_service.score(exercise_submission=submission, exercise=exercise)
-    submission_service.add_submission(session=db_session, submission=submission)
+    submission_service.upsert_submission(session=db_session, submission=submission)
     return submission
