@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import Float, ForeignKey, Uuid
+from sqlalchemy import Float, ForeignKey, UniqueConstraint, Uuid
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -43,4 +43,10 @@ class DbExerciseSubmission(DbBase):
     )
     exercise: Mapped["DbExercise"] = relationship(
         back_populates="exercise_submissions"
+    )
+
+    # CONSTRAINTS
+    # ------------------------------------------------------------------------
+    __table_args__ = (
+        UniqueConstraint("assessment_submission_id", "exercise_id"),
     )
