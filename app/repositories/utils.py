@@ -11,7 +11,7 @@ T = TypeVar("T", bound=DeclarativeBase)
 
 def add_entry(session: Session, db: T) -> None:
     session.add(db)
-    session.commit()
+    session.flush()
 
 
 def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
@@ -28,12 +28,12 @@ def get_all(session: Session, _class: Type[T], filter_by: dict[InstrumentedAttri
 
 def update_entry(session: Session, _class: Type[T], _id: UUID, **kwargs) -> None:
     session.execute(update(_class).where(_class.id == _id).values(**kwargs))
-    session.commit()
+    session.flush()
 
 
 def upsert_entry(session: Session, db: T) -> None:
     session.merge(db)
-    session.commit()
+    session.flush()
 
 
 def delete_entry(session: Session, _class: Type[T], _id: UUID) -> None:
@@ -43,4 +43,4 @@ def delete_entry(session: Session, _class: Type[T], _id: UUID) -> None:
             f"Table '{_class.__tablename__}' has no entry with id '{_id}'."
         )
     session.delete(entry)
-    session.commit()
+    session.flush()

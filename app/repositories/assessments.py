@@ -21,7 +21,7 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
             DbAssessmentsTasks(position=i, task=task)
             for i, task in enumerate(db_model.tasks, start=1)
         ]
-        session.commit()
+        session.flush()
         return None
 
     add_entry(session, db_model)

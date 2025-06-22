@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, Iterator
 from urllib.parse import quote
 
@@ -11,6 +12,7 @@ from app.config import Settings
 from app.database.tables.base import DbBase
 from app.settings import get_settings
 
+logger = logging.getLogger(__name__)
 
 def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engine:
     connection_url = "{db_type}+{driver}://{user}:{password}@{host}/{db_name}"
@@ -30,6 +32,11 @@ def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterato
     session_factory = sessionmaker(bind=engine)
     with session_factory.begin() as session:  # pylint: disable=no-member
         yield session
+        try:
+            session.commit()
+        except Exception as exc:
+            logger.exception(exc)
+            session.rollback()
 
 
 def import_tables() -> None:
