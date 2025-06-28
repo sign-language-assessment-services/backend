@@ -19,7 +19,6 @@ def test_add_exercise_submission(test_client: TestClient) -> None:
 
     assert response == {
         "id": ANY,
-        "user_id": str(exercise_submission_1.user_id),
         "assessment_submission_id": str(exercise_submission_1.assessment_submission_id),
         "exercise_id": str(exercise_submission_1.exercise_id),
         "answers": [str(choice_id) for choice_id in exercise_submission_1.answer.choices]
@@ -34,7 +33,6 @@ def test_get_exercise_submission(test_client: TestClient) -> None:
 
     assert response == {
         "id": str(exercise_submission_1.id),
-        "user_id": str(exercise_submission_1.user_id),
         "assessment_submission_id": str(exercise_submission_1.assessment_submission_id),
         "exercise_id": str(exercise_submission_1.exercise_id),
         "answers": [str(choice_id) for choice_id in exercise_submission_1.answer.choices]

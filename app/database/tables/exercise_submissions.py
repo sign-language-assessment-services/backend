@@ -13,9 +13,6 @@ class DbExerciseSubmission(DbBase):
 
     # COLUMNS
     # ------------------------------------------------------------------------
-    user_id: Mapped[UUID] = mapped_column(
-        nullable=False
-    )
     choices: Mapped[list[UUID]] = mapped_column(
         MutableList.as_mutable(ARRAY(Uuid, dimensions=1)),
         nullable=True

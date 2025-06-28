@@ -8,7 +8,6 @@ from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 
 class ExerciseSubmissionResponse(BaseModel):
     id: UUID
-    user_id: UUID
     assessment_submission_id: UUID
     exercise_id: UUID
     answer: MultipleChoiceAnswer = Field(exclude=True)

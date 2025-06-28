@@ -1,5 +1,5 @@
 from typing import Annotated
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -66,7 +66,6 @@ async def post_submission(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     submission = ExerciseSubmission(
-        user_id=current_user.id if current_user.id else uuid4(),  # TODO: temporary activate uuid for user
         answer=answers,
         assessment_submission_id=assessment_submission_id,
         exercise_id=exercise_id,

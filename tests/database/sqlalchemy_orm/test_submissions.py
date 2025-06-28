@@ -42,7 +42,6 @@ def test_insert_exercise_submission(db_session):
     assert table_count(db_session, DbExerciseSubmission) == 1
     assert db_submission.id == submission_data.get("id")
     assert db_submission.created_at == submission_data.get("created_at")
-    assert db_submission.user_id == submission_data.get("user_id")
     assert db_submission.choices == [choice for choice in submission_data.get("choices")]
     assert db_submission.assessment_submission_id == submission_data.get("assessment_submission_id")
     assert db_submission.exercise_id == submission_data.get("exercise_id")
@@ -111,7 +110,6 @@ def test_update_submission(db_session: Session) -> None:
     assert table_count(db_session, DbExerciseSubmission) == 1
     assert db_submission.id == submission_data.get("id")
     assert db_submission.created_at == submission_data.get("created_at")
-    assert db_submission.user_id == submission_data.get("user_id")
     assert db_submission.choices != [choice for choice in submission_data.get("choices")]
     assert db_submission.choices == [choice for choice in new_choices]
     assert db_submission.assessment_submission_id == submission_data.get("assessment_submission_id")

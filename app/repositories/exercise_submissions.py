@@ -39,12 +39,6 @@ def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
     return [exercise_submission_to_domain(r) for r in result]
 
 
-def list_exercise_submissions_for_user(session: Session, user_id: UUID) -> list[ExerciseSubmission]:
-    filter_conditions = {DbExerciseSubmission.user_id: user_id}
-    result = get_all(session, DbExerciseSubmission, filter_by=filter_conditions)
-    return [exercise_submission_to_domain(r) for r in result]
-
-
 def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
     update_entry(session, DbExerciseSubmission, _id, **kwargs)
 

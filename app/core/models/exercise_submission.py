@@ -11,7 +11,6 @@ class ExerciseSubmission(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified_at: datetime | None = Field(default=None)
 
-    user_id: UUID
     answer: MultipleChoiceAnswer
     score: float | None = Field(default=None)
     assessment_submission_id: UUID
