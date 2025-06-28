@@ -6,6 +6,7 @@ from alembic import command
 from alembic.config import Config
 from fastapi import Depends
 from sqlalchemy import Engine, create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import Settings
@@ -34,7 +35,7 @@ def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterato
         yield session
         try:
             session.commit()
-        except Exception as exc:
+        except SQLAlchemyError as exc:
             logger.exception(exc)
             session.rollback()
 
