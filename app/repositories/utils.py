@@ -1,12 +1,18 @@
-from typing import Any, Iterable, Type, TypeVar
+from collections.abc import Mapping
+from datetime import datetime, timezone
+from typing import Any, Iterable, Type, TypeAlias, TypeVar
 from uuid import UUID
 
-from sqlalchemy import and_, select, update
+from sqlalchemy import ColumnCollection, and_, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import DeclarativeBase, InstrumentedAttribute, Session
+from sqlalchemy.sql.schema import ColumnCollectionConstraint, Index
 
 from app.database.exceptions import EntryNotFoundError
 
 T = TypeVar("T", bound=DeclarativeBase)
+OnUpdateConstraint: TypeAlias = str | ColumnCollectionConstraint | Index | None
+OnUpdateFields: TypeAlias = Mapping[Any, Any] | ColumnCollection | None
 
 
 def add_entry(session: Session, db: T) -> None:
@@ -31,9 +37,27 @@ def update_entry(session: Session, _class: Type[T], _id: UUID, **kwargs) -> None
     session.flush()
 
 
-def upsert_entry(session: Session, db: T) -> None:
-    session.merge(db)
-    session.flush()
+def upsert_entry(
+        session: Session,
+        db: T,
+        on_constraint: OnUpdateConstraint,
+        fields_to_update: OnUpdateFields
+) -> None:
+    db_class: Type[T] = db.__class__
+    insert_stmt = insert(db_class).values(
+        **{
+            k: v for k, v in db.__dict__.items()
+            if not k.startswith("_")
+        }
+    )
+    upsert_stmt = insert_stmt.on_conflict_do_update(
+        constraint=on_constraint,
+        set_={
+            **fields_to_update,
+            db_class.modified_at: datetime.now(timezone.utc)
+        }
+    )
+    session.execute(upsert_stmt)
 
 
 def delete_entry(session: Session, _class: Type[T], _id: UUID) -> None:

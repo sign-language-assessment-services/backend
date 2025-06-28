@@ -237,6 +237,7 @@ def test_upsert_exercise_submission_with_new_id(db_session: Session) -> None:
     result = db_session.get(DbExerciseSubmission, exercise_submission.id)
     assert result.id == exercise_submission.id
     assert result.created_at == exercise_submission.created_at
+    assert result.modified_at is None
     assert result.user_id == exercise_submission.user_id
     assert result.choices == exercise_submission.answer.choices
     assert result.assessment_submission_id == exercise_submission.assessment_submission_id
@@ -266,23 +267,22 @@ def test_upsert_exercise_submission_with_existing_id(db_session: Session) -> Non
         choices=old_choices
     )
 
-    exercise_submission = ExerciseSubmission(
+    updated_exercise_submission = ExerciseSubmission(
         id=exercise_submission.get("id"),
         assessment_submission_id=assessment_submission.get("id"),
-        user_id=assessment_submission.get("user_id"),
         exercise_id=exercise_id,
+        user_id=assessment_submission.get("user_id"),
         answer=MultipleChoiceAnswer(choices=new_choices)
     )
-    upsert_exercise_submission(session=db_session, submission=exercise_submission)
+    upsert_exercise_submission(session=db_session, submission=updated_exercise_submission)
 
-    result = db_session.get(DbExerciseSubmission, exercise_submission.id)
-    assert result.id == exercise_submission.id
-    assert result.created_at == exercise_submission.created_at
-    assert result.user_id == exercise_submission.user_id
-    assert result.choices != old_choices
-    assert result.choices == new_choices
-    assert result.assessment_submission_id == exercise_submission.assessment_submission_id
-    assert result.exercise_id == exercise_submission.exercise_id
+    result = db_session.get(DbExerciseSubmission, updated_exercise_submission.id)
+    assert result.id == exercise_submission.get("id")
+    assert result.created_at == exercise_submission.get("created_at")
+    assert result.modified_at is not None
+    assert result.choices != old_choices and result.choices == new_choices
+    assert result.assessment_submission_id == exercise_submission.get("assessment_submission_id")
+    assert result.exercise_id == exercise_submission.get("exercise_id")
     assert table_count(db_session, DbExerciseSubmission) == 1
 
 

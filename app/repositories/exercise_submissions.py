@@ -51,7 +51,14 @@ def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> No
 
 def upsert_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
     db_model = exercise_submission_to_db(submission)
-    upsert_entry(session, db_model)
+    upsert_entry(
+        session=session,
+        db=db_model,
+        on_constraint="exercise_submissions_pkey",
+        fields_to_update={
+            DbExerciseSubmission.choices: db_model.choices
+        }
+    )
 
 
 def delete_exercise_submission(session: Session, _id: UUID) -> None:
