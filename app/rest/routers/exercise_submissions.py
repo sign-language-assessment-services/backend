@@ -61,11 +61,13 @@ async def post_submission(
         scoring_service: Annotated[ScoringService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session),
+        exercise_submission_id: UUID | None = None
 ) -> ExerciseSubmission:
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     submission = ExerciseSubmission(
+        id=exercise_submission_id,
         answer=answers,
         assessment_submission_id=assessment_submission_id,
         exercise_id=exercise_id,

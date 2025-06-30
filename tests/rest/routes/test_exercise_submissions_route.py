@@ -62,3 +62,26 @@ def test_list_exercise_submissions(test_client: TestClient) -> None:
             "id": str(exercise_submission_6.id)
         },
     ]
+
+
+def test_update_exercise_submission(test_client: TestClient) -> None:
+    assessment_submission_id = str(exercise_submission_1.assessment_submission_id)
+    exercise_id = str(exercise_submission_1.exercise_id)
+    exercise_submission_response = test_client.post(
+        f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
+        json={"choices": []}
+    ).json()
+
+    updated_exercise_submission_response = test_client.post(
+        f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
+        params={"exercise_submission_id": exercise_submission_response["id"]},
+        json={"choices": [str(choice) for choice in exercise_submission_1.answer.choices]}
+    ).json()
+
+    assert updated_exercise_submission_response == {
+        "id": exercise_submission_response["id"],
+        "assessment_submission_id": exercise_submission_response["assessment_submission_id"],
+        "exercise_id": exercise_submission_response["exercise_id"],
+        "answers": [str(choice_id) for choice_id in exercise_submission_1.answer.choices]
+    }
+    assert isinstance(updated_exercise_submission_response["id"], str)
