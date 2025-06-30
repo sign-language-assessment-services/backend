@@ -117,9 +117,9 @@ BEGIN
         SELECT choice_id INTO var_choice_id FROM multiple_choices_choices WHERE multiple_choice_id = var_multiple_choice_id ORDER BY random() LIMIT 1;
         SELECT CASE WHEN is_correct = true THEN 1 ELSE 0 END INTO var_score FROM multiple_choices_choices WHERE choice_id = var_choice_id;
 
-        INSERT INTO exercise_submissions (id, created_at, user_id, choices, assessment_submission_id, exercise_id, score)
+        INSERT INTO exercise_submissions (id, created_at, choices, assessment_submission_id, exercise_id, score)
         VALUES
-            (var_exercise_submission_id, now(), var_user_id, ARRAY[var_choice_id], var_assessment_submission_id, var_exercise_id, var_score);
+            (var_exercise_submission_id, now(), ARRAY[var_choice_id], var_assessment_submission_id, var_exercise_id, var_score);
     END LOOP;
 
 END $$;
