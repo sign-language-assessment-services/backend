@@ -56,6 +56,7 @@ def test_task_deletion_is_reflected_in_association_table(db_session: Session) ->
 
     db_primer_2 = db_session.get(DbPrimer, primer_data_2.get("id"))
     db_session.delete(db_primer_2)
+    db_session.flush()
 
     db_assessment = db_session.execute(select(DbAssessment)).scalar_one()
     assert table_count(db_session, DbAssessment) == 1
@@ -114,6 +115,7 @@ def test_task_deletion_does_not_delete_assessment(db_session: Session) -> None:
 
     db_task = db_session.get(DbTask, task_data.get("id"))
     db_session.delete(db_task)
+    db_session.flush()
 
     assert table_count(db_session, DbTask) == 0
     assert table_count(db_session, DbAssessmentsTasks) == 0
