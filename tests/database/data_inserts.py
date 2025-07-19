@@ -239,6 +239,7 @@ def insert_exercise_submission(
         exercise_id: UUID,
         choices: list[UUID],
         created_at: datetime = datetime(2000, 1, 1, 12, tzinfo=UTC),
+        score: float | None = None,
 ) -> DbData:
     """Insert an exercise submission into database"""
     exercise_submission = {
@@ -247,12 +248,13 @@ def insert_exercise_submission(
         "choices": choices,
         "assessment_submission_id": assessment_submission_id,
         "exercise_id": exercise_id,
+        "score": score,
     }
     session.execute(
         text(
             """
-            INSERT INTO exercise_submissions(id, created_at, choices, assessment_submission_id, exercise_id)
-            VALUES (:id, :created_at, :choices, :assessment_submission_id, :exercise_id)
+            INSERT INTO exercise_submissions(id, created_at, choices, assessment_submission_id, exercise_id, score)
+            VALUES (:id, :created_at, :choices, :assessment_submission_id, :exercise_id, :score)
             """
         ),
         exercise_submission

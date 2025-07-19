@@ -257,14 +257,16 @@ def test_upsert_exercise_submission_with_existing_id(db_session: Session) -> Non
         session=db_session,
         assessment_submission_id=assessment_submission.get("id"),
         exercise_id=exercise_id,
-        choices=old_choices
+        choices=old_choices,
+        score=0,
     )
 
     updated_exercise_submission = ExerciseSubmission(
         id=exercise_submission.get("id"),
         assessment_submission_id=assessment_submission.get("id"),
         exercise_id=exercise_id,
-        answer=MultipleChoiceAnswer(choices=new_choices)
+        answer=MultipleChoiceAnswer(choices=new_choices),
+        score=1.0
     )
     upsert_exercise_submission(session=db_session, submission=updated_exercise_submission)
 
@@ -273,6 +275,7 @@ def test_upsert_exercise_submission_with_existing_id(db_session: Session) -> Non
     assert result.created_at == exercise_submission.get("created_at")
     assert result.modified_at is not None
     assert result.choices != old_choices and result.choices == new_choices
+    assert result.score == updated_exercise_submission.score
     assert result.assessment_submission_id == exercise_submission.get("assessment_submission_id")
     assert result.exercise_id == exercise_submission.get("exercise_id")
     assert table_count(db_session, DbExerciseSubmission) == 1

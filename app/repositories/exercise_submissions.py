@@ -50,7 +50,8 @@ def upsert_exercise_submission(session: Session, submission: ExerciseSubmission)
         db=db_model,
         on_constraint="exercise_submissions_pkey",
         fields_to_update={
-            DbExerciseSubmission.choices: db_model.choices
+            DbExerciseSubmission.choices: db_model.choices,
+            DbExerciseSubmission.score: db_model.score
         }
     )
 
