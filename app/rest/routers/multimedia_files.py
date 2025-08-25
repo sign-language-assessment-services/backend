@@ -18,11 +18,6 @@ router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
 @router.post(
-    "/object-storage/",
-    response_model=CreateMultimediaFileResponse,
-    status_code=status.HTTP_200_OK
-)
-@router.post(
     "/multimedia_files/",
     response_model=CreateMultimediaFileResponse,
     status_code=status.HTTP_200_OK
@@ -49,11 +44,6 @@ async def create_multimedia_file(
     )
 
 
-@router.get(
-    "/object-storage/{multimedia_file_id}",
-    response_model=GetMultimediaFileResponse,
-    status_code=status.HTTP_200_OK
-)
 @router.get(
     "/multimedia_files/{multimedia_file_id}",
     response_model=GetMultimediaFileResponse,
@@ -84,11 +74,6 @@ async def get_multimedia_file(
     return multimedia_file
 
 
-@router.get(
-    "/object-storage/",
-    response_model=list[ListMultimediaFileResponse],
-    status_code=status.HTTP_200_OK
-)
 @router.get(
     "/multimedia_files/",
     response_model=list[ListMultimediaFileResponse],
