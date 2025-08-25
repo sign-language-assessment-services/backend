@@ -9,18 +9,54 @@ from tests.data.models.exercise_submissions import (
     exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
     exercise_submission_5, exercise_submission_6
 )
+from tests.data.models.exercises import exercise_1
+
+
+def test_add_exercise_submission_calls_scoring_function(
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
+    mocked_session = Mock()
+    exercise_submission_service.exercise_service.get_exercise_by_id = Mock(return_value=exercise_1)
+    mocked_scoring_function = Mock()
+    exercise_submission_service.scoring_service.score = mocked_scoring_function
+
+    exercise_submission_service.create_exercise_submission(
+        session=mocked_session,
+        assessment_submission_id=exercise_submission_1.assessment_submission_id,
+        exercise_id=exercise_submission_1.exercise_id,
+        answer_ids=exercise_submission_1.answer.choices
+    )
+
+    mocked_scoring_function.assert_called_once()
+    assert mocked_scoring_function.call_args.kwargs["exercise"] == exercise_1
+    assert mocked_scoring_function.call_args.kwargs["exercise_submission"].answer == exercise_submission_1.answer
+    assert mocked_scoring_function.call_args.kwargs["exercise_submission"].score == exercise_submission_1.score
 
 
 @patch.object(exercise_submission_service_module, add_exercise_submission.__name__)
-def test_add_subission(
+def test_add_exercise_submission(
         mocked_add_submission: MagicMock,
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
     mocked_session = Mock()
+    mocked_scoring_function = Mock()
+    mocked_get_exercise = Mock(return_value=exercise_1)
+    exercise_submission_service.scoring_service.score = mocked_scoring_function
+    exercise_submission_service.exercise_service.get_exercise_by_id = mocked_get_exercise
 
-    exercise_submission_service.add_submission(mocked_session, exercise_submission_1)
+    exercise_submission_service.create_exercise_submission(
+        session=mocked_session,
+        assessment_submission_id=exercise_submission_1.assessment_submission_id,
+        exercise_id=exercise_submission_1.exercise_id,
+        answer_ids=exercise_submission_1.answer.choices
+    )
 
-    mocked_add_submission.assert_called_once_with(session=mocked_session, submission=exercise_submission_1)
+    mocked_add_submission.assert_called_once()
+    assert mocked_add_submission.call_args.kwargs["session"] == mocked_session
+    submission_call = mocked_add_submission.call_args.kwargs["submission"]
+    assert submission_call.answer == exercise_submission_1.answer
+    assert submission_call.exercise_id == exercise_submission_1.exercise_id
+    assert submission_call.assessment_submission_id == exercise_submission_1.assessment_submission_id
 
 
 @patch.object(
@@ -34,7 +70,7 @@ def test_get_submission_by_id(
     submission_id = mocked_get_submission.return_value.id
     mocked_session = Mock()
 
-    submission = exercise_submission_service.get_submission_by_id(mocked_session, submission_id)
+    submission = exercise_submission_service.get_exercise_submission_by_id(mocked_session, submission_id)
 
     assert submission == mocked_get_submission.return_value
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
@@ -53,7 +89,7 @@ def test_list_submissions(
 ) -> None:
     mocked_session = Mock()
 
-    submissions = exercise_submission_service.list_submissions(mocked_session)
+    submissions = exercise_submission_service.list_exercise_submissions(mocked_session)
 
     assert len(submissions) == len(mocked_list_submission.return_value)
     for result, expected in zip(submissions, mocked_list_submission.return_value):
@@ -67,7 +103,15 @@ def test_upsert_submission(
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
     mocked_session = Mock()
+    exercise_submission_service.scoring_service.score = Mock()
+    exercise_submission_service.exercise_service.get_exercise_by_id = Mock(return_value=exercise_1)
 
-    exercise_submission_service.upsert_submission(mocked_session, exercise_submission_1)
+    exercise_submission_service.upsert_exercise_submission(
+        session=mocked_session,
+        data=exercise_submission_1.__dict__
+    )
 
-    mocked_upsert_submission.assert_called_once_with(session=mocked_session, submission=exercise_submission_1)
+    mocked_upsert_submission.assert_called_once_with(
+        session=mocked_session,
+        submission=exercise_submission_1
+    )

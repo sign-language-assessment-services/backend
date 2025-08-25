@@ -14,3 +14,4 @@ class MultimediaFile(BaseModel):
 
     location: MinioLocation
     media_type: MediaType
+    url: str | None = Field(default=None)

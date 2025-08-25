@@ -6,13 +6,30 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.core.models.exercise import Exercise
-from app.repositories.exercises import get_exercise, list_exercises
+from app.core.models.question import Question
+from app.core.models.question_type import QuestionType
+from app.repositories.exercises import add_exercise, get_exercise, list_exercises
+from app.repositories.multimedia_files import get_multimedia_file
+from app.repositories.multiple_choices import get_multiple_choice
 from app.settings import get_settings
 
 
 class ExerciseService:
     def __init__(self, settings: Annotated[Settings, Depends(get_settings)]):
         self.settings = settings
+
+    @staticmethod
+    def create_exercise(session: Session, points: int, multimedia_file_id: UUID, multiple_choice_id: UUID) -> Exercise:
+        multimedia_file = get_multimedia_file(session=session, _id=multimedia_file_id)
+        multiple_choice = get_multiple_choice(session=session, _id=multiple_choice_id)
+        exercise = Exercise(
+            points=points,
+            question=Question(content=multimedia_file),
+            question_type=QuestionType(content=multiple_choice)
+        )
+        add_exercise(session=session, exercise=exercise)
+        return exercise
+
 
     @staticmethod
     def get_exercise_by_id(session: Session, exercise_id: UUID) -> Exercise | None:

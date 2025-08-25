@@ -6,18 +6,14 @@ from minio.datatypes import Object as MinioObject
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
+from app.external_services.minio.client import ObjectStorageClient
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.exercise_service import ExerciseService
 from app.services.exercise_submission_service import ExerciseSubmissionService
 from app.services.multimedia_file_service import MultimediaFileService
-from app.services.object_storage_client import ObjectStorageClient
 from app.services.primer_service import PrimerService
-
-
-@pytest.fixture
-def storage_folders() -> list[str]:
-    return ["00", "01"]
+from app.services.scoring_service import ScoringService
 
 
 @pytest.fixture
@@ -43,11 +39,11 @@ def storage_files() -> list[MultimediaFile]:
 
 
 @pytest.fixture
-def storage_client(storage_files: list[MultimediaFile], storage_folders: list[str]) -> Mock:
+def storage_client(storage_files: list[MultimediaFile]) -> Mock:
     object_storage_client = Mock()
     object_storage_client.get_presigned_url.return_value = "http://some-url"
     object_storage_client.list_files.side_effect = storage_files
-    object_storage_client.list_folders.return_value = storage_folders
+    object_storage_client.list_folders.return_value = ["00", "01"]
     return object_storage_client
 
 
@@ -69,18 +65,23 @@ def exercise_service(settings: Mock) -> ExerciseService:
 
 
 @pytest.fixture
-def multimedia_file_service(settings: Mock) -> MultimediaFileService:
-    return MultimediaFileService(settings)
+def exercise_submission_service(settings: Mock, exercise_service: ExerciseService) -> ExerciseSubmissionService:
+    return ExerciseSubmissionService(settings, ScoringService(), exercise_service)
 
 
 @pytest.fixture
-def primer_service(settings: Mock) -> PrimerService:
-    return PrimerService(settings)
+def multimedia_file_service(settings: Mock, storage_client: Mock) -> MultimediaFileService:
+    return MultimediaFileService(settings, storage_client)
 
 
 @pytest.fixture
-def exercise_submission_service(settings: Mock) -> ExerciseSubmissionService:
-    return ExerciseSubmissionService(settings)
+def primer_service(settings: Mock, multimedia_file_service: MultimediaFileService) -> PrimerService:
+    return PrimerService(settings, multimedia_file_service)
+
+
+@pytest.fixture
+def scoring_service(settings: Mock) -> ScoringService:
+    return ScoringService()
 
 
 @pytest.fixture

@@ -13,7 +13,6 @@ def test_add_assessment_submission(test_client: TestClient) -> None:
 
     response = test_client.post(f"/assessments/{assessment_id}/submissions/").json()
 
-
     assert response == {"id": ANY}
     assert isinstance(response["id"], str)
 

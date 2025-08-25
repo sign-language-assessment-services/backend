@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.authorization.auth_bearer import JWTBearer
+from app.external_services.keycloak.auth_bearer import JWTBearer
 
 
 @dataclass

@@ -10,7 +10,8 @@ multimedia_file_primer_1 = MultimediaFile(
         bucket="testbucket",
         key="primer-1.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_primer_2 = MultimediaFile(
@@ -19,7 +20,8 @@ multimedia_file_primer_2 = MultimediaFile(
         bucket="testbucket",
         key="primer-2.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_question_1 = MultimediaFile(
@@ -28,7 +30,8 @@ multimedia_file_question_1 = MultimediaFile(
         bucket="testbucket",
         key="question-1.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_question_2 = MultimediaFile(
@@ -37,7 +40,8 @@ multimedia_file_question_2 = MultimediaFile(
         bucket="testbucket",
         key="question-2.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_1 = MultimediaFile(
@@ -46,7 +50,8 @@ multimedia_file_choice_1 = MultimediaFile(
         bucket="testbucket",
         key="choice-1.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_2 = MultimediaFile(
@@ -55,7 +60,8 @@ multimedia_file_choice_2 = MultimediaFile(
         bucket="testbucket",
         key="choice-2.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_3 = MultimediaFile(
@@ -64,7 +70,8 @@ multimedia_file_choice_3 = MultimediaFile(
         bucket="testbucket",
         key="choice-3.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_4 = MultimediaFile(
@@ -73,7 +80,8 @@ multimedia_file_choice_4 = MultimediaFile(
         bucket="testbucket",
         key="choice-4.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_5 = MultimediaFile(
@@ -82,7 +90,8 @@ multimedia_file_choice_5 = MultimediaFile(
         bucket="testbucket",
         key="choice-5.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_6 = MultimediaFile(
@@ -91,7 +100,8 @@ multimedia_file_choice_6 = MultimediaFile(
         bucket="testbucket",
         key="choice-6.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_7 = MultimediaFile(
@@ -100,7 +110,8 @@ multimedia_file_choice_7 = MultimediaFile(
         bucket="testbucket",
         key="choice-7.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )
 
 multimedia_file_choice_8 = MultimediaFile(
@@ -109,5 +120,6 @@ multimedia_file_choice_8 = MultimediaFile(
         bucket="testbucket",
         key="choice-8.mpg"
     ),
-    media_type=MediaType.VIDEO
+    media_type=MediaType.VIDEO,
+    url="http://some-url/"
 )

@@ -20,19 +20,21 @@ class AssessmentSubmissionService:
         self.settings = settings
 
     @staticmethod
-    def add_submission(session: Session, submission: AssessmentSubmission) -> None:
+    def create_assessment_submission(session: Session, user_id: UUID, assessment_id: UUID) -> AssessmentSubmission:
+        submission = AssessmentSubmission(user_id=user_id, assessment_id=assessment_id)
         add_assessment_submission(session=session, submission=submission)
+        return submission
 
     @staticmethod
-    def get_submission_by_id(session: Session, submission_id: UUID) -> AssessmentSubmission:
+    def get_assessment_submission_by_id(session: Session, submission_id: UUID) -> AssessmentSubmission:
         return get_assessment_submission(session=session, _id=submission_id)
 
     @staticmethod
-    def list_submissions(session: Session) -> list[AssessmentSubmission]:
+    def list_assessment_submissions(session: Session) -> list[AssessmentSubmission]:
         return list_assessment_submissions(session=session)
 
     @staticmethod
-    def update_submission(session: Session, submission_id: UUID, **kwargs: Any) -> AssessmentSubmission:
+    def update_assessment_submission(session: Session, submission_id: UUID, **kwargs: Any) -> AssessmentSubmission:
         if kwargs.get("finished"):
             exercise_submissions = get_exercise_submissions_for_assessment_submission(
                 session=session,

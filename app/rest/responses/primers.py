@@ -1,12 +1,16 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field
 
 from app.core.models.multimedia_file import MultimediaFile
 
 
-class PrimerResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class CreatePrimerResponse(BaseModel):
+    id: UUID
+
+
+class GetPrimerResponse(BaseModel):
+    id: UUID
     content: MultimediaFile = Field(exclude=True)
 
     @computed_field
@@ -20,5 +24,5 @@ class PrimerResponse(BaseModel):
         return str(self.content.id)  # pylint: disable=no-member
 
 
-class PrimerListResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class ListPrimerResponse(BaseModel):
+    id: UUID

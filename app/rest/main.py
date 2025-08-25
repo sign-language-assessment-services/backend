@@ -7,7 +7,7 @@ from app.database.orm import import_tables, run_migrations
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
 from app.rest.routers import (
-    assessment_submissions, assessments, exercise_submissions, exercises, object_storage, primers,
+    assessment_submissions, assessments, exercise_submissions, exercises, multimedia_files, primers,
     root
 )
 
@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
             "email": "tbd@not-yet-available.zzz"
         },
         default_response_class=ORJSONResponse,
-        lifespan=lifespan
+        # lifespan=lifespan
     )
     import_tables()
 
@@ -42,7 +42,7 @@ def create_app() -> FastAPI:
     app.include_router(assessment_submissions.router)
     app.include_router(assessments.router)
     app.include_router(exercises.router)
-    app.include_router(object_storage.router)
+    app.include_router(multimedia_files.router)
     app.include_router(primers.router)
     app.include_router(exercise_submissions.router)
     return app

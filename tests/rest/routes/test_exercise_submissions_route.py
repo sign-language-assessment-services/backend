@@ -14,15 +14,10 @@ def test_add_exercise_submission(test_client: TestClient) -> None:
 
     response = test_client.post(
         f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
-        json={"choices": [str(choice) for choice in exercise_submission_1.answer.choices]}
+        json={"answer": [str(choice_id) for choice_id in exercise_submission_1.answer.model_dump()["choices"]]}
     ).json()
 
-    assert response == {
-        "id": ANY,
-        "assessment_submission_id": str(exercise_submission_1.assessment_submission_id),
-        "exercise_id": str(exercise_submission_1.exercise_id),
-        "answers": [str(choice_id) for choice_id in exercise_submission_1.answer.choices]
-    }
+    assert response == {"id": ANY}
     assert isinstance(response["id"], str)
 
 
@@ -69,19 +64,14 @@ def test_update_exercise_submission(test_client: TestClient) -> None:
     exercise_id = str(exercise_submission_1.exercise_id)
     exercise_submission_response = test_client.post(
         f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
-        json={"choices": []}
+        json={"answer": []}
     ).json()
 
     updated_exercise_submission_response = test_client.post(
         f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
         params={"exercise_submission_id": exercise_submission_response["id"]},
-        json={"choices": [str(choice) for choice in exercise_submission_1.answer.choices]}
+        json={"answer": [str(choice) for choice in exercise_submission_1.answer.choices]}
     ).json()
 
-    assert updated_exercise_submission_response == {
-        "id": exercise_submission_response["id"],
-        "assessment_submission_id": exercise_submission_response["assessment_submission_id"],
-        "exercise_id": exercise_submission_response["exercise_id"],
-        "answers": [str(choice_id) for choice_id in exercise_submission_1.answer.choices]
-    }
+    assert updated_exercise_submission_response == {"id": exercise_submission_response["id"]}
     assert isinstance(updated_exercise_submission_response["id"], str)

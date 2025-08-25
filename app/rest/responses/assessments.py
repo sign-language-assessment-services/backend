@@ -1,16 +1,24 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, field_validator
+
+from app.core.models.exercise import Exercise
+from app.core.models.primer import Primer
 
 
-class AssessmentResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class CreateAssessmentResponse(BaseModel):
+    id: UUID
     name: str
-    tasks: list[dict[str, UUID | str]]
 
-    @field_validator("tasks", mode="before")
+
+class GetAssessmentResponse(BaseModel):
+    id: UUID
+    name: str
+    tasks: list[Primer | Exercise]
+
+    @field_validator("tasks", mode="after")
     @classmethod
-    def extract_task_ids(cls, value):
+    def compute_multimedia_file_id(cls, value) -> list[dict[str, str | UUID]]:
         return [
             {
                 "id": task.id,
@@ -20,6 +28,6 @@ class AssessmentResponse(BaseModel):
         ]
 
 
-class AssessmentListResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class ListAssessmentResponse(BaseModel):
+    id: UUID
     name: str

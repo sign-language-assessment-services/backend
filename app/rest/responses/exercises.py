@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field, field_validator
 
@@ -6,15 +6,19 @@ from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
 
 
-class ExerciseResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class CreateExerciseResponse(BaseModel):
+    id: UUID
+
+
+class GetExerciseResponse(BaseModel):
+    id: UUID
     points: int
     question: dict[str, UUID | str] | Question
     question_type: QuestionType = Field(exclude=True)
 
     @field_validator("question", mode="before")
     @classmethod
-    def compute_question_response(cls, value):
+    def compute_question_response(cls, value) -> dict[str, UUID | str]:
         return {
             "multimedia_file_id": value.content.id,
             "media_type": value.content.media_type.value
@@ -35,5 +39,5 @@ class ExerciseResponse(BaseModel):
         ]
 
 
-class ExerciseListResponse(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
+class ListExerciseResponse(BaseModel):
+    id: UUID

@@ -16,7 +16,7 @@ GET_ENDPOINTS = [
     f"/assessments/{str(assessment_1.id)}",
     f"/exercise_submissions/{str(exercise_submission_1.id)}",
     f"/exercises/{str(exercise_1.id)}",
-    f"/object-storage/{str(multimedia_file_choice_1.id)}",
+    f"/multimedia_files/{str(multimedia_file_choice_1.id)}",
     f"/primers/{str(primer_1.id)}"
 ]
 
@@ -53,7 +53,7 @@ def test_get_not_found(endpoint: str, test_client_not_found: TestClient) -> None
 
 def test_post_exercise_submission_200(test_client: TestClient) -> None:
     endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
-    data = {"choices": [str(uuid4())]}
+    data = {"answer": [str(uuid4())]}
 
     response = test_client.post(endpoint, json=data)
 
@@ -62,7 +62,7 @@ def test_post_exercise_submission_200(test_client: TestClient) -> None:
 
 def test_post_exercise_submission_403(test_client_no_roles: TestClient) -> None:
     endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
-    data = {"choices": [str(uuid4())]}
+    data = {"answer": [str(uuid4())]}
 
     response = test_client_no_roles.post(endpoint, json=data)
 

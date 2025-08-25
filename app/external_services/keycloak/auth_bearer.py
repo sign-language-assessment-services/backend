@@ -5,9 +5,9 @@ import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.authorization.exceptions import SettingsNotAvailableError
 from app.config import Settings
 from app.core.models.user import User
+from app.external_services.keycloak.exceptions import SettingsNotAvailableError
 from app.settings import get_settings
 
 

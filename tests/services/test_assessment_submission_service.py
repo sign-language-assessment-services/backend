@@ -14,15 +14,26 @@ from tests.data.models.exercise_submissions import exercise_submission_5, exerci
 
 
 @patch.object(assessment_submission_service_module, add_assessment_submission.__name__)
-def test_add_subission(
+def test_create_submission(
         mocked_add_submission: MagicMock,
         assessment_submission_service: AssessmentSubmissionService
 ) -> None:
     mocked_session = Mock()
 
-    assessment_submission_service.add_submission(mocked_session, assessment_submission_1)
+    assessment_submission_service.create_assessment_submission(
+        mocked_session,
+        user_id=assessment_submission_1.user_id,
+        assessment_id=assessment_submission_1.assessment_id
+    )
 
-    mocked_add_submission.assert_called_once_with(session=mocked_session, submission=assessment_submission_1)
+    mocked_add_submission.assert_called_once_with(session=mocked_session, submission=ANY)
+    called_submission = mocked_add_submission.call_args.kwargs["submission"]
+    assert mocked_add_submission.call_args.kwargs["session"] == mocked_session
+    assert called_submission.user_id == assessment_submission_1.user_id
+    assert called_submission.assessment_id == assessment_submission_1.assessment_id
+    assert called_submission.score is None
+    assert called_submission.finished is False
+    assert called_submission.finished_at is None
 
 
 @patch.object(
@@ -36,7 +47,7 @@ def test_get_submission_by_id(
     submission_id = mocked_get_submission.return_value.id
     mocked_session = Mock()
 
-    submission = assessment_submission_service.get_submission_by_id(mocked_session, submission_id)
+    submission = assessment_submission_service.get_assessment_submission_by_id(mocked_session, submission_id)
 
     assert submission == mocked_get_submission.return_value
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
@@ -52,7 +63,7 @@ def test_list_submissions(
 ) -> None:
     mocked_session = Mock()
 
-    submissions = assessment_submission_service.list_submissions(mocked_session)
+    submissions = assessment_submission_service.list_assessment_submissions(mocked_session)
 
     assert len(submissions) == len(mocked_list_submission.return_value)
     for result, expected in zip(submissions, mocked_list_submission.return_value):
@@ -70,7 +81,7 @@ def test_update_submission_finished(update_assessment_submission_mock: MagicMock
     mocked_session = Mock()
     assessment_submission_service = AssessmentSubmissionService(mocked_session)
 
-    assessment_submission_service.update_submission(
+    assessment_submission_service.update_assessment_submission(
         session=mocked_session,
         submission_id=assessment_submission_1.id,
         finished=True

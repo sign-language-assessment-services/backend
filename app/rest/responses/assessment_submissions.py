@@ -1,21 +1,28 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class AssessmentSubmissionResponse(BaseModel):
+class CreateAssessmentSubmissionResponse(BaseModel):
+    id: UUID
+
+
+class GetAssessmentSubmissionResponse(BaseModel):
     id: UUID
     user_id: UUID
     assessment_id: UUID
     score: float | None
-    finished: bool = Field(default=False)
+    finished: bool
     finished_at: datetime | None
 
 
-class AssessmentSubmissionCreatedResponse(BaseModel):
+class ListAssessmentSubmissionResponse(BaseModel):
     id: UUID
 
 
-class AssessmentSubmissionListResponse(BaseModel):
+class UpdateAssessmentSubmissionToFinishedResponse(BaseModel):
     id: UUID
+    finished: bool
+    score: float
+    finished_at: datetime

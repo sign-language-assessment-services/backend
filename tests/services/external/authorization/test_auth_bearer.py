@@ -5,13 +5,14 @@ from uuid import UUID
 import pytest
 from fastapi import HTTPException, status
 
-from app.authorization.auth_bearer import JWTBearer, decode_jwt
-from app.authorization.exceptions import SettingsNotAvailableError
+import app.external_services.keycloak.auth_bearer as auth_bearer_module
 from app.core.models.user import User
+from app.external_services.keycloak.auth_bearer import JWTBearer, decode_jwt
+from app.external_services.keycloak.exceptions import SettingsNotAvailableError
 from tests.data.models.users import test_taker_1
 
 
-@patch("app.authorization.auth_bearer.jwt")
+@patch.object(auth_bearer_module, auth_bearer_module.jwt.__name__)
 def test_decode_jwt(jwt: Mock, jwk_client: Mock, settings: Mock) -> None:
     jwt.PyJWKClient.return_value = jwk_client
     jwt.decode.return_value = {"token": "decoded_token"}
@@ -87,7 +88,7 @@ def test_verify_jwt_no_settings_raises_settings_not_available() -> None:
         bearer.verify_jwt("test_token")
 
 
-@patch("app.authorization.auth_bearer.decode_jwt")
+@patch.object(auth_bearer_module, decode_jwt.__name__)
 def test_verify_jwt_returns_decoded_token(decoder: Mock, settings: Mock) -> None:
     bearer = JWTBearer()
     bearer.settings = settings
@@ -98,7 +99,7 @@ def test_verify_jwt_returns_decoded_token(decoder: Mock, settings: Mock) -> None
     assert result == {"token": "decoded_token"}
 
 
-@patch("app.authorization.auth_bearer.decode_jwt")
+@patch.object(auth_bearer_module, decode_jwt.__name__)
 def test_verify_jwt_exception_raises_bad_request(decoder: Mock, settings: Mock) -> None:
     bearer = JWTBearer()
     bearer.settings = settings

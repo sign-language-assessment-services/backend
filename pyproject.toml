@@ -14,6 +14,7 @@ pydantic-settings = "^2.8"
 pyjwt = {version = "^2.10", extras = ["crypto"]}
 python-multipart = "^0.0"
 requests = "^2.32"
+slowapi = "^0.1"
 sqlalchemy = "^2.0"
 
 [tool.poetry.group.dev.dependencies]

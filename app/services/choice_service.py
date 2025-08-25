@@ -5,13 +5,13 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.config import Settings
-from app.core.models.primer import Primer
-from app.repositories.primers import add_primer, get_primer, list_primers
+from app.core.models.choice import Choice
+from app.repositories.choices import add_choice, get_choice, list_choices
 from app.services.multimedia_file_service import MultimediaFileService
 from app.settings import get_settings
 
 
-class PrimerService:
+class ChoiceService:
     def __init__(
             self,
             settings: Annotated[Settings, Depends(get_settings)],
@@ -20,18 +20,21 @@ class PrimerService:
         self.settings = settings
         self.multimedia_file_service = multimedia_file_service
 
-    def create_primer(self, session: Session, multimedia_file_id: UUID) -> None:
+    def create_choice(self, session: Session, multimedia_file_id: UUID, is_correct: bool) -> None:
         multimedia_file = self.multimedia_file_service.get_multimedia_file_by_id(
             session=session,
             multimedia_file_id=multimedia_file_id
         )
-        primer = Primer(content=multimedia_file)
-        add_primer(session=session, primer=primer)
+        choice = Choice(
+            is_correct=is_correct,
+            content=multimedia_file
+        )
+        add_choice(session=session, choice=choice)
 
     @staticmethod
-    def get_primer_by_id(session: Session, primer_id: UUID) -> Primer | None:
-        return get_primer(session=session, _id=primer_id)
+    def get_choice_by_id(session: Session, choice_id: UUID) -> Choice | None:
+        return get_choice(session=session, _id=choice_id)
 
     @staticmethod
-    def list_primers(session: Session) -> list[Primer]:
-        return list_primers(session=session)
+    def list_choices(session: Session) -> list[Choice]:
+        return list_choices(session=session)
