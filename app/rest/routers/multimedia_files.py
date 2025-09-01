@@ -1,20 +1,24 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from pydantic import Json
 from sqlalchemy.orm import Session
 
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user
-from app.rest.requests.multimedia_files import CreateMultimediaFileRequest
+from app.rest.requests.multimedia_files import CreateMultimediaFileRequest, NotAsJson
 from app.rest.responses.multimedia_files import (
     CreateMultimediaFileResponse, GetMultimediaFileResponse, ListMultimediaFileResponse
 )
 from app.services.multimedia_file_service import MultimediaFileService
 
-router = APIRouter(dependencies=[Depends(JWTBearer())])
+router = APIRouter(
+    dependencies=[Depends(JWTBearer())],
+    tags=["Multimedia Files"],
+)
 
 
 @router.post(
@@ -23,11 +27,11 @@ router = APIRouter(dependencies=[Depends(JWTBearer())])
     status_code=status.HTTP_200_OK
 )
 async def create_multimedia_file(
-        data: CreateMultimediaFileRequest,
-        file_object: UploadFile,
+        file: UploadFile,
+        meta_data: Annotated[Json[CreateMultimediaFileRequest], NotAsJson, Form()],
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Session = Depends(get_db_session),
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -35,13 +39,12 @@ async def create_multimedia_file(
             detail="The current user is not allowed to access this resource."
         )
 
-    return multimedia_file_service.create_multimedia_file(
+    multimedia_file = multimedia_file_service.create_multimedia_file(
         session=db_session,
-        file=file_object.file,
-        bucket=data.location.bucket,
-        key=data.location.key,
-        media_type=data.media_type
+        file=file.file,
+        media_type=meta_data.media_type
     )
+    return multimedia_file
 
 
 @router.get(
@@ -70,7 +73,6 @@ async def get_multimedia_file(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The multimedia file id '{multimedia_file_id}' was not found."
         )
-
     return multimedia_file
 
 
@@ -79,7 +81,7 @@ async def get_multimedia_file(
     response_model=list[ListMultimediaFileResponse],
     status_code=status.HTTP_200_OK
 )
-async def list_exercises(
+async def list_multimedia_files(
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
@@ -90,4 +92,5 @@ async def list_exercises(
             detail="The current user is not allowed to access this resource."
         )
 
-    return multimedia_file_service.list_multimedia_files(session=db_session)
+    multimedia_files = multimedia_file_service.list_multimedia_files(session=db_session)
+    return multimedia_files

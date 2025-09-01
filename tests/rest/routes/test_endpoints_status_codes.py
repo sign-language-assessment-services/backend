@@ -4,6 +4,7 @@ import pytest
 from fastapi import status
 from starlette.testclient import TestClient
 
+from app.rest.requests.assessments import CreateAssessmentRequest
 from tests.data.models.assessment_submissions import assessment_submission_1
 from tests.data.models.assessments import assessment_1
 from tests.data.models.exercise_submissions import exercise_submission_1
@@ -19,8 +20,6 @@ GET_ENDPOINTS = [
     f"/multimedia_files/{str(multimedia_file_choice_1.id)}",
     f"/primers/{str(primer_1.id)}"
 ]
-
-
 LIST_ENDPOINTS = [
     "/assessment_submissions/",
     "/assessments/",
@@ -45,26 +44,24 @@ def test_get_403(endpoint: str, test_client_no_roles: TestClient) -> None:
 
 
 @pytest.mark.parametrize("endpoint", GET_ENDPOINTS)
-def test_get_not_found(endpoint: str, test_client_not_found: TestClient) -> None:
+def test_get_404(endpoint: str, test_client_not_found: TestClient) -> None:
     response = test_client_not_found.get(endpoint)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_post_exercise_submission_200(test_client: TestClient) -> None:
-    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
-    data = {"answer": [str(uuid4())]}
+def test_post_assessment_200(test_client: TestClient) -> None:
+    create_assessment_request = CreateAssessmentRequest(name=assessment_1.name).model_dump()
 
-    response = test_client.post(endpoint, json=data)
+    response = test_client.post("/assessments/", json=create_assessment_request)
 
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_post_exercise_submission_403(test_client_no_roles: TestClient) -> None:
-    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
-    data = {"answer": [str(uuid4())]}
+def test_post_assessment_403(test_client_no_roles: TestClient) -> None:
+    create_assessment_request = CreateAssessmentRequest(name=assessment_1.name).model_dump()
 
-    response = test_client_no_roles.post(endpoint, json=data)
+    response = test_client_no_roles.post("/assessments/", json=create_assessment_request)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -107,3 +104,21 @@ def test_put_assessment_submission_404(test_client_not_found: TestClient) -> Non
     response = test_client_not_found.put(endpoint, json={"finished": True})
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_post_exercise_submission_200(test_client: TestClient) -> None:
+    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
+    data = {"answer": [str(uuid4())]}
+
+    response = test_client.post(endpoint, json=data)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_post_exercise_submission_403(test_client_no_roles: TestClient) -> None:
+    endpoint = f"/assessment_submissions/{str(assessment_submission_1.id)}/exercises/{str(exercise_1.id)}/submissions/"
+    data = {"answer": [str(uuid4())]}
+
+    response = test_client_no_roles.post(endpoint, json=data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

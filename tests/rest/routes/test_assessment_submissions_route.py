@@ -8,7 +8,7 @@ from tests.data.models.assessment_submissions import (
 from tests.data.models.users import test_taker_1
 
 
-def test_add_assessment_submission(test_client: TestClient) -> None:
+def test_create_assessment_submission(test_client: TestClient) -> None:
     assessment_id = str(assessment_submission_1.assessment_id)
 
     response = test_client.post(f"/assessments/{assessment_id}/submissions/").json()
@@ -37,10 +37,14 @@ def test_list_assessment_submissions(test_client: TestClient) -> None:
 
     assert response == [
         {
-            "id": str(assessment_submission_1.id)
+            "id": str(assessment_submission_1.id),
+            "assessment_id": str(assessment_submission_1.assessment_id),
+            "user_id": str(test_taker_1.id)
         },
         {
-            "id": str(assessment_submission_2.id)
+            "id": str(assessment_submission_2.id),
+            "assessment_id": str(assessment_submission_2.assessment_id),
+            "user_id": str(test_taker_1.id)
         }
     ]
 

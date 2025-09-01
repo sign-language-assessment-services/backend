@@ -11,8 +11,8 @@ class MediaType(Enum):
 
     @classmethod
     def from_content_type(cls, content_type: str) -> MediaType:
-        if content_type.startswith("video"):
+        if content_type.lower().startswith("video"):
             return cls.VIDEO
-        if content_type.startswith("image"):
+        if content_type.lower().startswith("image"):
             return cls.IMAGE
         raise UnsupportedMimeType("Only images or videos are supported.")

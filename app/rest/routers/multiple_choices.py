@@ -8,26 +8,26 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user
-from app.rest.requests.assessments import CreateAssessmentRequest
-from app.rest.responses.assessments import (
-    CreateAssessmentResponse, GetAssessmentResponse, ListAssessmentResponse
+from app.rest.requests.multiple_choices import CreateMultipleChoiceRequest
+from app.rest.responses.multiple_choices import (
+    CreateMultipleChoiceResponse, GetMultipleChoiceResponse, ListMultipleChoiceResponse
 )
-from app.services.assessment_service import AssessmentService
+from app.services.multiple_choice_service import MultipleChoiceService
 
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
-    tags=["Assessments"]
+    tags=["Multiple Choices"]
 )
 
 
 @router.post(
-    "/assessments/",
-    response_model=CreateAssessmentResponse,
+    "/multiple_choices/",
+    response_model=CreateMultipleChoiceResponse,
     status_code=status.HTTP_200_OK
 )
-async def create_assessment(
-        data: CreateAssessmentRequest,
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def create_multiple_choice(
+        data: CreateMultipleChoiceRequest,
+        multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -37,21 +37,22 @@ async def create_assessment(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessment = assessment_service.create_assessment(
+    multiple_choice = multiple_choice_service.create_multiple_choice(
         session=db_session,
-        name=data.name
+        choice_ids=data.choice_ids,
+        correct_choice_ids=data.correct_choice_ids
     )
-    return assessment
+    return multiple_choice
 
 
 @router.get(
-    "/assessments/{assessment_id}",
-    response_model=GetAssessmentResponse,
+    "/multiple_choices/{multiple_choice_id}",
+    response_model=GetMultipleChoiceResponse,
     status_code=status.HTTP_200_OK
 )
-async def get_assessment(
-        assessment_id: UUID,
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def get_multiple_choice(
+        multiple_choice_id: UUID,
+        multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -61,25 +62,25 @@ async def get_assessment(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessment = assessment_service.get_assessment_by_id(
+    multiple_choice = multiple_choice_service.get_multiple_choice_by_id(
         session=db_session,
-        assessment_id=assessment_id
+        multiple_choice_id=multiple_choice_id
     )
-    if not assessment:
+    if not multiple_choice:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The assessment id '{assessment_id}' was not found."
+            detail=f"The multiple_choice id '{multiple_choice_id}' was not found."
         )
-    return assessment
+    return multiple_choice
 
 
 @router.get(
-    "/assessments/",
-    response_model=list[ListAssessmentResponse],
+    "/multiple_choices/",
+    response_model=list[ListMultipleChoiceResponse],
     status_code=status.HTTP_200_OK
 )
-async def list_assessments(
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def list_multiple_choices(
+        multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -89,5 +90,5 @@ async def list_assessments(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessments = assessment_service.list_assessments(session=db_session)
-    return assessments
+    multiple_choices = multiple_choice_service.list_multiple_choices(session=db_session)
+    return multiple_choices

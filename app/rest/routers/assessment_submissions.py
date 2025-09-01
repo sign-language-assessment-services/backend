@@ -15,7 +15,10 @@ from app.rest.responses.assessment_submissions import (
 )
 from app.services.assessment_submission_service import AssessmentSubmissionService
 
-router = APIRouter(dependencies=[Depends(JWTBearer())])
+router = APIRouter(
+    dependencies=[Depends(JWTBearer())],
+    tags=["Assessment Submissions"]
+)
 
 
 @router.post(
@@ -88,7 +91,8 @@ async def list_submissions(
             detail="The current user is not allowed to access this resource."
         )
 
-    return assessment_submission_service.list_assessment_submissions(session=db_session)
+    submissions = assessment_submission_service.list_assessment_submissions(session=db_session)
+    return submissions
 
 
 @router.put(

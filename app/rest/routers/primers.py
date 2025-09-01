@@ -12,7 +12,10 @@ from app.rest.requests.primers import CreatePrimerRequest
 from app.rest.responses.primers import CreatePrimerResponse, GetPrimerResponse, ListPrimerResponse
 from app.services.primer_service import PrimerService
 
-router = APIRouter(dependencies=[Depends(JWTBearer())])
+router = APIRouter(
+    dependencies=[Depends(JWTBearer())],
+    tags=["Primers"]
+)
 
 
 @router.post(
@@ -32,10 +35,11 @@ async def create_primer(
             detail="The current user is not allowed to access this resource."
         )
 
-    return primer_service.create_primer(
+    primer = primer_service.create_primer(
         session=db_session,
         multimedia_file_id=data.multimedia_file_id
     )
+    return primer
 
 
 @router.get(
@@ -83,4 +87,5 @@ async def list_primers(
             detail="The current user is not allowed to access this resource."
         )
 
-    return primer_service.list_primers(session=db_session)
+    primers = primer_service.list_primers(session=db_session)
+    return primers

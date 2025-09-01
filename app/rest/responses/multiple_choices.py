@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, computed_field, field_validator
 
-from app.core.models.multimedia_file import MultimediaFile
+from app.core.models.choice import Choice, MultipleChoiceUsage
 
 
 class CreateMultipleChoiceResponse(BaseModel):
@@ -11,13 +11,31 @@ class CreateMultipleChoiceResponse(BaseModel):
 
 class GetMultipleChoiceResponse(BaseModel):
     id: UUID
-    content: list[MultimediaFile] = Field(exclude=True)
+    choices: list[MultipleChoiceUsage]
 
-    @field_validator("choice_ids", mode="before")
+    @field_validator("choices", mode="before")
     @classmethod
-    def compute_choice_ids(cls, value) -> list[UUID]:
-        return [choice.id for choice in value.content]
+    def compute_choices(cls, value) -> list[dict[str, UUID | int | bool]]:
+        return [
+            {
+                "id": choice.id,
+                "position": choice.position,
+                "is_correct": choice.is_correct
+            }
+            for choice in value
+        ]
 
 
 class ListMultipleChoiceResponse(BaseModel):
     id: UUID
+    choices: list[Choice] = Field(exclude=True)
+
+    @computed_field(
+        description="Number of choices",
+        json_schema_extra={
+            "example": 2
+        }
+    )
+    @property
+    def number_of_choices(self) -> int:
+        return len(self.choices)

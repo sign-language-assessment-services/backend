@@ -2,7 +2,6 @@ from typing import Annotated, BinaryIO, cast
 
 from fastapi import Depends, HTTPException
 from minio import Minio
-from minio.error import MinioException
 
 from app.config import Settings
 from app.core.models.media_types import MediaType
@@ -20,10 +19,6 @@ class ObjectStorageClient:
             secure=settings.data_secure,
         )
 
-    def is_alive(self) -> None:
-        if not self.minio.bucket_exists("slportal"):
-            raise MinioException("slportal bucket does not exist")
-
     def get_presigned_url(self, location: MinioLocation) -> str:
         try:
             presigned_url = self.minio.get_presigned_url(
@@ -36,6 +31,16 @@ class ObjectStorageClient:
             raise HTTPException(
                 status_code=503, detail=f"Minio not reachable. {exc}"
             ) from exc
+
+    def add_object(self, location: MinioLocation, data: BinaryIO, media_type=MediaType) -> None:
+        self.minio.put_object(
+            bucket_name=location.bucket,
+            object_name=location.key,
+            data=data,
+            length=-1,
+            part_size=16 * 1024 * 1024,  # 16 MiB
+            content_type=media_type.value
+        )
 
     def list_folders(self, bucket_name: str, folder: str|None = None) -> list[str]:
         if folder:
@@ -61,13 +66,3 @@ class ObjectStorageClient:
             for item in self.minio.list_objects(bucket_name=bucket_name, prefix=folder, include_user_meta=True)
             if not item.is_dir
         ]
-
-    def add_object(self, location: MinioLocation, data: BinaryIO) -> None:
-        self.minio.put_object(
-            bucket_name=location.bucket,
-            object_name=location.key,
-            data=data,
-            length=-1,
-            part_size=16 * 1024 * 1024,  # 16 MiB
-            content_type=location.media_type.value
-        )

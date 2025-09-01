@@ -1,5 +1,5 @@
 from typing import Annotated, BinaryIO
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -28,21 +28,28 @@ class MultimediaFileService:
             self,
             session: Session,
             file: BinaryIO,
-            bucket: str,
-            key: str,
             media_type: MediaType
-    ) -> None:
+    ) -> MultimediaFile:
+        key = uuid4()
+        minio_location = MinioLocation(
+            bucket=self.settings.data_bucket_name,
+            key=str(key)
+        )
         self.object_storage_client.add_object(
-            location=MinioLocation(bucket=bucket, key=key),
-            data=file
+            location=minio_location,
+            data=file,
+            media_type=media_type
+        )
+        multimedia_file = MultimediaFile(
+            id=key,
+            location=minio_location,
+            media_type=media_type
         )
         add_multimedia_file(
             session=session,
-            multimedia_file=MultimediaFile(
-                location=MinioLocation(bucket=bucket, key=key),
-                media_type=media_type
-            )
+            multimedia_file=multimedia_file
         )
+        return multimedia_file
 
     def get_multimedia_file_by_id(self, session: Session, multimedia_file_id: UUID) -> MultimediaFile | None:
         multimedia_file = get_multimedia_file(session=session, _id=multimedia_file_id)

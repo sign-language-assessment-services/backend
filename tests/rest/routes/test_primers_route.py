@@ -21,9 +21,11 @@ def test_list_primers(test_client: TestClient) -> None:
 
     assert response == [
         {
-            "id": str(primer_1.id)
+            "id": str(primer_1.id),
+            "media_type": primer_1.content.media_type.value,
         },
         {
-            "id": str(primer_2.id)
+            "id": str(primer_2.id),
+            "media_type": primer_2.content.media_type.value,
         }
     ]

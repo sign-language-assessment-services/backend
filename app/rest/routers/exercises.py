@@ -14,7 +14,10 @@ from app.rest.responses.exercises import (
 )
 from app.services.exercise_service import ExerciseService
 
-router = APIRouter(dependencies=[Depends(JWTBearer())])
+router = APIRouter(
+    dependencies=[Depends(JWTBearer())],
+    tags=["Exercises"]
+)
 
 
 @router.post(
@@ -87,4 +90,5 @@ async def list_exercises(
             detail="The current user is not allowed to access this resource."
         )
 
-    return exercise_service.list_exercises(db_session)
+    exercises = exercise_service.list_exercises(db_session)
+    return exercises

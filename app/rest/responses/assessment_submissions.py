@@ -19,6 +19,8 @@ class GetAssessmentSubmissionResponse(BaseModel):
 
 class ListAssessmentSubmissionResponse(BaseModel):
     id: UUID
+    assessment_id: UUID
+    user_id: UUID
 
 
 class UpdateAssessmentSubmissionToFinishedResponse(BaseModel):

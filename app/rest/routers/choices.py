@@ -8,26 +8,24 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user
-from app.rest.requests.assessments import CreateAssessmentRequest
-from app.rest.responses.assessments import (
-    CreateAssessmentResponse, GetAssessmentResponse, ListAssessmentResponse
-)
-from app.services.assessment_service import AssessmentService
+from app.rest.requests.choices import CreateChoiceRequest
+from app.rest.responses.choices import CreateChoiceResponse, GetChoiceResponse, ListChoiceResponse
+from app.services.choice_service import ChoiceService
 
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
-    tags=["Assessments"]
+    tags=["Choices"]
 )
 
 
 @router.post(
-    "/assessments/",
-    response_model=CreateAssessmentResponse,
+    "/choices/",
+    response_model=CreateChoiceResponse,
     status_code=status.HTTP_200_OK
 )
-async def create_assessment(
-        data: CreateAssessmentRequest,
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def create_choice(
+        data: CreateChoiceRequest,
+        choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -37,21 +35,21 @@ async def create_assessment(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessment = assessment_service.create_assessment(
+    choice = choice_service.create_choice(
         session=db_session,
-        name=data.name
+        multimedia_file_id=data.multimedia_file_id
     )
-    return assessment
+    return choice
 
 
 @router.get(
-    "/assessments/{assessment_id}",
-    response_model=GetAssessmentResponse,
+    "/choices/{choice_id}",
+    response_model=GetChoiceResponse,
     status_code=status.HTTP_200_OK
 )
-async def get_assessment(
-        assessment_id: UUID,
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def get_choice(
+        choice_id: UUID,
+        choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -61,25 +59,25 @@ async def get_assessment(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessment = assessment_service.get_assessment_by_id(
+    choice = choice_service.get_choice_by_id(
         session=db_session,
-        assessment_id=assessment_id
+        choice_id=choice_id
     )
-    if not assessment:
+    if not choice:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The assessment id '{assessment_id}' was not found."
+            detail=f"The choice id '{choice_id}' was not found."
         )
-    return assessment
+    return choice
 
 
 @router.get(
-    "/assessments/",
-    response_model=list[ListAssessmentResponse],
+    "/choices/",
+    response_model=list[ListChoiceResponse],
     status_code=status.HTTP_200_OK
 )
-async def list_assessments(
-        assessment_service: Annotated[AssessmentService, Depends()],
+async def list_choices(
+        choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
@@ -89,5 +87,5 @@ async def list_assessments(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessments = assessment_service.list_assessments(session=db_session)
-    return assessments
+    choices = choice_service.list_choices(session=db_session)
+    return choices

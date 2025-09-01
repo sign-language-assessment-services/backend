@@ -6,6 +6,6 @@ from pydantic import BaseModel, Field
 
 class CreateAssessmentRequest(BaseModel):
     name: str
-    deadline: datetime | None
-    max_attempts: int | None
+    deadline: datetime | None = Field(default=None)
+    max_attempts: int | None = Field(default=None)
     tasks: list[UUID] = Field(default_factory=list)

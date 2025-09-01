@@ -1,7 +1,11 @@
-from sqlalchemy import Engine, inspect
+from unittest.mock import MagicMock, patch
 
+from sqlalchemy import Engine, inspect
+from sqlalchemy.exc import SQLAlchemyError
+
+import app.database.orm as orm_module
 from app.config import Settings
-from app.database.orm import get_db_engine, get_db_session, import_tables, init_db
+from app.database.orm import get_db_engine, get_db_session, import_tables, init_db, sessionmaker
 from app.database.tables.base import DbBase
 from tests.database.utils import get_all_table_names_from_tables_folder
 
@@ -23,6 +27,19 @@ def test_get_db_session_binds_engine(settings: Settings) -> None:
     session = next(get_db_session(engine=engine))
 
     assert session.bind is engine
+
+
+@patch.object(orm_module, sessionmaker.__name__)
+def test_get_db_session_rollbacks_on_error(mock_sessionmaker: MagicMock, settings: Settings) -> None:
+    mock_session = MagicMock()
+    mock_sessionmaker.return_value.begin.return_value.__enter__.return_value = mock_session
+    mock_session.commit.side_effect = SQLAlchemyError("Error test message")
+
+    for _ in get_db_session(engine=get_db_engine(settings=settings)):
+        pass
+
+    mock_session.commit.assert_called_once()
+    mock_session.rollback.assert_called_once()
 
 
 def test_all_tables_are_imported() -> None:

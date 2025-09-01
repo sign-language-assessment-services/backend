@@ -11,7 +11,7 @@ from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.database.exceptions import EntryNotFoundError
 from app.database.tables.choices import DbChoice
-from app.mappers.choice_mapper import _get_correct_choice_from_association_table
+from app.mappers.choice_mapper import _get_usages_in_multiple_choices
 from app.repositories.choices import (
     add_choice, delete_choice, get_choice, list_choices, update_choice
 )
@@ -37,7 +37,11 @@ def test_add_choice(db_session: Session) -> None:
     assert table_count(db_session, DbChoice) == 1
 
 
-@patch.object(choice_mapper_module, _get_correct_choice_from_association_table.__name__, return_value=True)
+@patch.object(
+    choice_mapper_module,
+    _get_usages_in_multiple_choices.__name__,
+    return_value=[{"id": uuid4(), "position": 1}]
+)
 def test_get_choice_by_id(_, db_session: Session) -> None:
     video_id = insert_bucket_object(session=db_session).get("id")
     choice = insert_choice(session=db_session, bucket_object_id=video_id)
@@ -63,7 +67,11 @@ def test_list_no_choices(db_session: Session) -> None:
     assert table_count(db_session, DbChoice) == 0
 
 
-@patch.object(choice_mapper_module, _get_correct_choice_from_association_table.__name__, return_value=True)
+@patch.object(
+    choice_mapper_module,
+    _get_usages_in_multiple_choices.__name__,
+    return_value=[{"id": uuid4(), "position": 1}]
+)
 def test_list_multiple_choices(_, db_session: Session) -> None:
     for _ in range(100):
         video_id = insert_bucket_object(session=db_session).get("id")

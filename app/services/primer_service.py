@@ -20,13 +20,14 @@ class PrimerService:
         self.settings = settings
         self.multimedia_file_service = multimedia_file_service
 
-    def create_primer(self, session: Session, multimedia_file_id: UUID) -> None:
+    def create_primer(self, session: Session, multimedia_file_id: UUID) -> Primer:
         multimedia_file = self.multimedia_file_service.get_multimedia_file_by_id(
             session=session,
             multimedia_file_id=multimedia_file_id
         )
         primer = Primer(content=multimedia_file)
         add_primer(session=session, primer=primer)
+        return primer
 
     @staticmethod
     def get_primer_by_id(session: Session, primer_id: UUID) -> Primer | None:

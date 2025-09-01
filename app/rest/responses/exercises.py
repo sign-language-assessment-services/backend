@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field, field_validator
 
+from app.core.models.choice import MultipleChoiceUsage
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
 
@@ -24,20 +25,29 @@ class GetExerciseResponse(BaseModel):
             "media_type": value.content.media_type.value
         }
 
-    @computed_field
+    @computed_field(
+        description="Choices for the multiple choice question",
+        json_schema_extra={
+            "example": [
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "is_correct": True,
+                    "position": 1
+                }
+            ]
+        }
+    )
     @property
-    def choices(self) -> list[dict[str, UUID | str]]:
+    def choices(self) -> list[MultipleChoiceUsage]:
         return [
-            {
-                "id": choice.id,
-                "multimedia_file_id": choice.content.id,
-                "media_type": choice.content.media_type.value
-            }
-            for number, choice in enumerate(
-                self.question_type.content.choices, start=1  # pylint: disable=no-member
+            MultipleChoiceUsage(
+                id=choice.id,
+                position=choice.position
             )
+            for choice in self.question_type.content.choices  # pylint: disable=no-member
         ]
 
 
 class ListExerciseResponse(BaseModel):
     id: UUID
+    points: float

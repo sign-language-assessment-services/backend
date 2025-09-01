@@ -1,3 +1,6 @@
+import io
+from unittest.mock import Mock
+
 import pytest
 from fastapi import HTTPException
 from minio.datatypes import Object as MinioObject
@@ -7,6 +10,25 @@ from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.external_services.minio.client import ObjectStorageClient
+
+
+def test_minio_add_object_calls_put_object_correctly(storage_client_minio: ObjectStorageClient) -> None:
+    mocked_put_object = Mock()
+    storage_client_minio.minio.put_object = mocked_put_object
+    location = MinioLocation(bucket="testbucket", key="123")
+    data = io.BytesIO(b"testdata")
+    media_type = MediaType.VIDEO
+
+    storage_client_minio.add_object(location=location, data=data, media_type=media_type)
+
+    mocked_put_object.assert_called_once_with(
+        bucket_name=location.bucket,
+        object_name=location.key,
+        data=data,
+        length=-1,
+        part_size=16 * 1024 * 1024,
+        content_type=media_type.value
+    )
 
 
 def test_http_exception_is_called_on_minio_errors(storage_client_minio: ObjectStorageClient) -> None:

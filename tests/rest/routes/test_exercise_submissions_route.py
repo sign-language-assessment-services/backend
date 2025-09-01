@@ -1,24 +1,31 @@
-from unittest.mock import ANY
-
+from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
 
+from app.rest.requests.exercise_submissions import UpsertExerciseSubmissionRequest
+from app.rest.responses.exercise_submissions import UpsertExerciseSubmissionResponse
 from tests.data.models.exercise_submissions import (
     exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
     exercise_submission_5, exercise_submission_6
 )
 
 
-def test_add_exercise_submission(test_client: TestClient) -> None:
+def test_create_exercise_submission(test_client: TestClient) -> None:
+    create_exercise_submission_request = jsonable_encoder(
+        UpsertExerciseSubmissionRequest(
+            answer=exercise_submission_1.answer.choices
+        ),
+        exclude_none=True
+    )
     assessment_submission_id = str(exercise_submission_1.assessment_submission_id)
     exercise_id = str(exercise_submission_1.exercise_id)
 
     response = test_client.post(
         f"/assessment_submissions/{assessment_submission_id}/exercises/{exercise_id}/submissions/",
-        json={"answer": [str(choice_id) for choice_id in exercise_submission_1.answer.model_dump()["choices"]]}
+        json=create_exercise_submission_request
     ).json()
 
-    assert response == {"id": ANY}
-    assert isinstance(response["id"], str)
+    create_exercise_submission_response = UpsertExerciseSubmissionResponse(**response)
+    assert create_exercise_submission_response.id == exercise_submission_1.id
 
 
 def test_get_exercise_submission(test_client: TestClient) -> None:
@@ -39,23 +46,37 @@ def test_list_exercise_submissions(test_client: TestClient) -> None:
 
     assert response == [
         {
-            "id": str(exercise_submission_1.id)
+            "id": str(exercise_submission_1.id),
+            "exercise_id": str(exercise_submission_1.exercise_id),
+            "assessment_submission_id": str(exercise_submission_1.assessment_submission_id)
         },
         {
-            "id": str(exercise_submission_2.id)
+            "id": str(exercise_submission_2.id),
+            "exercise_id": str(exercise_submission_2.exercise_id),
+            "assessment_submission_id": str(exercise_submission_2.assessment_submission_id)
+
         },
         {
-            "id": str(exercise_submission_3.id)
+            "id": str(exercise_submission_3.id),
+            "exercise_id": str(exercise_submission_3.exercise_id),
+            "assessment_submission_id": str(exercise_submission_3.assessment_submission_id)
         },
         {
-            "id": str(exercise_submission_4.id)
+            "id": str(exercise_submission_4.id),
+            "exercise_id": str(exercise_submission_4.exercise_id),
+            "assessment_submission_id": str(exercise_submission_4.assessment_submission_id)
         },
         {
-            "id": str(exercise_submission_5.id)
+            "id": str(exercise_submission_5.id),
+            "exercise_id": str(exercise_submission_5.exercise_id),
+            "assessment_submission_id": str(exercise_submission_5.assessment_submission_id)
+
         },
         {
-            "id": str(exercise_submission_6.id)
-        },
+            "id": str(exercise_submission_6.id),
+            "exercise_id": str(exercise_submission_6.exercise_id),
+            "assessment_submission_id": str(exercise_submission_6.assessment_submission_id)
+        }
     ]
 
 
@@ -73,5 +94,6 @@ def test_update_exercise_submission(test_client: TestClient) -> None:
         json={"answer": [str(choice) for choice in exercise_submission_1.answer.choices]}
     ).json()
 
-    assert updated_exercise_submission_response == {"id": exercise_submission_response["id"]}
-    assert isinstance(updated_exercise_submission_response["id"], str)
+    response_1 = UpsertExerciseSubmissionResponse(**exercise_submission_response)
+    response_2 = UpsertExerciseSubmissionResponse(**updated_exercise_submission_response)
+    assert response_1.id == response_2.id

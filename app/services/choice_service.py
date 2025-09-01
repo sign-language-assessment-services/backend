@@ -20,16 +20,14 @@ class ChoiceService:
         self.settings = settings
         self.multimedia_file_service = multimedia_file_service
 
-    def create_choice(self, session: Session, multimedia_file_id: UUID, is_correct: bool) -> None:
+    def create_choice(self, session: Session, multimedia_file_id: UUID) -> Choice:
         multimedia_file = self.multimedia_file_service.get_multimedia_file_by_id(
             session=session,
             multimedia_file_id=multimedia_file_id
         )
-        choice = Choice(
-            is_correct=is_correct,
-            content=multimedia_file
-        )
+        choice = Choice(content=multimedia_file)
         add_choice(session=session, choice=choice)
+        return choice
 
     @staticmethod
     def get_choice_by_id(session: Session, choice_id: UUID) -> Choice | None:

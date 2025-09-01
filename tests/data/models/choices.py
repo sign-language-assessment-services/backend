@@ -10,47 +10,55 @@ from tests.data.models.multimedia_files import (
 choice_1 = Choice(
     id=uuid4(),
     is_correct=True,
+    position=1,
     content=multimedia_file_choice_1
 )
 
 choice_2 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=2,
     content=multimedia_file_choice_2
 )
 
 choice_3 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=3,
     content=multimedia_file_choice_3
 )
 
 choice_4 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=4,
     content=multimedia_file_choice_4
 )
 
 choice_5 = Choice(
     id=uuid4(),
     is_correct=True,
+    position=1,
     content=multimedia_file_choice_5
 )
 
 choice_6 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=2,
     content=multimedia_file_choice_6
 )
 
 choice_7 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=3,
     content=multimedia_file_choice_7
 )
 
 choice_8 = Choice(
     id=uuid4(),
     is_correct=False,
+    position=4,
     content=multimedia_file_choice_8
 )
