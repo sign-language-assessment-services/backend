@@ -14,7 +14,7 @@ from tests.data.models.exercise_submissions import exercise_submission_5, exerci
 
 
 @patch.object(assessment_submission_service_module, add_assessment_submission.__name__)
-def test_create_submission(
+def test_create_assessment_submission(
         mocked_add_submission: MagicMock,
         assessment_submission_service: AssessmentSubmissionService
 ) -> None:
@@ -40,7 +40,7 @@ def test_create_submission(
     assessment_submission_service_module, get_assessment_submission.__name__,
     return_value=assessment_submission_1
 )
-def test_get_submission_by_id(
+def test_get_assessment_submission_by_id(
         mocked_get_submission: MagicMock,
         assessment_submission_service: AssessmentSubmissionService
 ) -> None:
@@ -57,7 +57,7 @@ def test_get_submission_by_id(
     assessment_submission_service_module, list_assessment_submissions.__name__,
     return_value=[assessment_submission_1, assessment_submission_2]
 )
-def test_list_submissions(
+def test_list_assessment_submissions(
         mocked_list_submission: MagicMock,
         assessment_submission_service: AssessmentSubmissionService
 ) -> None:
@@ -77,7 +77,9 @@ def test_list_submissions(
 )
 @patch.object(assessment_submission_service_module, get_assessment_submission.__name__)
 @patch.object(assessment_submission_service_module, update_assessment_submission.__name__)
-def test_update_submission_finished(update_assessment_submission_mock: MagicMock, *args: MagicMock) -> None:
+def test_update_assessment_submission_to_finished(
+        update_assessment_submission_mock: MagicMock, *args: MagicMock
+) -> None:
     mocked_session = Mock()
     assessment_submission_service = AssessmentSubmissionService(mocked_session)
 

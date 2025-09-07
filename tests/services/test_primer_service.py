@@ -1,8 +1,30 @@
 from unittest.mock import MagicMock, Mock, patch
 
 from app.services import primer_service as primer_service_module
-from app.services.primer_service import PrimerService, get_primer, list_primers
+from app.services.primer_service import PrimerService, add_primer, get_primer, list_primers
+from tests.data.models.multimedia_files import multimedia_file_choice_1
 from tests.data.models.primers import primer_1, primer_2
+
+
+@patch.object(primer_service_module, add_primer.__name__)
+def test_create_primer(
+        mocked_add_primer: MagicMock,
+        primer_service: PrimerService
+) -> None:
+    mocked_session = Mock()
+    mocked_get_multimedia_file = Mock(return_value=multimedia_file_choice_1)
+    primer_service.multimedia_file_service.get_multimedia_file_by_id = mocked_get_multimedia_file
+
+    primer = primer_service.create_primer(
+        session=mocked_session,
+        multimedia_file_id=mocked_get_multimedia_file.return_value.id
+    )
+
+    mocked_add_primer.assert_called_once_with(
+        session=mocked_session,
+        primer=primer
+    )
+    assert primer.content == multimedia_file_choice_1
 
 
 @patch.object(

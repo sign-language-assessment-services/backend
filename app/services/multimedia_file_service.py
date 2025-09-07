@@ -20,16 +20,11 @@ class MultimediaFileService:
             self,
             settings: Annotated[Settings, Depends(get_settings)],
             object_storage_client: Annotated[ObjectStorageClient, Depends()],
-    ):
+    ) -> None:
         self.settings = settings
         self.object_storage_client = object_storage_client
 
-    def create_multimedia_file(
-            self,
-            session: Session,
-            file: BinaryIO,
-            media_type: MediaType
-    ) -> MultimediaFile:
+    def create_multimedia_file(self, session: Session, file: BinaryIO, media_type: MediaType) -> MultimediaFile:
         key = uuid4()
         minio_location = MinioLocation(
             bucket=self.settings.data_bucket_name,

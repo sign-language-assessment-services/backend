@@ -1,8 +1,29 @@
 from unittest.mock import MagicMock, Mock, patch
 
 from app.services import assessment_service as assessment_service_module
-from app.services.assessment_service import AssessmentService, get_assessment, list_assessments
+from app.services.assessment_service import (
+    AssessmentService, add_assessment, get_assessment, list_assessments
+)
 from tests.data.models.assessments import assessment_1, assessment_2
+
+
+@patch.object(assessment_service_module, add_assessment.__name__)
+def test_create_assessment_without_tasks(
+        mocked_add_assessment: MagicMock,
+        assessment_service: AssessmentService
+) -> None:
+    mocked_session = Mock()
+
+    assessment = assessment_service.create_assessment(
+        session=mocked_session,
+        name=assessment_1.name
+    )
+
+    mocked_add_assessment.assert_called_once_with(
+        session=mocked_session,
+        assessment=assessment
+    )
+    assert assessment.name == assessment_1.name
 
 
 @patch.object(

@@ -1,8 +1,37 @@
 from unittest.mock import MagicMock, Mock, patch
 
 from app.services import exercise_service as exercise_service_module
-from app.services.exercise_service import ExerciseService, get_exercise, list_exercises
+from app.services.exercise_service import (
+    ExerciseService, add_exercise, get_exercise, get_multimedia_file, get_multiple_choice,
+    list_exercises
+)
 from tests.data.models.exercises import exercise_1, exercise_2
+from tests.data.models.multimedia_files import multimedia_file_choice_1
+from tests.data.models.multiple_choices import multiple_choice_1
+
+
+@patch.object(exercise_service_module, get_multiple_choice.__name__, return_value=multiple_choice_1)
+@patch.object(exercise_service_module, get_multimedia_file.__name__, return_value=multimedia_file_choice_1)
+@patch.object(exercise_service_module, add_exercise.__name__)
+def test_create_empty_exercise(
+        mocked_add_exercise: MagicMock,
+        mocked_get_multimedia_file: MagicMock,
+        mocked_get_multiple_choice: MagicMock,
+        exercise_service: ExerciseService
+) -> None:
+    mocked_session = Mock()
+
+    exercise = exercise_service.create_exercise(
+        session=mocked_session,
+        points=1,
+        multimedia_file_id=mocked_get_multimedia_file.id,
+        multiple_choice_id=mocked_get_multiple_choice.id
+    )
+
+    mocked_add_exercise.assert_called_once_with(session=mocked_session, exercise=exercise)
+    assert exercise.points == 1
+    assert exercise.question.content == mocked_get_multimedia_file.return_value
+    assert exercise.question_type.content == mocked_get_multiple_choice.return_value
 
 
 @patch.object(

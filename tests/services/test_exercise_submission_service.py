@@ -12,7 +12,7 @@ from tests.data.models.exercise_submissions import (
 from tests.data.models.exercises import exercise_1
 
 
-def test_add_exercise_submission_calls_scoring_function(
+def test_create_exercise_submission_calls_scoring_function(
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
     mocked_session = Mock()
@@ -34,7 +34,7 @@ def test_add_exercise_submission_calls_scoring_function(
 
 
 @patch.object(exercise_submission_service_module, add_exercise_submission.__name__)
-def test_add_exercise_submission(
+def test_create_exercise_submission(
         mocked_add_submission: MagicMock,
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
@@ -63,7 +63,7 @@ def test_add_exercise_submission(
     exercise_submission_service_module, get_exercise_submission.__name__,
     return_value=exercise_submission_1
 )
-def test_get_submission_by_id(
+def test_get_exercise_submission_by_id(
         mocked_get_submission: MagicMock,
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
@@ -83,7 +83,7 @@ def test_get_submission_by_id(
         exercise_submission_4, exercise_submission_5, exercise_submission_6
     ]
 )
-def test_list_submissions(
+def test_list_exercise_submissions(
         mocked_list_submission: MagicMock,
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
@@ -98,7 +98,7 @@ def test_list_submissions(
 
 
 @patch.object(exercise_submission_service_module, upsert_exercise_submission.__name__)
-def test_upsert_submission(
+def test_upsert_exercise_submission(
         mocked_upsert_submission: MagicMock,
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:

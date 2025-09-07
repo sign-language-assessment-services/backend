@@ -37,6 +37,13 @@ exclude_dirs = ["tests", ".venv"]
 
 [tool.coverage.run]
 concurrency = ["thread", "gevent"]
+omit = [
+    "tests/*",
+    "*/tests/*"
+]
+
+[tool.coverage.report]
+omit = ["**/tests/*"]
 
 [tool.isort]
 line_length = 100
@@ -86,6 +93,12 @@ max-line-length = 120
 
 [tool.pylint.master]
 extension-pkg-whitelist = "pydantic"
+
+[tool.pytest]
+collect_ignore_glob = [
+    "**/multimedia_files.py::NotAsJson",
+    "**/db_migrations/env.py"
+]
 
 [tool.pytest.ini_options]
 addopts = [

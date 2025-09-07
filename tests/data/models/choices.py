@@ -9,8 +9,8 @@ from tests.data.models.multimedia_files import (
 
 choice_1 = Choice(
     id=uuid4(),
-    is_correct=True,
-    position=1,
+    is_correct=True,  # TODO: choice itself should not know
+    position=1,       # TODO: choice itself should not know
     content=multimedia_file_choice_1
 )
 

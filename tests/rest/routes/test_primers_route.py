@@ -1,6 +1,23 @@
+from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
 
+from app.rest.requests.primers import CreatePrimerRequest
 from tests.data.models.primers import primer_1, primer_2
+
+
+def test_create_primer(test_client: TestClient) -> None:
+    create_primer_request = jsonable_encoder(
+        CreatePrimerRequest(
+            multimedia_file_id=primer_1.content.id
+        )
+    )
+
+    response = test_client.post("/primers/", json=create_primer_request).json()
+
+    assert response == {
+        "id": str(primer_1.id),
+        "multimedia_file_id": str(primer_1.content.id)
+    }
 
 
 def test_get_primer(test_client: TestClient) -> None:
