@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from app.core.models.choice import Choice
+from app.core.models.choice import AssociatedChoice, Choice
 from app.core.models.exercise import Exercise
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
@@ -47,7 +47,7 @@ def test_add_exercise(db_session: Session) -> None:
             content=MultipleChoice(
                 id=multiple_choice_id,
                 choices=[
-                    Choice(
+                    AssociatedChoice(
                         id=choice_id,
                         content=MultimediaFile(
                             id=choice_video.get("id"),
@@ -56,7 +56,9 @@ def test_add_exercise(db_session: Session) -> None:
                                 key=choice_video.get("key")
                             ),
                             media_type=MediaType.VIDEO
-                        )
+                        ),
+                        position=1,
+                        is_correct=True
                     )
                 ]
             )

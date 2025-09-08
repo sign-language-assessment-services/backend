@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import ANY, MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation

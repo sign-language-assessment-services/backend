@@ -4,7 +4,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from app.core.models.choice import Choice
+from app.core.models.choice import AssociatedChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.database.exceptions import EntryNotFoundError
 from app.database.tables.choices import DbChoice
@@ -18,16 +18,16 @@ from tests.database.data_inserts import insert_bucket_object, insert_choice, ins
 from tests.database.utils import table_count
 
 
-def test_add_multiple_choice(db_session: Session) -> None:
+def test_add_multiple_choice_with_choices(db_session: Session) -> None:
     multimedia_file = insert_bucket_object(session=db_session)
     choice_1 = insert_choice(session=db_session, bucket_object_id=multimedia_file.get("id"))
     choice_2 = insert_choice(session=db_session, bucket_object_id=multimedia_file.get("id"))
     choice_3 = insert_choice(session=db_session, bucket_object_id=multimedia_file.get("id"))
     multiple_choice = MultipleChoice(
         choices=[
-            Choice(**choice_1, is_correct=True),
-            Choice(**choice_2, is_correct=False),
-            Choice(**choice_3, is_correct=False)
+            AssociatedChoice(**choice_1, is_correct=True, position=1),
+            AssociatedChoice(**choice_2, is_correct=False, position=2),
+            AssociatedChoice(**choice_3, is_correct=False, position=3)
         ]
     )
 

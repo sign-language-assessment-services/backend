@@ -2,7 +2,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field
 
-from app.core.models.choice import MultipleChoiceUsage
 from app.core.models.multimedia_file import MultimediaFile
 
 
@@ -13,7 +12,6 @@ class CreateChoiceResponse(BaseModel):
 class GetChoiceResponse(BaseModel):
     id: UUID
     content: MultimediaFile = Field(exclude=True)
-    multiple_choices: list[MultipleChoiceUsage] = Field(default_factory=list)
 
     @computed_field(
         description="Media type of the multimedia file",

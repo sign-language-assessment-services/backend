@@ -2,7 +2,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field, field_validator
 
-from app.core.models.choice import MultipleChoiceUsage
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
 
@@ -38,12 +37,12 @@ class GetExerciseResponse(BaseModel):
         }
     )
     @property
-    def choices(self) -> list[MultipleChoiceUsage]:
+    def choices(self) -> list[dict[str, UUID | int]]:
         return [
-            MultipleChoiceUsage(
-                id=choice.id,
-                position=choice.position
-            )
+            {
+                "id": choice.id,
+                "position": choice.position,
+            }
             for choice in self.question_type.content.choices  # pylint: disable=no-member
         ]
 

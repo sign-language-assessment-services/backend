@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, computed_field, field_validator
 
-from app.core.models.choice import Choice, MultipleChoiceUsage
+from app.core.models.choice import AssociatedChoice, Choice
 
 
 class CreateMultipleChoiceResponse(BaseModel):
@@ -11,7 +11,7 @@ class CreateMultipleChoiceResponse(BaseModel):
 
 class GetMultipleChoiceResponse(BaseModel):
     id: UUID
-    choices: list[MultipleChoiceUsage]
+    choices: list[AssociatedChoice]
 
     @field_validator("choices", mode="before")
     @classmethod

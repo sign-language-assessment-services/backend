@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
-from app.core.models.choice import Choice
+from app.core.models.choice import AssociatedChoice, Choice
 from app.core.models.exercise import Exercise
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
@@ -67,9 +67,17 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
                     content=MultipleChoice(
                         id=multiple_choice_object.get("id"),
                         choices=[
-                            Choice(
+                            AssociatedChoice(
                                 id=choice_object.get("id"),
                                 content=multimedia_file,
+                                is_correct=True,
+                                position=1
+                            ),
+                            AssociatedChoice(
+                                id=choice_object.get("id"),
+                                content=multimedia_file,
+                                is_correct=False,
+                                position=2
                             )
                         ]
                     )

@@ -9,7 +9,7 @@ from app.rest.requests.assessments import CreateAssessmentRequest
 from app.rest.requests.multimedia_files import CreateMultimediaFileRequest
 from tests.data.models.assessment_submissions import assessment_submission_1
 from tests.data.models.assessments import assessment_1
-from tests.data.models.choices import choice_1, choice_2
+from tests.data.models.choices import associated_choice_1, associated_choice_2
 from tests.data.models.exercise_submissions import exercise_submission_1
 from tests.data.models.exercises import exercise_1
 from tests.data.models.multimedia_files import multimedia_file_choice_1
@@ -19,7 +19,7 @@ from tests.data.models.primers import primer_1
 GET_ENDPOINTS = [
     f"/assessment_submissions/{str(assessment_submission_1.id)}",
     f"/assessments/{str(assessment_1.id)}",
-    f"/choices/{str(choice_1.id)}",
+    f"/choices/{str(associated_choice_1.id)}",
     f"/exercise_submissions/{str(exercise_submission_1.id)}",
     f"/exercises/{str(exercise_1.id)}",
     f"/multimedia_files/{str(multimedia_file_choice_1.id)}",
@@ -208,8 +208,8 @@ def test_post_multimedia_file_403(test_client_no_roles: TestClient, tmp_path: Pa
 def test_post_multiple_choice_200(test_client: TestClient) -> None:
     endpoint = "/multiple_choices/"
     data = {
-        "choice_ids": [str(choice_1.id), str(choice_2.id)],
-        "correct_choice_ids": [str(choice_1.id)]
+        "choice_ids": [str(associated_choice_1.id), str(associated_choice_2.id)],
+        "correct_choice_ids": [str(associated_choice_1.id)]
     }
 
     response = test_client.post(endpoint, json=data)
@@ -220,8 +220,8 @@ def test_post_multiple_choice_200(test_client: TestClient) -> None:
 def test_post_multiple_choice_403(test_client_no_roles: TestClient) -> None:
     endpoint = "/multiple_choices/"
     data = {
-        "choice_ids": [str(choice_1.id), str(choice_2.id)],
-        "correct_choice_ids": [str(choice_1.id)]
+        "choice_ids": [str(associated_choice_1.id), str(associated_choice_2.id)],
+        "correct_choice_ids": [str(associated_choice_1.id)]
     }
 
     response = test_client_no_roles.post(endpoint, json=data)
@@ -232,7 +232,7 @@ def test_post_multiple_choice_403(test_client_no_roles: TestClient) -> None:
 def test_post_multiple_choice_422(test_client: TestClient) -> None:
     endpoint = "/multiple_choices/"
     data = {
-        "choice_ids": [str(choice_1.id), str(choice_2.id)],
+        "choice_ids": [str(associated_choice_1.id), str(associated_choice_2.id)],
         "correct_choice_ids": [str(uuid4())]  # not subset of choice_ids
     }
 

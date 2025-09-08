@@ -3,7 +3,9 @@ from fastapi.testclient import TestClient
 
 from app.rest.requests.choices import CreateChoiceRequest
 from app.rest.responses.choices import CreateChoiceResponse
-from tests.data.models.choices import choice_1, choice_2, choice_3, choice_4
+from tests.data.models.choices import (
+    associated_choice_1, associated_choice_2, associated_choice_3, associated_choice_4
+)
 from tests.data.models.multimedia_files import multimedia_file_choice_1
 
 
@@ -17,15 +19,14 @@ def test_create_choice(test_client: TestClient) -> None:
 
 
 def test_get_choice(test_client: TestClient) -> None:
-    choice_id = str(choice_1.id)
+    choice_id = str(associated_choice_1.id)
 
     response = test_client.get(f"/choices/{choice_id}").json()
 
     assert response == {
         "id": choice_id,
-        "media_type": choice_1.content.media_type.value,
-        "multimedia_file_id": str(choice_1.content.id),
-        "multiple_choices": []
+        "media_type": associated_choice_1.content.media_type.value,
+        "multimedia_file_id": str(associated_choice_1.content.id)
     }
 
 
@@ -34,23 +35,23 @@ def test_list_choices(test_client: TestClient) -> None:
 
     assert response == [
         {
-            "id": str(choice_1.id),
-            "multimedia_file_id": str(choice_1.content.id),
-            "media_type": choice_1.content.media_type.value,
+            "id": str(associated_choice_1.id),
+            "multimedia_file_id": str(associated_choice_1.content.id),
+            "media_type": associated_choice_1.content.media_type.value,
         },
         {
-            "id": str(choice_2.id),
-            "multimedia_file_id": str(choice_2.content.id),
-            "media_type": choice_2.content.media_type.value,
+            "id": str(associated_choice_2.id),
+            "multimedia_file_id": str(associated_choice_2.content.id),
+            "media_type": associated_choice_2.content.media_type.value,
         },
         {
-            "id": str(choice_3.id),
-            "multimedia_file_id": str(choice_3.content.id),
-            "media_type": choice_3.content.media_type.value,
+            "id": str(associated_choice_3.id),
+            "multimedia_file_id": str(associated_choice_3.content.id),
+            "media_type": associated_choice_3.content.media_type.value,
         },
         {
-            "id": str(choice_4.id),
-            "multimedia_file_id": str(choice_4.content.id),
-            "media_type": choice_4.content.media_type.value,
+            "id": str(associated_choice_4.id),
+            "multimedia_file_id": str(associated_choice_4.content.id),
+            "media_type": associated_choice_4.content.media_type.value,
         }
     ]

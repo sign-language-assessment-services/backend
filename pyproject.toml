@@ -38,12 +38,17 @@ exclude_dirs = ["tests", ".venv"]
 [tool.coverage.run]
 concurrency = ["thread", "gevent"]
 omit = [
-    "tests/*",
-    "*/tests/*"
+    "**/tests/**/*",
+    "db_migrations/env.py",
+    "app/rest/open_api_workaround.py"
 ]
 
 [tool.coverage.report]
-omit = ["**/tests/*"]
+omit = [
+    "**/tests/**/*",
+    "db_migrations/env.py",
+    "app/rest/open_api_workaround.py"
+]
 
 [tool.isort]
 line_length = 100

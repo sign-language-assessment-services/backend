@@ -9,7 +9,8 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user
-from app.rest.requests.multimedia_files import CreateMultimediaFileRequest, NotAsJson
+from app.rest.open_api_workaround import NotAsJson
+from app.rest.requests.multimedia_files import CreateMultimediaFileRequest
 from app.rest.responses.multimedia_files import (
     CreateMultimediaFileResponse, GetMultimediaFileResponse, ListMultimediaFileResponse
 )
