@@ -4,25 +4,23 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.config import Settings
 from app.core.models.assessment import Assessment
-from app.external_services.minio.client import ObjectStorageClient
 from app.repositories.assessments import add_assessment, get_assessment, list_assessments
-from app.settings import get_settings
+from app.services.task_service import TaskService
 
 
 class AssessmentService:
-    def __init__(
-            self,
-            object_storage_client: Annotated[ObjectStorageClient, Depends()],
-            settings: Annotated[Settings, Depends(get_settings)],
-    ):
-        self.object_storage_client = object_storage_client
-        self.settings = settings
+    def __init__(self, task_service: Annotated[TaskService, Depends()]) -> None:
+        self.task_service = task_service
 
-    @staticmethod
-    def create_assessment(session: Session, name: str) -> Assessment:
-        assessment = Assessment(name=name)
+    def create_assessment(self, session: Session, name: str, task_ids: list[UUID] = None) -> Assessment:
+        assessment = Assessment(
+            name=name,
+            tasks=[
+                self.task_service.get_task_by_id(session=session, task_id=task_id)
+                for task_id in task_ids
+            ] if task_ids else []
+        )
         add_assessment(session=session, assessment=assessment)
         return assessment
 

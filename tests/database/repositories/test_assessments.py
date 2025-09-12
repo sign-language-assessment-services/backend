@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
-from app.core.models.choice import AssociatedChoice, Choice
+from app.core.models.choice import AssociatedChoice
 from app.core.models.exercise import Exercise
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
@@ -46,6 +46,12 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
     bucket_object = insert_bucket_object(session=db_session, filename="testfile.mpg")
     choice_object = insert_choice(session=db_session, bucket_object_id=bucket_object.get("id"))
     multiple_choice_object = insert_multiple_choice(session=db_session)
+    primer = insert_primer(session=db_session, bucket_object_id=bucket_object.get("id"))
+    exercise = insert_exercise(
+        session=db_session,
+        bucket_object_id=bucket_object.get("id"),
+        multiple_choice_id=multiple_choice_object.get("id")
+    )
     multimedia_file = MultimediaFile(
         id=bucket_object.get("id"),
         location=MinioLocation(
@@ -58,9 +64,11 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
         name="Test Assessment",
         tasks=[
             Primer(
+                id=primer.get("id"),
                 content=multimedia_file
             ),
             Exercise(
+                id=exercise.get("id"),
                 points=1,
                 question=Question(content=multimedia_file),
                 question_type=QuestionType(
@@ -96,8 +104,9 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
     assert result.max_attempts == assessment.max_attempts
     assert table_count(db_session, DbAssessment) == 1
     assert result.tasks[0].id == assessment.tasks[0].id
-    assert result.tasks[0].created_at == assessment.tasks[0].created_at
     assert result.tasks[0].task_type == "primer"
+    assert result.tasks[1].id == assessment.tasks[1].id
+    assert result.tasks[1].task_type == "exercise"
     assert table_count(db_session, DbTask) == 2
     assert table_count(db_session, DbPrimer) == 1
     assert table_count(db_session, DbExercise) == 1

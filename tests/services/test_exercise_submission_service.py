@@ -1,10 +1,13 @@
+from copy import deepcopy
 from unittest.mock import MagicMock, Mock, patch
 
+from app.core.models.exercise_submission import ExerciseSubmission
 from app.services import exercise_submission_service as exercise_submission_service_module
 from app.services.exercise_submission_service import (
     ExerciseSubmissionService, add_exercise_submission, get_exercise_submission,
     list_exercise_submissions, upsert_exercise_submission
 )
+from tests.data.models.assessment_submissions import assessment_submission_1
 from tests.data.models.exercise_submissions import (
     exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
     exercise_submission_5, exercise_submission_6
@@ -103,15 +106,27 @@ def test_upsert_exercise_submission(
         exercise_submission_service: ExerciseSubmissionService
 ) -> None:
     mocked_session = Mock()
-    exercise_submission_service.scoring_service.score = Mock()
+    mocked_scoring_function = Mock()
+    exercise_submission_service.scoring_service.score = mocked_scoring_function
     exercise_submission_service.exercise_service.get_exercise_by_id = Mock(return_value=exercise_1)
+
+    data=deepcopy(exercise_submission_1.__dict__)
+    data["answer"] = [str(choice) for choice in data["answer"].choices]
+    assessment_submission_id = data.pop("assessment_submission_id")
+    exercise_id = data.pop("exercise_id")
 
     exercise_submission_service.upsert_exercise_submission(
         session=mocked_session,
-        data=exercise_submission_1.__dict__
+        data=data,
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id
     )
 
-    mocked_upsert_submission.assert_called_once_with(
-        session=mocked_session,
-        submission=exercise_submission_1
+    called_submission = mocked_upsert_submission.call_args.kwargs["submission"]
+    assert called_submission.assessment_submission_id == assessment_submission_id
+    assert called_submission.exercise_id == exercise_id
+    assert called_submission.answer == exercise_submission_1.answer
+    mocked_scoring_function.assert_called_once_with(
+        exercise_submission=exercise_submission_1,
+        exercise=exercise_1
     )

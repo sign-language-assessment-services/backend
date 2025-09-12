@@ -28,6 +28,7 @@ from app.services.exercise_submission_service import ExerciseSubmissionService
 from app.services.multimedia_file_service import MultimediaFileService
 from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
+from app.services.task_service import TaskService
 from app.settings import get_settings
 from tests.data.models.assessment_submissions import (
     assessment_submission_1, assessment_submission_1_updated, assessment_submission_2
@@ -98,6 +99,9 @@ def app_dependency_overrides_data() -> FastAPI:
             exercise_submission_1, exercise_submission_2, exercise_submission_3,
             exercise_submission_4, exercise_submission_5, exercise_submission_6
         ]
+    )
+    app.dependency_overrides[TaskService] = _get_override_task_service(
+        get_by_id_return=[primer_1, exercise_1]
     )
     return app
 
@@ -274,6 +278,17 @@ def _get_override_primer_service(
         return primer_service
 
     return override_primer_service
+
+
+def _get_override_task_service(
+        get_by_id_return: list[Primer | Exercise] | None = None
+) -> Callable:
+    async def override_task_service() -> Mock:
+        task_service = Mock()
+        task_service.get_task_by_id.side_effect = get_by_id_return
+        return task_service
+
+    return override_task_service
 
 
 def _get_override_exercise_submission_service(

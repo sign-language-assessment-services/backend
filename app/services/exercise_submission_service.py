@@ -64,11 +64,23 @@ class ExerciseSubmissionService:
     def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
         return list_exercise_submissions(session=session)
 
-    def upsert_exercise_submission(self, session: Session, data: dict[str, Any]) -> ExerciseSubmission:
-        exercise_submission = ExerciseSubmission(**data)
+    def upsert_exercise_submission(
+            self,
+            session: Session,
+            data: dict[str, Any],
+            assessment_submission_id: UUID,
+            exercise_id: UUID
+    ) -> ExerciseSubmission:
+        choices = data.pop("answer")
+        exercise_submission = ExerciseSubmission(
+            **data,
+            answer=MultipleChoiceAnswer(choices=choices),
+            assessment_submission_id=assessment_submission_id,
+            exercise_id=exercise_id
+        )
         exercise = self.exercise_service.get_exercise_by_id(
             session=session,
-            exercise_id=data["exercise_id"]
+            exercise_id=exercise_id
         )
         self.scoring_service.score(
             exercise_submission=exercise_submission,

@@ -74,7 +74,9 @@ async def list_submissions(
     response_model=UpsertExerciseSubmissionResponse,
     status_code=status.HTTP_200_OK
 )
-async def upsert_submission(
+async def upsert_exercise_submission(
+        assessment_submission_id: UUID,
+        exercise_id: UUID,
         data: UpsertExerciseSubmissionRequest,
         exercise_submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
@@ -88,6 +90,8 @@ async def upsert_submission(
 
     exercise_submission = exercise_submission_service.upsert_exercise_submission(
         session=db_session,
-        data=data.model_dump(exclude_unset=True)
+        data=data.model_dump(exclude_none=True),
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id
     )
     return exercise_submission

@@ -39,7 +39,8 @@ async def create_assessment(
 
     assessment = assessment_service.create_assessment(
         session=db_session,
-        name=data.name
+        name=data.name,
+        task_ids=data.tasks
     )
     return assessment
 

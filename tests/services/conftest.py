@@ -16,6 +16,7 @@ from app.services.multimedia_file_service import MultimediaFileService
 from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
 from app.services.scoring_service import ScoringService
+from app.services.task_service import TaskService
 
 
 @pytest.fixture
@@ -82,8 +83,13 @@ def exercise_service(settings: Mock) -> ExerciseService:
 
 
 @pytest.fixture
-def assessment_service(storage_client: Mock, settings: Mock) -> AssessmentService:
-    return AssessmentService(storage_client, settings)
+def task_service(settings: Mock) -> TaskService:
+    return TaskService()
+
+
+@pytest.fixture
+def assessment_service(settings: Mock, task_service: TaskService) -> AssessmentService:
+    return AssessmentService(task_service)
 
 
 @pytest.fixture

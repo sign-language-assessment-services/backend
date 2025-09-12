@@ -11,21 +11,25 @@ from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, 
 
 
 def add_assessment(session: Session, assessment: Assessment) -> None:
-    db_model = assessment_to_db(assessment)
-    if db_model.tasks:
-        session.add(db_model)
-        session.add_all(db_model.tasks)
-        session.flush()
+    assessment_without_tasks = assessment.model_dump(exclude={"tasks"})
+    db_model = assessment_to_db(Assessment(**assessment_without_tasks))
 
-        db_model.tasks_link = [
-            DbAssessmentsTasks(position=i, task=task)
-            for i, task in enumerate(db_model.tasks, start=1)
+    session.add(db_model)
+    session.flush()
+
+    if assessment.tasks:
+        tasks_links = [
+            DbAssessmentsTasks(
+                assessment_id=db_model.id,
+                task_id=task.id,
+                position=i
+            )
+            for i, task in enumerate(assessment.tasks, start=1)
         ]
+        session.add_all(tasks_links)
         session.flush()
-        return None
 
     add_entry(session, db_model)
-    return None
 
 
 def get_assessment(session: Session, _id: UUID) -> Assessment | None:

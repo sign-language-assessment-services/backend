@@ -48,6 +48,8 @@ class MultimediaFileService:
 
     def get_multimedia_file_by_id(self, session: Session, multimedia_file_id: UUID) -> MultimediaFile | None:
         multimedia_file = get_multimedia_file(session=session, _id=multimedia_file_id)
+        if multimedia_file is None:
+            return None
         multimedia_file.url = self._get_multimedia_file_url(multimedia_file.location)
         return multimedia_file
 
