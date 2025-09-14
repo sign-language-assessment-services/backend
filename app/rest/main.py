@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
             "email": "tbd@not-yet-available.zzz"
         },
         default_response_class=ORJSONResponse,
-        # lifespan=lifespan
+        lifespan=lifespan
     )
     import_tables()
 
