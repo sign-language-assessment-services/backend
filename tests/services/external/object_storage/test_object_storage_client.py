@@ -17,7 +17,7 @@ def test_minio_add_object_calls_put_object_correctly(storage_client_minio: Objec
     storage_client_minio.minio.put_object = mocked_put_object
     location = MinioLocation(bucket="testbucket", key="123")
     data = io.BytesIO(b"testdata")
-    media_type = MediaType.VIDEO
+    media_type = "video/mp4"
 
     storage_client_minio.add_object(location=location, data=data, media_type=media_type)
 
@@ -27,7 +27,7 @@ def test_minio_add_object_calls_put_object_correctly(storage_client_minio: Objec
         data=data,
         length=-1,
         part_size=16 * 1024 * 1024,
-        content_type=media_type.value
+        content_type=media_type
     )
 
 

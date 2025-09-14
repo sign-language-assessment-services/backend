@@ -26,7 +26,7 @@ def test_create_multimedia_file(
     multimedia_file = multimedia_file_service.create_multimedia_file(
         session=mocked_session,
         file=test_file,
-        media_type=MediaType.VIDEO
+        media_type="video/mp4"
     )
 
     mocked_add_object_storage.assert_called_once_with(
@@ -35,7 +35,7 @@ def test_create_multimedia_file(
             key=multimedia_file.location.key
         ),
         data=test_file,
-        media_type=MediaType.VIDEO
+        media_type="video/mp4"
     )
     mocked_add_multimedia_file.assert_called_once_with(
         session=mocked_session,
