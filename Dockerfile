@@ -1,13 +1,16 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
 RUN apt update && apt install -y curl
-RUN pip install poetry==1.6 && poetry config virtualenvs.create false
+RUN pip install poetry==2.1.2 && poetry config virtualenvs.create false
 
 COPY ./pyproject.toml /app/pyproject.toml
 COPY ./poetry.lock /app/poetry.lock
-RUN poetry install --no-interaction && yes | poetry cache clear --all .
+COPY ./alembic.ini /app/alembic.ini
+COPY ./db_migrations /app/db_migrations
+
+RUN poetry install --no-interaction --no-root && yes | poetry cache clear --all .
 
 COPY ./app /app/app
 COPY ./logging.yaml /app/logging.yaml

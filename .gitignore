@@ -132,3 +132,4 @@ dmypy.json
 diagram.bpmn
 pytest-results.xml
 .env
+poetry.toml

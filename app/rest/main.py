@@ -1,9 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
+from app.database.orm import import_tables, run_migrations
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
-from app.rest.routers import assessments, root
+from app.rest.routers import (
+    assessment_submissions, assessments, choices, exercise_submissions, exercises, multimedia_files,
+    multiple_choices, primers, root
+)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    run_migrations()
+    yield
+    print("Shutting down...")
 
 
 def create_app() -> FastAPI:
@@ -20,8 +33,18 @@ def create_app() -> FastAPI:
             "name": "Sign Language Assessment Services GmbH",
             "email": "tbd@not-yet-available.zzz"
         },
-        default_response_class=ORJSONResponse
+        default_response_class=ORJSONResponse,
+        # lifespan=lifespan
     )
+    import_tables()
+
     app.include_router(root.router)
     app.include_router(assessments.router)
+    app.include_router(primers.router)
+    app.include_router(exercises.router)
+    app.include_router(multiple_choices.router)
+    app.include_router(choices.router)
+    app.include_router(multimedia_files.router)
+    app.include_router(assessment_submissions.router)
+    app.include_router(exercise_submissions.router)
     return app

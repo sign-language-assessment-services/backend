@@ -1,9 +1,60 @@
-version: "3.5"
-
 services:
   fastapi:
-    image: slportal_backend:compose
+    image: slportal_backend
     build: .
     ports:
     - "8000:8000"
     restart: always
+    environment:
+      DB_HOST: database
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      AUTH_ENABLED: $AUTH_ENABLED
+    depends_on:
+      database:
+        condition: service_healthy
+      object-storage:
+        condition: service_healthy
+  
+  database:
+    image: postgres:16.3-alpine
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_DB: $DB_USER
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    healthcheck:
+      test: pg_isready -U $DB_USER
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  object-storage:
+    image: quay.io/minio/minio:RELEASE.2024-06-22T05-26-45Z
+    ports:
+      - "9000:9000"
+      - "9030:9030"
+      - "9090:9090"
+    restart: always
+    environment:
+      MINIO_ROOT_USER: $DATA_ROOT_USER
+      MINIO_ROOT_PASSWORD: $DATA_ROOT_PASSWORD
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      interval: 5s
+      retries: 20
+      timeout: 2s
+    command: server /data --console-address ":9090"
+
+volumes:
+  db_data:
+    driver: local
+  minio_data:
+    driver: local

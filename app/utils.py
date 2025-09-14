@@ -1,4 +1,4 @@
-def strtobool(val: str|None, default: bool = False) -> bool:
+def strtobool(val: str | None, default: bool = False) -> bool:
     """Convert a string representation of a boolean to a boolean
 
     Accepted values for True: yes, y, true, t, on, 1.

@@ -1,0 +1,121 @@
+### GET assessments
+GET /assessments
+Accept: application/json
+
+> {%
+  client.test("Request executed successfully", function() {
+    client.assert(response.body === [
+      {
+        id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        name: "Assessment Name"
+      }
+    ]);
+  });
+%}
+
+
+### GET assessment by id
+GET /assessments/f6712dff-d585-467e-bd6b-ad872db675f2
+Accept: application/json
+
+> {%
+  client.test("Request executed successfully", function() {
+    client.assert(response.body === {
+      name: "Assessment Name",
+      items: [
+        {
+          id: "a6712dff-d585-467e-bd6b-ad872db675f2",
+          content: {
+            id: "b6712dff-d585-467e-bd6b-ad872db675f2",
+            type: "video",
+            url: "http://example.com/34234"
+          }
+        },
+        {
+          id: "b6712dff-d585-467e-bd6b-ad872db675f2",
+          question: {
+            id: "c6712dff-d585-467e-bd6b-ad872db675f2",
+            type: "image",
+            url: "http://example.com/34234"
+          },
+          choices: [
+            {
+              id: "c6712dff-d585-467e-bd6b-ad872db675f2",
+              type: "image",
+              url: "http://example.com/34234"
+            }
+          ]
+        }
+      ],
+    }
+    );
+  });
+%}
+
+### GET submissions for user
+GET /submissions?user_id=f6712dff-d585-467e-bd6b-ad872db675f2
+Accept: application/json
+
+> {%
+  client.test("Request executed successfully", function() {
+    client.assert(response.body === [
+      {
+        id: "b6712dff-d585-467e-bd6b-ad872db675f2",
+        created_at: "2023-10-29T12:00:00Z",
+        user_id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        assessment_id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        answers: [
+          {
+            item_id: "a6712dff-d585-467e-bd6b-ad872db675f2",
+            choice_ids: [
+              "b6712dff-d585-467e-bd6b-ad872db675f2",
+            ]
+          }],
+        points: 40,
+        maximum_points: 50,
+        percentage: 80
+      }
+    ]);
+  });
+%}
+
+### POST submission
+POST /submissions
+Accept: application/json
+Content-Type: application/json
+
+{
+  "assessment_id": "f6712dff-d585-467e-bd6b-ad872db675f2",
+  "answers": [
+    {
+      "item_id": "a6712dff-d585-467e-bd6b-ad872db675f2",
+      "choice_ids": [
+        "a6712dff-d585-467e-bd6b-ad872db675f2",
+        "b6712dff-d585-467e-bd6b-ad872db675f2"
+      ]
+    }
+  ]
+}
+
+> {%
+  client.test("Request executed successfully", function() {
+    client.assert(response.body ===
+      {
+        id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        created_at: "2023-10-29T12:00:00Z",
+        user_id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        assessment_id: "f6712dff-d585-467e-bd6b-ad872db675f2",
+        answers: [
+          {
+            item_id: "a6712dff-d585-467e-bd6b-ad872db675f2",
+            choice_ids: [
+              "b6712dff-d585-467e-bd6b-ad872db675f2",
+            ]
+          }],
+        points: 40,
+        maximum_points: 50,
+        percentage: 80
+      }
+    );
+  });
+%}

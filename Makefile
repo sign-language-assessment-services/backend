@@ -27,7 +27,7 @@ clean:	## delete caches, builds etc.
 .PHONY: coverage
 MIN_COVERAGE ?= 95
 coverage:	## Run test coverage
-	poetry run coverage run -m pytest tests
+	poetry run coverage run --source=app,db_migrations -m pytest tests
 	poetry run coverage report -m --fail-under=${MIN_COVERAGE}
 
 coverage-codacy: SHELL:=/bin/bash
@@ -45,7 +45,7 @@ help:	## List targets and description
 
 .PHONY: install
 install:	## Install dependencies as configured in pyproject.toml
-	poetry install
+	poetry install --no-root
 
 .PHONY: isort
 isort:	## Check if imports are in the right order
@@ -69,11 +69,11 @@ pytest:	## Run tests
 
 .PHONY: run
 run:	## Start a development server
-	poetry run uvicorn app.main:app --port "${SERVER_PORT}" --reload
+	docker-compose -f docker-compose.yml up -d database object-storage && poetry run uvicorn app.main:app --port "${SERVER_PORT}" --reload
 
 .PHONY: run-compose
 run-compose:	## Boot up all docker services defined in docker-compose.yml
-	docker-compose -f docker-compose.yml up -d
+	docker-compose -f docker-compose.yml up --build -d
 
 .PHONY: run-container
 run-container:	## Start a dockerized development server

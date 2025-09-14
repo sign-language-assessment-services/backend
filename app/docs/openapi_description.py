@@ -14,15 +14,15 @@ what each endpoint is trying to achieve.
 An assessment is basically a series of questions and possible answers
 to them. It is used to present to a learner as an exam or for learning
 purposes. An assessment does not have to consist exclusively of
-question-answer pairs. It can also include other elements such as a
+question-choices pairs. It can also include other elements such as a
 video that tells a story before questions. The format of the questions
 and answers (text, images, videos, etc.) is not important for the
 assessment itself.
 
-#### Submission
+#### ExerciseSubmission
 A submission is the result of an assessment after the learner or person
 being assessed has gone through an assessment and given the choice of
-possible answers. Submission therefore contains the answers to a
+possible answers. ExerciseSubmission therefore contains the answers to a
 particular assessment in a structured form so that it can then be
 scored or evaluated.
 
