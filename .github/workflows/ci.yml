@@ -37,9 +37,6 @@ jobs:
       - name: Linting
         run: make lint
       
-      - name: Testing
-        run: make test AUTH_ENABLED=false
-      
       - name: Coverage
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
