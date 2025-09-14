@@ -16,14 +16,6 @@ def migration_config(db_engine: Engine) -> Config:
     alembic_config = Config()
     alembic_config.set_main_option("script_location", str(project_root / "db_migrations"))
     alembic_config.set_main_option("sqlalchemy.url", sqlalchemy_url)
-
-    section = alembic_config.config_ini_section
-    alembic_config.set_section_option(section, "DB_USER", str(db_engine.url.username or ""))
-    alembic_config.set_section_option(section, "DB_PASSWORD", str(db_engine.url.password or ""))
-    alembic_config.set_section_option(section, "DB_HOST", str(db_engine.url.host or "localhost"))
-    alembic_config.set_section_option(section, "DB_PORT", str(db_engine.url.port or "5432"))
-    alembic_config.set_section_option(section, "DB_NAME", str(db_engine.url.database or "backend"))
-
     yield alembic_config
 
 
