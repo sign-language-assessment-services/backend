@@ -1,9 +1,10 @@
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     # Keycloak
-    algorithms: list[str] = ["RS256"]
+    algorithms: list[str] = Field(default_factory=lambda: ["RS256"])
     api_audience: str = "backend"
     auth_enabled: bool = True
     issuer: str = "http://localhost:9000/auth/realms/slas"
@@ -21,4 +22,9 @@ class Settings(BaseSettings):
     # Database
     db_user: str
     db_password: str
-    db_host: str
+    db_host: str = "localhost"
+    db_port: int = 5432
+    db_name: str = "slportal"
+
+    # Environment variables from .env file in root folder
+    model_config = SettingsConfigDict(env_file=".env")

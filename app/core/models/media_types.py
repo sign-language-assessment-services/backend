@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from enum import Enum
 
-from app.core.models.exceptions import UnsupportedMimeType
+from app.core.exceptions import UnsupportedMimeType
 
 
 class MediaType(Enum):
-    IMAGE = "image"
-    VIDEO = "video"
+    IMAGE = "IMAGE"
+    VIDEO = "VIDEO"
 
     @classmethod
     def from_content_type(cls, content_type: str) -> MediaType:
-        if content_type.startswith("video"):
+        if content_type.lower().startswith("video"):
             return cls.VIDEO
-        if content_type.startswith("image"):
+        if content_type.lower().startswith("image"):
             return cls.IMAGE
         raise UnsupportedMimeType("Only images or videos are supported.")

@@ -13,4 +13,12 @@ from app.main import app
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+
+    uvicorn.run(
+        "app.rest.main:create_app",
+        host="0.0.0.0",  # nosec B104
+        port=8000,
+        factory=True,
+        log_level="trace"
+    )
+    _ = app  # use app to prevent being deleted by IDE

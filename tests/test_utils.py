@@ -19,3 +19,4 @@ def test_strtobool_returns_false(val: str) -> None:
 def test_strtobool_returns_default(val: Any) -> None:
     assert strtobool(val) is False
     assert strtobool(val, default=True) is True
+    assert strtobool(val, default=False) is False
