@@ -42,6 +42,8 @@ class GetExerciseResponse(BaseModel):
             {
                 "id": choice.id,
                 "position": choice.position,
+                "multimedia_file_id": choice.content.id,
+                "media_type": choice.content.media_type.value
             }
             for choice in self.question_type.content.choices  # pylint: disable=no-member
         ]
