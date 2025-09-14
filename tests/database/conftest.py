@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -8,8 +10,13 @@ from app.database.tables.base import DbBase
 
 
 def _db_engine_fixture() -> Engine:
-    with PostgresContainer("postgres:16.1") as postgres:
+    with PostgresContainer("postgres:17.6") as postgres:
         engine = create_engine(postgres.get_connection_url(), pool_pre_ping=True)
+        os.environ["DB_USER"] = engine.url.username
+        os.environ["DB_PASSWORD"] = engine.url.password
+        os.environ["DB_HOST"] = engine.url.host
+        os.environ["DB_PORT"] = str(engine.url.port)
+        os.environ["DB_NAME"] = engine.url.database
         try:
             yield engine
         finally:
