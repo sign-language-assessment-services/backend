@@ -32,14 +32,14 @@ class ObjectStorageClient:
                 status_code=503, detail=f"Minio not reachable. {exc}"
             ) from exc
 
-    def add_object(self, location: MinioLocation, data: BinaryIO, media_type=MediaType) -> None:
+    def add_object(self, location: MinioLocation, data: BinaryIO, media_type: str) -> None:
         self.minio.put_object(
             bucket_name=location.bucket,
             object_name=location.key,
             data=data,
             length=-1,
             part_size=16 * 1024 * 1024,  # 16 MiB
-            content_type=media_type.value
+            content_type=media_type
         )
 
     def list_folders(self, bucket_name: str, folder: str|None = None) -> list[str]:
