@@ -38,19 +38,27 @@ def test_get_exercise(test_client: TestClient) -> None:
         "choices": [
             {
                 "id": str(exercise_1.question_type.content.choices[0].id),
-                "position": exercise_1.question_type.content.choices[0].position
+                "position": exercise_1.question_type.content.choices[0].position,
+                "multimedia_file_id": str(exercise_1.question_type.content.choices[0].content.id),
+                "media_type": exercise_1.question_type.content.choices[0].content.media_type.value
             },
             {
                 "id": str(exercise_1.question_type.content.choices[1].id),
-                "position": exercise_1.question_type.content.choices[1].position
+                "position": exercise_1.question_type.content.choices[1].position,
+                "multimedia_file_id": str(exercise_1.question_type.content.choices[1].content.id),
+                "media_type": exercise_1.question_type.content.choices[1].content.media_type.value
             },
             {
                 "id": str(exercise_1.question_type.content.choices[2].id),
-                "position": exercise_1.question_type.content.choices[2].position
+                "position": exercise_1.question_type.content.choices[2].position,
+                "multimedia_file_id": str(exercise_1.question_type.content.choices[2].content.id),
+                "media_type": exercise_1.question_type.content.choices[2].content.media_type.value
             },
             {
                 "id": str(exercise_1.question_type.content.choices[3].id),
-                "position": exercise_1.question_type.content.choices[3].position
+                "position": exercise_1.question_type.content.choices[3].position,
+                "multimedia_file_id": str(exercise_1.question_type.content.choices[3].content.id),
+                "media_type": exercise_1.question_type.content.choices[3].content.media_type.value
             }
         ]
     }
