@@ -11,7 +11,8 @@ on:
 
 jobs:
   build:
-    
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -51,6 +52,9 @@ jobs:
   
   publish:
     needs: build
+    permissions:
+      contents: read
+      packages: write
     env:
       IMAGE_NAME: slportal_backend
       IMAGE_VERSION: latest
