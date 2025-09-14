@@ -24,7 +24,7 @@ class MultimediaFileService:
         self.settings = settings
         self.object_storage_client = object_storage_client
 
-    def create_multimedia_file(self, session: Session, file: BinaryIO, media_type: str) -> MultimediaFile:
+    def create_multimedia_file(self, session: Session, file: BinaryIO, media_type: MediaType) -> MultimediaFile:
         key = uuid4()
         minio_location = MinioLocation(
             bucket=self.settings.data_bucket_name,
@@ -38,7 +38,7 @@ class MultimediaFileService:
         multimedia_file = MultimediaFile(
             id=key,
             location=minio_location,
-            media_type=MediaType.from_content_type(media_type)
+            media_type=media_type
         )
         add_multimedia_file(
             session=session,
