@@ -30,7 +30,7 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
         session.flush()
 
     add_entry(session, db_model)
-
+    session.commit()
 
 def get_assessment(session: Session, _id: UUID) -> Assessment | None:
     result = get_by_id(session, DbAssessment, _id)
