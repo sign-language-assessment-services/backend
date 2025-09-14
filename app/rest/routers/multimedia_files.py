@@ -1,16 +1,13 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
-from pydantic import Json
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user
-from app.rest.open_api_workaround import NotAsJson
-from app.rest.requests.multimedia_files import CreateMultimediaFileRequest
 from app.rest.responses.multimedia_files import (
     CreateMultimediaFileResponse, GetMultimediaFileResponse, ListMultimediaFileResponse
 )
@@ -29,7 +26,6 @@ router = APIRouter(
 )
 async def create_multimedia_file(
         file: UploadFile,
-        meta_data: Annotated[Json[CreateMultimediaFileRequest], NotAsJson, Form()],
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session),
@@ -43,7 +39,7 @@ async def create_multimedia_file(
     multimedia_file = multimedia_file_service.create_multimedia_file(
         session=db_session,
         file=file.file,
-        media_type=meta_data.media_type
+        media_type=file.content_type
     )
     return multimedia_file
 
