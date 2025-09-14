@@ -35,7 +35,6 @@ async def create_multimedia_file(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
         )
-    _ = meta_data  # todo: delete meta_data
     multimedia_file = multimedia_file_service.create_multimedia_file(
         session=db_session,
         file=file.file,
