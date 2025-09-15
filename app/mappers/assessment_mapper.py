@@ -1,3 +1,5 @@
+import logging
+
 from app.core.models.assessment import Assessment
 from app.core.models.exercise import Exercise
 from app.core.models.primer import Primer
@@ -7,8 +9,14 @@ from app.database.tables.primers import DbPrimer
 from app.mappers.exercise_mapper import exercise_to_db, exercise_to_domain
 from app.mappers.primer_mapper import primer_to_db, primer_to_domain
 
+logger = logging.getLogger(__name__)
+
 
 def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
+    logger.debug(
+        "Mapping assessment to domain model: %(db_assessment)r",
+        {"db_assessment": db_assessment}
+    )
     tasks = []
     for task in db_assessment.tasks:
         if isinstance(task, DbPrimer):
@@ -27,6 +35,10 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
 
 
 def assessment_to_db(assessment: Assessment) -> DbAssessment:
+    logger.debug(
+        "Mapping assessment to database model: %(assessment)r",
+        {"assessment": assessment}
+    )
     tasks = []
     for task in assessment.tasks:
         if isinstance(task, Primer):

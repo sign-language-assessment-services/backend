@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Annotated, Iterator
 from urllib.parse import quote
 
@@ -67,12 +68,17 @@ def import_tables() -> None:
 
 
 def run_migrations():  # pragma: no cover
-    logger.info("Configures alembic and runs migrations.")
+    logger.info("Configure alembic.")
     alembic_cfg = Config("alembic.ini")
     logger.info("Running migrations to latest revision.")
     try:
+        start_time = time.time()
         command.upgrade(alembic_cfg, "head")
-        logger.info("Running migrations to latest revision finished.")
+        end_time = time.time()
+        logger.info(
+            "Running migrations to latest revision finished in %(duration).2f seconds.",
+            {"duration": end_time - start_time}
+        )
     except Exception as exc:
         logger.exception(exc)
         logger.error("Running migrations to latest revision failed.")

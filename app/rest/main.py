@@ -1,10 +1,9 @@
 import logging
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from app.database.orm import import_tables, run_migrations
+from app.database.orm import import_tables
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
 from app.log.config.setup_logging import setup_logging
@@ -16,15 +15,6 @@ from app.rest.routers import (
 setup_logging()
 logger = logging.getLogger(__name__)
 logger.info("Logger is successfully configured.")
-
-
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    logger.info("Running migrations.")
-    run_migrations()
-    logger.info("Finished running migrations.")
-    yield
-    logger.info("Closing lifespan context.")
 
 
 def create_app() -> FastAPI:
@@ -42,8 +32,7 @@ def create_app() -> FastAPI:
             "name": "Sign Language Assessment Services GmbH",
             "email": "tbd@not-yet-available.zzz"
         },
-        default_response_class=ORJSONResponse,
-        lifespan=lifespan
+        default_response_class=ORJSONResponse
     )
     logger.info("Importing tables.")
     import_tables()

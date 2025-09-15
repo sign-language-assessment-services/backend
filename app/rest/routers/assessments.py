@@ -86,12 +86,12 @@ async def list_assessments(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
-    logger.info(f"Current user: {current_user} accesses list assessments.")
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
         )
 
+    logger.info("List assessments requested.")
     assessments = assessment_service.list_assessments(session=db_session)
     return assessments

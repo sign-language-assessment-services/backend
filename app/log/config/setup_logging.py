@@ -26,11 +26,11 @@ def _configure_third_party_loggers():
 
     alembic_logger = logging.getLogger("alembic")
 
-    for logger in {
+    for logger in (
         fastapi_logger,
         uvicorn_logger, uvicorn_error_logger, uvicorn_access_logger,
         sqlalchemy_logger, sqlalchemy_engine_logger, sqlalchemy_pool_logger, sqlalchemy_orm_logger,
         alembic_logger
-    }:
+    ):
         if logger.level == logging.NOTSET:
             logger.setLevel(logging.WARNING)

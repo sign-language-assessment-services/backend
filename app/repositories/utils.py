@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Mapping
 from datetime import datetime, timezone
 from typing import Any, Iterable, Type, TypeAlias, TypeVar
@@ -9,6 +10,8 @@ from sqlalchemy.orm import DeclarativeBase, InstrumentedAttribute, Session
 from sqlalchemy.sql.schema import ColumnCollectionConstraint, Index
 
 from app.database.exceptions import EntryNotFoundError
+
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=DeclarativeBase)
 OnUpdateConstraint: TypeAlias = str | ColumnCollectionConstraint | Index | None
@@ -27,6 +30,10 @@ def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
 def get_all(session: Session, _class: Type[T], filter_by: dict[InstrumentedAttribute, Any] = None) -> Iterable[T]:
     query = select(_class)
     if filter_by:
+        logger.debug(
+            "Filter used in querying %(_class)s: %(filter)r",
+            {"_class": _class.__name__, "filter": filter_by}
+        )
         conditions = [key == value for key, value in filter_by.items()]
         query = query.where(and_(*conditions))
     return session.execute(query).unique().scalars().all()

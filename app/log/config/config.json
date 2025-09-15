@@ -3,12 +3,12 @@
     "disable_existing_loggers": false,
     "formatters": {
         "simple": {
-            "format": "%(asctime)s - %(levelname)-8s - %(name)s - %(message)s",
-            "datefmt": "%Y-%m-%d %H%M%S"
+            "format": "%(asctime)s :: %(levelname)-8s :: %(name)s :: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S %Z"
         },
         "detailed": {
-            "format": "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s",
-            "datefmt": "%Y-%m-%d %H%M%S"
+            "format": "%(asctime)s :: %(levelname)-8s :: %(name)s :: %(funcName)s:%(lineno)d :: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S %Z"
         }
     },
     "filters": {
@@ -25,7 +25,7 @@
             "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout",
-            "filters": ["healthcheck_filter", "warnings_and_below_filter"]
+            "filters": ["warnings_and_below_filter"]
         },
         "stderr": {
             "class": "logging.StreamHandler",
@@ -35,54 +35,13 @@
         }
     },
     "loggers": {
-        "app": {
-            "level": "DEBUG",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "fastapi": {
-            "level": "ERROR",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "uvicorn": {
-            "level": "WARNING",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "uvicorn.error": {
-            "level": "ERROR",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "sqlalchemy": {
-            "level": "WARNING",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "sqlalchemy.engine": {
-            "level": "ERROR",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "sqlalchemy.pool": {
-            "level": "WARNING",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "sqlalchemy.orm": {
-            "level": "ERROR",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
-        },
-        "alembic": {
-            "level": "DEBUG",
-            "handlers": ["stdout", "stderr"],
-            "propagate": false
+        "uvicorn.access": {
+            "filters": ["healthcheck_filter"],
+            "propagate": true
         }
     },
     "root": {
-        "level": "DEBUG",
+        "level": "INFO",
         "handlers": ["stdout", "stderr"]
     }
 }

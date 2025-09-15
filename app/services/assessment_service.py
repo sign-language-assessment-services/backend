@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -7,6 +8,8 @@ from sqlalchemy.orm import Session
 from app.core.models.assessment import Assessment
 from app.repositories.assessments import add_assessment, get_assessment, list_assessments
 from app.services.task_service import TaskService
+
+logger = logging.getLogger(__name__)
 
 
 class AssessmentService:
@@ -30,4 +33,5 @@ class AssessmentService:
 
     @staticmethod
     def list_assessments(session: Session) -> list[Assessment]:
+        logger.info("Trying to receive all assessments.")
         return list_assessments(session=session)

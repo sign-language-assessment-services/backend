@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 from uuid import UUID
 
@@ -8,6 +9,8 @@ from app.database.tables.assessments import DbAssessment
 from app.database.tables.assessments_tasks import DbAssessmentsTasks
 from app.mappers.assessment_mapper import assessment_to_db, assessment_to_domain
 from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
+
+logger = logging.getLogger(__name__)
 
 
 def add_assessment(session: Session, assessment: Assessment) -> None:
@@ -40,6 +43,7 @@ def get_assessment(session: Session, _id: UUID) -> Assessment | None:
 
 
 def list_assessments(session: Session) -> list[Assessment]:
+    logger.info("Requesting all assessments from database.")
     results = get_all(session, DbAssessment)
     return [assessment_to_domain(result) for result in results]
 

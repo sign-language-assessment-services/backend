@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-IMAGE_NAME:= slportal_backend
+IMAGE_NAME:= slportal-backend
 IMAGE_VERSION:= latest
 IMAGE_TAG := ${IMAGE_NAME}:${IMAGE_VERSION}
 
@@ -78,6 +78,11 @@ run-compose:	## Boot up all docker services defined in docker-compose.yml
 .PHONY: run-container
 run-container:	## Start a dockerized development server
 	docker run --rm -ti -p "${SERVER_PORT}":8000 --name "${IMAGE_NAME}" "${IMAGE_TAG}"
+
+
+.PHONY: run-database-migration
+run-database-migration:	## Run alembic database migration for slportal backend db
+	docker exec -it "${IMAGE_NAME}-1" alembic upgrade head
 
 .PHONY: security
 security:	## Run security checks
