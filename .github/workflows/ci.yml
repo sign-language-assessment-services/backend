@@ -53,7 +53,7 @@ jobs:
       contents: read
       packages: write
     env:
-      IMAGE_NAME: slportal_backend
+      IMAGE_NAME: slportal-backend
       IMAGE_VERSION: latest
     
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 services:
   fastapi:
-    image: slportal_backend
+    image: slportal-backend
     build: .
     ports:
     - "8000:8000"
