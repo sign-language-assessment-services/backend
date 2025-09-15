@@ -31,12 +31,16 @@ def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engin
 
 def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterator[Session]:
     session_factory = sessionmaker(bind=engine)
+    logger.debug("Creating new database session.")
     with session_factory.begin() as session:  # pylint: disable=no-member
+        logger.debug("Session created.")
         yield session
         try:
+            logger.debug("Committing database session objects.")
             session.commit()
         except SQLAlchemyError as exc:
             logger.exception(exc)
+            logger.error("Rolling back database session objects.")
             session.rollback()
 
 
@@ -63,10 +67,20 @@ def import_tables() -> None:
 
 
 def run_migrations():  # pragma: no cover
+    logger.info("Configures alembic and runs migrations.")
     alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
+    logger.info("Running migrations to latest revision.")
+    try:
+        command.upgrade(alembic_cfg, "head")
+        logger.info("Running migrations to latest revision finished.")
+    except Exception as exc:
+        logger.exception(exc)
+        logger.error("Running migrations to latest revision failed.")
+        raise
 
 
 def init_db(engine: Annotated[Engine, Depends(get_db_engine)]) -> None:
     import_tables()
+    logger.info("Creating database tables.")
     DbBase.metadata.create_all(bind=engine, checkfirst=True)
+    logger.info("Database tables created.")

@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -14,6 +15,7 @@ from app.rest.responses.assessments import (
 )
 from app.services.assessment_service import AssessmentService
 
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
     tags=["Assessments"]
@@ -84,6 +86,7 @@ async def list_assessments(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
+    logger.info(f"Current user: {current_user} accesses list assessments.")
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
