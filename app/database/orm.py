@@ -26,7 +26,12 @@ def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engin
             password=quote(settings.db_password),
             host=quote(settings.db_host),
             db_name=quote(settings.db_user)
-        )
+        ),
+        pool_size=5,
+        max_overflow=10,
+        pool_timeout=30,
+        pool_recycle=3600,
+        pool_pre_ping=True
     )
 
 
