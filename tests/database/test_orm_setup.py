@@ -35,7 +35,7 @@ def test_get_db_session_performs_rollback_on_sqlalchemy_error(db_engine: Engine)
         session = next(session_generator)
 
         with patch.object(session, "rollback") as mock_rollback:
-            with contextlib.suppress(StopIteration):
+            with contextlib.suppress(StopIteration, SQLAlchemyError):
                 session_generator.throw(SQLAlchemyError("Test database error"))
 
     mock_rollback.assert_called_once()
