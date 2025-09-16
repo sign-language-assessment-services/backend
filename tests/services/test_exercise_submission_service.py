@@ -1,13 +1,11 @@
 from copy import deepcopy
 from unittest.mock import MagicMock, Mock, patch
 
-from app.core.models.exercise_submission import ExerciseSubmission
 from app.services import exercise_submission_service as exercise_submission_service_module
 from app.services.exercise_submission_service import (
     ExerciseSubmissionService, add_exercise_submission, get_exercise_submission,
     list_exercise_submissions, upsert_exercise_submission
 )
-from tests.data.models.assessment_submissions import assessment_submission_1
 from tests.data.models.exercise_submissions import (
     exercise_submission_1, exercise_submission_2, exercise_submission_3, exercise_submission_4,
     exercise_submission_5, exercise_submission_6

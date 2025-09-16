@@ -1,11 +1,11 @@
-from unittest.mock import MagicMock, patch
+import contextlib
+from unittest.mock import patch
 
 from sqlalchemy import Engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
 
-import app.database.orm as orm_module
 from app.config import Settings
-from app.database.orm import get_db_engine, get_db_session, import_tables, init_db, sessionmaker
+from app.database.orm import get_db_engine, get_db_session, import_tables, init_db
 from app.database.tables.base import DbBase
 from tests.database.utils import get_all_table_names_from_tables_folder
 
@@ -29,17 +29,18 @@ def test_get_db_session_binds_engine(settings: Settings) -> None:
     assert session.bind is engine
 
 
-@patch.object(orm_module, sessionmaker.__name__)
-def test_get_db_session_rollbacks_on_error(mock_sessionmaker: MagicMock, settings: Settings) -> None:
-    mock_session = MagicMock()
-    mock_sessionmaker.return_value.begin.return_value.__enter__.return_value = mock_session
-    mock_session.commit.side_effect = SQLAlchemyError("Error test message")
+def test_get_db_session_performs_rollback_on_sqlalchemy_error(db_engine: Engine) -> None:
+    with patch("app.database.orm.logger") as mock_logger:
+        session_generator = get_db_session(engine=db_engine)
+        session = next(session_generator)
 
-    for _ in get_db_session(engine=get_db_engine(settings=settings)):
-        pass
+        with patch.object(session, "rollback") as mock_rollback:
+            with contextlib.suppress(StopIteration):
+                session_generator.throw(SQLAlchemyError("Test database error"))
 
-    mock_session.commit.assert_called_once()
-    mock_session.rollback.assert_called_once()
+    mock_rollback.assert_called_once()
+    mock_logger.exception.assert_called_once()
+    mock_logger.error.assert_called_once_with("Rolling back database session objects.")
 
 
 def test_all_tables_are_imported() -> None:

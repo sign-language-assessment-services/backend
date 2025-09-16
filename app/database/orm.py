@@ -40,14 +40,14 @@ def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterato
     logger.debug("Creating new database session.")
     with session_factory.begin() as session:  # pylint: disable=no-member
         logger.debug("Session created.")
-        yield session
         try:
-            logger.debug("Committing database session objects.")
-            session.commit()
+            yield session
+            logger.debug("Closing database session.")
         except SQLAlchemyError as exc:
             logger.exception(exc)
             logger.error("Rolling back database session objects.")
             session.rollback()
+            raise exc
 
 
 def import_tables() -> None:

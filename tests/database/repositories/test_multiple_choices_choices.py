@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.core.models.choice import AssociatedChoice, Choice
+from app.core.models.choice import AssociatedChoice
 from app.core.models.multiple_choice import MultipleChoice
 from app.database.tables.choices import DbChoice
 from app.database.tables.multiple_choices import DbMultipleChoice

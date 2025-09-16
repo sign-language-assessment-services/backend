@@ -1,10 +1,8 @@
-from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
 from sqlalchemy.orm import Session
 
-import app.mappers.choice_mapper as choice_mapper_module
 from app.core.models.choice import Choice
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation

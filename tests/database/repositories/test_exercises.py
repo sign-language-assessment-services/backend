@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from app.core.models.choice import AssociatedChoice, Choice
+from app.core.models.choice import AssociatedChoice
 from app.core.models.exercise import Exercise
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
