@@ -3,12 +3,11 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.user import User
-from app.database.orm import get_db_session
+from app.dependencies import get_current_user, get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
 from app.rest.requests.assessments import CreateAssessmentRequest
 from app.rest.responses.assessments import (
     CreateAssessmentResponse, GetAssessmentResponse, ListAssessmentResponse
@@ -31,7 +30,7 @@ async def create_assessment(
         data: CreateAssessmentRequest,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -56,7 +55,7 @@ async def get_assessment(
         assessment_id: UUID,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -64,7 +63,7 @@ async def get_assessment(
             detail="The current user is not allowed to access this resource."
         )
 
-    assessment = assessment_service.get_assessment_by_id(
+    assessment = await assessment_service.get_assessment_by_id(
         session=db_session,
         assessment_id=assessment_id
     )
@@ -84,7 +83,7 @@ async def get_assessment(
 async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -93,5 +92,5 @@ async def list_assessments(
         )
 
     logger.info("List assessments requested.")
-    assessments = assessment_service.list_assessments(session=db_session)
+    assessments = await assessment_service.list_assessments(session=db_session)
     return assessments

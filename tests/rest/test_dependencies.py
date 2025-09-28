@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 
 from app.core.models.user import User
-from app.rest.dependencies import get_current_user
+from app.dependencies import get_current_user
 
 
 @pytest.mark.asyncio

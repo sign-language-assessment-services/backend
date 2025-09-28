@@ -6,6 +6,7 @@ from uuid import UUID
 
 from sqlalchemy import ColumnCollection, and_, select, update
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase, InstrumentedAttribute, Session
 from sqlalchemy.sql.schema import ColumnCollectionConstraint, Index
 
@@ -27,6 +28,11 @@ def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
     return session.execute(select(_class).filter_by(id=_id)).unique().scalar_one_or_none()
 
 
+async def aget_by_id(session: AsyncSession, _class: Type[T], _id: UUID) -> T | None:
+    result = await session.execute(select(_class).filter_by(id=_id))
+    return result.unique().scalar_one_or_none()
+
+
 def get_all(session: Session, _class: Type[T], filter_by: dict[InstrumentedAttribute, Any] = None) -> Iterable[T]:
     query = select(_class)
     if filter_by:
@@ -37,6 +43,19 @@ def get_all(session: Session, _class: Type[T], filter_by: dict[InstrumentedAttri
         conditions = [key == value for key, value in filter_by.items()]
         query = query.where(and_(*conditions))
     return session.execute(query).unique().scalars().all()
+
+
+async def aget_all(session: AsyncSession, _class: Type[T], filter_by: dict[InstrumentedAttribute, Any] = None) -> Iterable[T]:
+    query = select(_class)
+    if filter_by:
+        logger.debug(
+            "Filter used in querying %(_class)s: %(filter)r",
+            {"_class": _class.__name__, "filter": filter_by}
+        )
+        conditions = [key == value for key, value in filter_by.items()]
+        query = query.where(and_(*conditions))
+    result = await session.execute(query)
+    return result.unique().scalars().all()
 
 
 def update_entry(session: Session, _class: Type[T], _id: UUID, **kwargs) -> None:

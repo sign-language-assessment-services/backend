@@ -33,7 +33,11 @@ class JWTBearer:
         self.http_bearer = HTTPBearer(auto_error=True)
         self.settings: Settings | None = None
 
-    async def __call__(self, settings: Annotated[Settings, Depends(get_settings)], request: Request) -> User:
+    async def __call__(
+            self,
+            settings: Annotated[Settings, Depends(get_settings)],
+            request: Request
+    ) -> User:
         self.settings = settings
 
         if not self.settings.auth_enabled:

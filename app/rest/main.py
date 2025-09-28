@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from app.database.orm import import_tables
+from app.database.table_importer import import_tables
 from app.docs.openapi_description import DESCRIPTION
 from app.docs.openapi_summary import SUMMARY
 from app.log.config.setup_logging import setup_logging

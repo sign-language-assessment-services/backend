@@ -8,12 +8,12 @@ package-mode=false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = {version = "^0.116", extras = ["all"]}
+fastapi = {version = "^0.117", extras = ["all"]}
 minio = "^7.2"
-sqlalchemy = "^2.0"
-psycopg2-binary = "^2.9"
+sqlalchemy = {version = "^2.0", extras = ["asyncio"]}
+asyncpg = "^0.30.0"
 alembic = "^1.15, !=1.15.0"
-pydantic-settings = "^2.8"
+pydantic-settings = "^2.11"
 pyjwt = {version = "^2.10", extras = ["crypto"]}
 python-multipart = "^0.0"
 requests = "^2.32"

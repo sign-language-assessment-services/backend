@@ -2,13 +2,14 @@ import logging
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.assessments_tasks import DbAssessmentsTasks
 from app.mappers.assessment_mapper import assessment_to_db, assessment_to_domain
-from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
+from app.repositories.utils import add_entry, aget_all, aget_by_id, delete_entry, update_entry
 
 logger = logging.getLogger(__name__)
 
@@ -34,16 +35,16 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
 
     add_entry(session, db_model)
 
-def get_assessment(session: Session, _id: UUID) -> Assessment | None:
-    result = get_by_id(session, DbAssessment, _id)
+async def get_assessment(session: AsyncSession, _id: UUID) -> Assessment | None:
+    result = await aget_by_id(session, DbAssessment, _id)
     if result:
         return assessment_to_domain(result)
     return None
 
 
-def list_assessments(session: Session) -> list[Assessment]:
+async def list_assessments(session: AsyncSession) -> list[Assessment]:
     logger.info("Requesting all assessments from database.")
-    results = get_all(session, DbAssessment)
+    results = await aget_all(session, DbAssessment)
     return [assessment_to_domain(result) for result in results]
 
 

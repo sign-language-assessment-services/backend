@@ -16,9 +16,9 @@ from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.primer import Primer
 from app.core.models.user import User
 from app.database.orm import get_db_session
+from app.dependencies import get_current_user
 from app.external_services.minio.client import ObjectStorageClient
 from app.main import app
-from app.rest.dependencies import get_current_user
 from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionToFinishedRequest
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService

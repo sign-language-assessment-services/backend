@@ -5,7 +5,7 @@ from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-from app.database.orm import import_tables
+from app.database.table_importer import import_tables
 from app.database.tables.base import DbBase
 
 # this is the Alembic Config object, which provides

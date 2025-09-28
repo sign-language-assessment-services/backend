@@ -32,6 +32,7 @@ class DbAssessment(DbBase):
     )
     tasks: Mapped[list["DbTask"]] = relationship(
         secondary="assessments_tasks",
+        lazy="selectin",
         viewonly=True
     )
     tasks_link: Mapped[list["DbAssessmentsTasks"]] = relationship(

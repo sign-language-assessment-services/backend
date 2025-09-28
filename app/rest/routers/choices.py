@@ -5,9 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.models.user import User
-from app.database.orm import get_db_session
+from app.dependencies import get_current_user, get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
 from app.rest.requests.choices import CreateChoiceRequest
 from app.rest.responses.choices import CreateChoiceResponse, GetChoiceResponse, ListChoiceResponse
 from app.services.choice_service import ChoiceService

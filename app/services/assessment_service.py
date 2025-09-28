@@ -3,6 +3,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
@@ -28,10 +29,10 @@ class AssessmentService:
         return assessment
 
     @staticmethod
-    def get_assessment_by_id(session: Session, assessment_id: UUID) -> Assessment | None:
-        return get_assessment(session=session, _id=assessment_id)
+    async def get_assessment_by_id(session: AsyncSession, assessment_id: UUID) -> Assessment | None:
+        return await get_assessment(session=session, _id=assessment_id)
 
     @staticmethod
-    def list_assessments(session: Session) -> list[Assessment]:
+    async def list_assessments(session: AsyncSession) -> list[Assessment]:
         logger.info("Trying to receive all assessments.")
-        return list_assessments(session=session)
+        return await list_assessments(session=session)
