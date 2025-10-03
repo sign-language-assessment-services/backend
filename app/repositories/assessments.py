@@ -14,9 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 def add_assessment(session: Session, assessment: Assessment) -> None:
+    # TODO: see if it can be simplified like in multiple choice
     assessment_without_tasks = assessment.model_dump(exclude={"tasks"})
     db_model = assessment_to_db(Assessment(**assessment_without_tasks))
-
+    logger.info(
+        "Requesting add assessment %(_id)s with session id %(session_id)s.",
+        {"_id": db_model.id, "session_id": id(session)}
+    )
     session.add(db_model)
     session.flush()
 
@@ -29,12 +33,24 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
             )
             for i, task in enumerate(assessment.tasks, start=1)
         ]
+        logger.info(
+            "Requesting adding %(n)d tasks for assessment %(_id)s with session id %(session_id)s.",
+            {"n": len(tasks_links), "_id": db_model.id, "session_id": id(session)}
+        )
         session.add_all(tasks_links)
         session.flush()
 
+    logger.info(
+        "Requesting add full assessment %(_id)s with session id %(session_id)s.",
+        {"_id": db_model.id, "session_id": id(session)}
+    )
     add_entry(session, db_model)
 
 def get_assessment(session: Session, _id: UUID) -> Assessment | None:
+    logger.info(
+        "Requesting assessment %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     result = get_by_id(session, DbAssessment, _id)
     if result:
         return assessment_to_domain(result)
@@ -42,14 +58,25 @@ def get_assessment(session: Session, _id: UUID) -> Assessment | None:
 
 
 def list_assessments(session: Session) -> list[Assessment]:
-    logger.info("Requesting all assessments from database.")
+    logger.info(
+        "Requesting all assessments with session id %(session_id)s.",
+        {"session_id": id(session)}
+    )
     results = get_all(session, DbAssessment)
     return [assessment_to_domain(result) for result in results]
 
 
 def update_assessment(session: Session, _id: UUID, **kwargs: Any) -> None:
+    logger.info(
+        "Requesting update assessment %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     update_entry(session, DbAssessment, _id, **kwargs)
 
 
 def delete_assessment(session: Session, _id: UUID) -> None:
+    logger.info(
+        "Requesting delete assessment %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     delete_entry(session, DbAssessment, _id)

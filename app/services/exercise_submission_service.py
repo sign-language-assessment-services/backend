@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, Any
 from uuid import UUID
 
@@ -14,6 +15,8 @@ from app.repositories.exercise_submissions import (
 from app.services.exercise_service import ExerciseService
 from app.services.scoring_service import ScoringService
 from app.settings import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class ExerciseSubmissionService:
@@ -58,6 +61,10 @@ class ExerciseSubmissionService:
 
     @staticmethod
     def get_exercise_submission_by_id(session: Session, submission_id: UUID) -> ExerciseSubmission | None:
+        logger.info(
+            "Trying to receive exercise submission %(_id)s with session id %(session_id)s.",
+            {"_id": submission_id, "session_id": id(session)}
+        )
         return get_exercise_submission(session=session, _id=submission_id)
 
     @staticmethod

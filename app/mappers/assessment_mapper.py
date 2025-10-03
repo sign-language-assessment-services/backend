@@ -13,18 +13,24 @@ logger = logging.getLogger(__name__)
 
 
 def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
-    logger.debug(
-        "Mapping assessment to domain model: %(db_assessment)r",
-        {"db_assessment": db_assessment}
+    logger.info(
+        "Transform assessment with id %(_id)s into domain model object.",
+        {"_id": db_assessment.id}
     )
+
+    number = 0
     tasks = []
-    for task in db_assessment.tasks:
+    for number, task in enumerate(db_assessment.tasks, start=1):
         if isinstance(task, DbPrimer):
             tasks.append(primer_to_domain(task))
         elif isinstance(task, DbExercise):
             tasks.append(exercise_to_domain(task))
+    logger.info(
+        "Added %(number)d tasks from database object to assessment.",
+        {"number": number}
+    )
 
-    return Assessment(
+    assessment = Assessment(
         id=db_assessment.id,
         created_at=db_assessment.created_at,
         name=db_assessment.name,
@@ -32,21 +38,25 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
         max_attempts=db_assessment.max_attempts,
         tasks=tasks
     )
+    return assessment
 
 
 def assessment_to_db(assessment: Assessment) -> DbAssessment:
-    logger.debug(
-        "Mapping assessment to database model: %(assessment)r",
-        {"assessment": assessment}
-    )
+    logger.info("Transform assessment into database object.")
+
+    number = 0
     tasks = []
-    for task in assessment.tasks:
+    for number, task in enumerate(assessment.tasks, start=1):
         if isinstance(task, Primer):
             tasks.append(primer_to_db(task))
         elif isinstance(task, Exercise):
             tasks.append(exercise_to_db(task))
+    logger.info(
+        "Added %(number)d tasks from assessment to database object.",
+        {"number": number}
+    )
 
-    return DbAssessment(
+    db_assessment = DbAssessment(
         id=assessment.id,
         created_at=assessment.created_at,
         name=assessment.name,
@@ -54,3 +64,8 @@ def assessment_to_db(assessment: Assessment) -> DbAssessment:
         max_attempts=assessment.max_attempts,
         tasks=tasks,
     )
+    logger.info(
+        "Assessment database object with id %(_id)s created.",
+        {"_id": db_assessment.id}
+    )
+    return db_assessment

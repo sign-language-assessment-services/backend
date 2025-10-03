@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -12,6 +13,8 @@ from app.repositories.exercises import add_exercise, get_exercise, list_exercise
 from app.repositories.multimedia_files import get_multimedia_file
 from app.repositories.multiple_choices import get_multiple_choice
 from app.settings import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class ExerciseService:
@@ -33,6 +36,10 @@ class ExerciseService:
 
     @staticmethod
     def get_exercise_by_id(session: Session, exercise_id: UUID) -> Exercise | None:
+        logger.info(
+            "Trying to receive exercise %(_id)s with session id %(session_id)s.",
+            {"_id": exercise_id, "session_id": id(session)}
+        )
         return get_exercise(session=session, _id=exercise_id)
 
     @staticmethod

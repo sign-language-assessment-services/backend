@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, BinaryIO, cast
 
 import requests
@@ -10,6 +11,8 @@ from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.settings import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class ObjectStorageClient:
@@ -25,6 +28,9 @@ class ObjectStorageClient:
         )
 
     def get_presigned_url(self, location: MinioLocation) -> str:
+        logger.debug(
+            f"Getting presigned URL for {location.bucket}/{location.key}"
+        )
         try:
             presigned_url = self.minio.get_presigned_url(
                 method="GET",
@@ -33,6 +39,10 @@ class ObjectStorageClient:
             )
             return cast(str, presigned_url)
         except Exception as exc:
+            logger.exception(
+                f"Failed to get presigned URL for "
+                f"{location.bucket}/{location.key}"
+            )
             raise HTTPException(
                 status_code=503, detail=f"Minio not reachable. {exc}"
             ) from exc

@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -14,6 +15,7 @@ from app.rest.responses.exercises import (
 )
 from app.services.exercise_service import ExerciseService
 
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
     tags=["Exercises"]
@@ -62,6 +64,10 @@ async def get_exercise(
             detail="The current user is not allowed to access this resource."
         )
 
+    logger.info(
+        "Get exercise requested with session id %(session_id)s.",
+        {"session_id": id(db_session)}
+    )
     exercise = exercise_service.get_exercise_by_id(
         session=db_session,
         exercise_id=exercise_id

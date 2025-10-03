@@ -11,11 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 def exercise_to_domain(db_exercise: DbExercise) -> Exercise:
-    logger.debug(
-        "Mapping exercise to domain model: %(db_exercise)r",
-        {"db_exercise": db_exercise}
-    )
-    return Exercise(
+    logger.info("Transform DbExercise into domain model object.")
+    exercise = Exercise(
         id=db_exercise.id,
         created_at=db_exercise.created_at,
         points=db_exercise.points,
@@ -26,17 +23,20 @@ def exercise_to_domain(db_exercise: DbExercise) -> Exercise:
             content=multiple_choice_to_domain(db_exercise.multiple_choice)
         )
     )
+    return exercise
 
 
 def exercise_to_db(exercise: Exercise) -> DbExercise:
-    logger.debug(
-        "Mapping exercise to database model: %(exercise)r",
-        {"exercise": exercise}
-    )
-    return DbExercise(
+    logger.info("Transform exercise into database object.")
+    db_exercise = DbExercise(
         id=exercise.id,
         created_at=exercise.created_at,
         points=exercise.points,
         bucket_object_id=exercise.question.content.id,
         multiple_choice_id=exercise.question_type.content.id
     )
+    logger.info(
+        "Exercise database object with id %(_id)s created.",
+        {"_id": db_exercise.id}
+    )
+    return db_exercise

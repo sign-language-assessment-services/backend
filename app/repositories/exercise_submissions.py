@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 from uuid import UUID
 
@@ -12,13 +13,23 @@ from app.repositories.utils import (
     add_entry, delete_entry, get_all, get_by_id, update_entry, upsert_entry
 )
 
+logger = logging.getLogger(__name__)
+
 
 def add_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
     db_model = exercise_submission_to_db(submission)
+    logger.info(
+        "Requesting add exercise submission %(_id)s with session id %(session_id)s.",
+        {"_id": db_model.id, "session_id": id(session)}
+    )
     add_entry(session, db_model)
 
 
 def get_exercise_submission(session: Session, _id: UUID) -> ExerciseSubmission | None:
+    logger.info(
+        "Requesting exercise submission %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     result = get_by_id(session, DbExerciseSubmission, _id)
     if result:
         return exercise_submission_to_domain(result)
@@ -30,21 +41,33 @@ def get_exercise_submissions_for_assessment_submission(
         assessment_submission_id: UUID
 ) -> list[ExerciseSubmission]:
     filter_conditions = {DbExerciseSubmission.assessment_submission_id: assessment_submission_id}
-    result = get_all(session, DbExerciseSubmission, filter_by=filter_conditions)
+    result = get_all(session, DbExerciseSubmission, filters=filter_conditions)
     return [exercise_submission_to_domain(r) for r in result]
 
 
 def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
+    logger.info(
+        "Requesting all exercise submissions with session id %(session_id)s.",
+        {"session_id": id(session)}
+    )
     result = get_all(session, DbExerciseSubmission)
     return [exercise_submission_to_domain(r) for r in result]
 
 
 def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
+    logger.info(
+        "Requesting update exercise submission %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     update_entry(session, DbExerciseSubmission, _id, **kwargs)
 
 
 def upsert_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
     db_model = exercise_submission_to_db(submission)
+    logger.info(
+        "Requesting upsert exercise submission %(_id)s with session id %(session_id)s.",
+        {"_id": db_model.id, "session_id": id(session)}
+    )
     upsert_entry(
         session=session,
         db=db_model,
@@ -57,4 +80,8 @@ def upsert_exercise_submission(session: Session, submission: ExerciseSubmission)
 
 
 def delete_exercise_submission(session: Session, _id: UUID) -> None:
+    logger.info(
+        "Requesting delete exercise submission %(_id)s with session id %(session_id)s.",
+        {"_id": _id, "session_id": id(session)}
+    )
     delete_entry(session, DbExerciseSubmission, _id)

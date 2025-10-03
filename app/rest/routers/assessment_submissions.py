@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -15,6 +16,7 @@ from app.rest.responses.assessment_submissions import (
 )
 from app.services.assessment_submission_service import AssessmentSubmissionService
 
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
     tags=["Assessment Submissions"]
@@ -63,6 +65,7 @@ async def get_assessment_submission(
             detail="The current user is not allowed to access this resource."
         )
 
+    logger.info("Get assessment submission requested.")
     submission = submission_service.get_assessment_submission_by_id(
         session=db_session,
         submission_id=submission_id

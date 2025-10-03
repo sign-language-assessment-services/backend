@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -14,6 +15,7 @@ from app.rest.responses.exercise_submissions import (
 )
 from app.services.exercise_submission_service import ExerciseSubmissionService
 
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(JWTBearer())],
     tags=["Exercise Submissions"]
@@ -37,6 +39,10 @@ async def get_submission(
             detail="The current user is not allowed to access this resource."
         )
 
+    logger.info(
+        "Get exercise submission requested with session id %(session_id)s.",
+        {"session_id": id(db_session)}
+    )
     submission = submission_service.get_exercise_submission_by_id(
         session=db_session,
         submission_id=exercise_submission_id

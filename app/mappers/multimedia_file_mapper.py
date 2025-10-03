@@ -9,11 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 def bucket_object_to_domain(db_bucket_object: DbBucketObjects) -> MultimediaFile:
-    logger.debug(
-        "Mapping bucket_object to domain model: %(db_bucket_object)r",
-        {"db_bucket_object": db_bucket_object}
-    )
-    return MultimediaFile(
+    logger.info("Transform DbBucketObject into domain model object.")
+    multimedia_file = MultimediaFile(
         id=db_bucket_object.id,
         created_at=db_bucket_object.created_at,
         location=MinioLocation(
@@ -22,17 +19,20 @@ def bucket_object_to_domain(db_bucket_object: DbBucketObjects) -> MultimediaFile
         ),
         media_type=MediaType(db_bucket_object.media_type)
     )
+    return multimedia_file
 
 
 def multimedia_file_to_db(multimedia_file: MultimediaFile) -> DbBucketObjects:
-    logger.debug(
-        "Mapping multimedia_file to database model: %(multimedia_file)r",
-        {"multimedia_file": multimedia_file}
-    )
-    return DbBucketObjects(
+    logger.info("Transform multimedia file into database object.")
+    db_bucket_object = DbBucketObjects(
         id=multimedia_file.id,
         created_at=multimedia_file.created_at,
         bucket=multimedia_file.location.bucket,
         key=multimedia_file.location.key,
         media_type=multimedia_file.media_type.value
     )
+    logger.info(
+        "Bucket object database object with id %(_id)s created.",
+        {"_id": db_bucket_object.id}
+    )
+    return db_bucket_object
