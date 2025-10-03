@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     db_pool_recycle: int = 3600
     db_pool_pre_ping: bool = True
     db_max_overflow: int = 10
+    db_echo: bool = False
+    db_echo_pool: bool = False
 
     # Database session settings
     db_expire_on_commit: bool = False
