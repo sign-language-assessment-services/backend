@@ -1,53 +1,70 @@
 import logging
 import time
-from typing import Annotated, Iterator
-from urllib.parse import quote
+from functools import cache
+from typing import Annotated, Generator
 
 from alembic import command
 from alembic.config import Config
 from fastapi import Depends
-from sqlalchemy import Engine, create_engine
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import URL, Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.config import Settings
 from app.database.tables.base import DbBase
 from app.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
-def get_db_engine(settings: Annotated[Settings, Depends(get_settings)]) -> Engine:
-    connection_url = "{db_type}+{driver}://{user}:{password}@{host}/{db_name}"
+
+@cache
+def get_db_engine() -> Engine:
+    settings = get_settings()
+    connection_url = URL.create(
+        drivername=f"{settings.db_type}+{settings.db_driver}",
+        username=settings.db_user,
+        password=settings.db_password,
+        host=settings.db_host,
+        port=settings.db_port,
+        database=settings.db_name,
+    )
     return create_engine(
-        connection_url.format(
-            db_type="postgresql",
-            driver="psycopg2",
-            user=quote(settings.db_user),
-            password=quote(settings.db_password),
-            host=quote(settings.db_host),
-            db_name=quote(settings.db_user)
-        ),
-        pool_size=5,
-        max_overflow=10,
-        pool_timeout=30,
-        pool_recycle=3600,
-        pool_pre_ping=True
+        connection_url,
+        max_overflow=settings.db_max_overflow,
+        pool_pre_ping=settings.db_pool_pre_ping,
+        pool_size=settings.db_pool_size,
+        pool_timeout=settings.db_pool_timeout,
+        pool_recycle=settings.db_pool_recycle,
+        echo=settings.db_echo,
+        echo_pool=settings.db_echo_pool
     )
 
 
-def get_db_session(engine: Annotated[Engine, Depends(get_db_engine)]) -> Iterator[Session]:
-    session_factory = sessionmaker(bind=engine)
-    logger.debug("Creating new database session.")
-    with session_factory.begin() as session:  # pylint: disable=no-member
-        logger.debug("Session created.")
-        try:
-            yield session
-            logger.debug("Closing database session.")
-        except SQLAlchemyError as exc:
-            logger.exception(exc)
-            logger.error("Rolling back database session objects.")
-            session.rollback()
-            raise exc
+@cache
+def get_sessionmaker() -> sessionmaker:
+    settings = get_settings()
+    return sessionmaker(
+        class_=Session,
+        expire_on_commit=settings.db_expire_on_commit,
+        autoflush=settings.db_autoflush
+    )
+
+
+def get_db_session(
+        session_factory: Annotated[sessionmaker, Depends(get_sessionmaker)]
+) -> Generator[Session, None, None]:
+    session = session_factory(bind=get_db_engine())
+    logger.info(
+        "New database session %(session_id)s created for engine %(engine_id)s.",
+        {"session_id": id(session), "engine_id": id(session.get_bind())},
+    )
+    try:
+        yield session
+    except Exception:
+        logger.exception("Error in session %(_id)s. Rolling back.", {"_id": id(session)})
+        session.rollback()
+        raise
+    finally:
+        logger.info("Closing database session %(_id)s.", {"_id": id(session)})
+        session.close()
 
 
 def import_tables() -> None:
