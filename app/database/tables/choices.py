@@ -19,14 +19,17 @@ class DbChoice(DbBase):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     bucket_object: Mapped["DbBucketObjects"] = relationship(
-        back_populates="choices"
+        back_populates="choices",
+        lazy="selectin"
     )
     multiple_choices: Mapped[list["DbMultipleChoice"]] = relationship(
         secondary="multiple_choices_choices",
         back_populates="choices",
-        viewonly=True
+        viewonly=True,
+        lazy="selectin"
     )
     associations: Mapped[list["DbMultipleChoicesChoices"]] = relationship(
         back_populates="choice",
-        passive_deletes=True
+        passive_deletes=True,
+        lazy="selectin"
     )

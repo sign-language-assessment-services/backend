@@ -18,11 +18,13 @@ class DbTask(DbBase):
     # ------------------------------------------------------------------------
     assessments: Mapped[list["DbAssessment"]] = relationship(
         secondary="assessments_tasks",
-        back_populates="tasks"
+        back_populates="tasks",
+        lazy="selectin"
     )
     assessment_links: Mapped[list["DbAssessmentsTasks"]] = relationship(
         back_populates="task",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy="selectin"
     )
 
     # CONFIGURATION

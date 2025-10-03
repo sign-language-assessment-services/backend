@@ -39,9 +39,11 @@ class DbAssessmentsTasks(DbBase):
     # ------------------------------------------------------------------------
     assessment: Mapped["DbAssessment"] = relationship(
         back_populates="tasks_link",
+        lazy="selectin"
     )
     task: Mapped["DbTask"] = relationship(
-        back_populates="assessment_links"
+        back_populates="assessment_links",
+        lazy="selectin"
     )
 
     # CONSTRAINTS

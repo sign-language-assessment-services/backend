@@ -24,7 +24,8 @@ class DbPrimer(DbTask):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     bucket_object: Mapped["DbBucketObjects"] = relationship(
-        back_populates="primers"
+        back_populates="primers",
+        lazy="selectin"
     )
 
     # CONFIGURATION

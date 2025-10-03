@@ -34,13 +34,16 @@ class DbExercise(DbTask):
     # RELATIONSHIPS
     # ------------------------------------------------------------------------
     bucket_object: Mapped["DbBucketObjects"] = relationship(
-        back_populates="exercises"
+        back_populates="exercises",
+        lazy="selectin"
     )
     multiple_choice: Mapped["DbMultipleChoice"] = relationship(
-        back_populates="exercises"
+        back_populates="exercises",
+        lazy="selectin"
     )
     exercise_submissions: Mapped[list["DbExerciseSubmission"]] = relationship(
-        back_populates="exercise"
+        back_populates="exercise",
+        lazy="selectin"
     )
 
     # CONFIGURATION
