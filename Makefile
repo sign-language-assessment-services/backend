@@ -65,7 +65,7 @@ pylint:	## Run pylint
 
 .PHONY: pytest
 pytest:	## Run tests
-	poetry run python -m pytest tests
+	poetry run python -m pytest -x tests
 
 .PHONY: run
 run:	## Start a development server

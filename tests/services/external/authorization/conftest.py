@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from app.external_services.keycloak.auth_bearer import JWTBearer
+from tests.settings_for_tests import TestSettings
 
 
 @dataclass
@@ -24,7 +25,7 @@ def jwk_client() -> Mock:
 
 
 @pytest.fixture
-def bearer_credentials() -> JWTBearer:
+def bearer_credentials(settings: TestSettings) -> JWTBearer:
     async def http_bearer_return_value() -> Credentials:
         return Credentials(credentials="test_credentials")
 
@@ -34,7 +35,7 @@ def bearer_credentials() -> JWTBearer:
 
 
 @pytest.fixture
-def bearer_no_credentials() -> JWTBearer:
+def bearer_no_credentials(settings: TestSettings) -> JWTBearer:
     async def http_bearer_return_value() -> None:
         return None
 
@@ -44,7 +45,7 @@ def bearer_no_credentials() -> JWTBearer:
 
 
 @pytest.fixture
-def bearer_none_credentials() -> JWTBearer:
+def bearer_none_credentials(settings: TestSettings) -> JWTBearer:
     async def http_bearer_return_value() -> Credentials:
         return Credentials()
 
@@ -54,7 +55,7 @@ def bearer_none_credentials() -> JWTBearer:
 
 
 @pytest.fixture
-def bearer_wrong_scheme() -> JWTBearer:
+def bearer_wrong_scheme(settings: TestSettings) -> JWTBearer:
     async def http_bearer_return_value() -> Credentials:
         return Credentials(scheme="Not-Bearer")
 

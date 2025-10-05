@@ -4,8 +4,8 @@ from unittest.mock import Mock
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from pydantic_settings import BaseSettings
 
-from app.config import Settings
 from app.core.models.assessment import Assessment
 from app.core.models.assessment_submission import AssessmentSubmission
 from app.core.models.choice import Choice
@@ -44,6 +44,7 @@ from tests.data.models.multimedia_files import multimedia_file_choice_1, multime
 from tests.data.models.multiple_choices import multiple_choice_1, multiple_choice_2
 from tests.data.models.primers import primer_1, primer_2
 from tests.data.models.users import test_taker_1
+from tests.settings_for_tests import TestSettings
 
 
 @pytest.fixture
@@ -137,15 +138,10 @@ def test_client_no_roles(app_dependency_overrides_no_data: FastAPI) -> TestClien
 
 
 def _get_override_settings(auth_enabled: bool = False) -> Callable:
-    async def override_settings() -> Settings:
-        return Settings(
-            auth_enabled=auth_enabled,
-            db_user="db_testuser",
-            db_password="db_testpassword",
-            db_host="db_testhost",
-            client_id="client_id",
-            client_secret="client_secret",
-        )
+    async def override_settings() -> BaseSettings:
+        test_settings = TestSettings()
+        test_settings.auth_enabled = auth_enabled
+        return test_settings
 
     return override_settings
 

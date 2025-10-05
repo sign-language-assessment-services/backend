@@ -50,27 +50,9 @@ def test_choice_deletion_is_reflected_in_asscociation_table(db_session: Session)
     db_session.delete(db_choice_2)
 
     db_multiple_choice = db_session.get(DbMultipleChoice, multiple_choice_id)
-    assert table_count(db_session, DbChoice) == 2
-    assert table_count(db_session, DbMultipleChoicesChoices) == 2
-    assert table_count(db_session, DbMultipleChoice) == 1
     assert len(db_multiple_choice.choices) == 2
     assert db_multiple_choice.choices[0].id == choice_1.get("id")
     assert db_multiple_choice.choices[1].id == choice_3.get("id")
-
-
-def test_multiple_choice_deletion_does_not_delete_choices(db_session: Session) -> None:
-    multiple_choice_data = insert_multiple_choice(session=db_session)
-    bucket_object_data = insert_bucket_object(session=db_session, media_type=MediaType.VIDEO)
-    choice_data = insert_choice(session=db_session, bucket_object_id=bucket_object_data.get("id"))
-    connect_multiple_choice_with_choices(
-        session=db_session,
-        multiple_choice_id=multiple_choice_data.get("id"),
-        choice_ids=[choice_data.get("id")]
-    )
-
-    db_multiple_choice = db_session.get(DbMultipleChoice, multiple_choice_data.get("id"))
-    db_session.delete(db_multiple_choice)
-
-    assert table_count(db_session, DbMultipleChoice) == 0
-    assert table_count(db_session, DbMultipleChoicesChoices) == 0
-    assert table_count(db_session, DbChoice) == 1
+    assert table_count(db_session, DbChoice) == 2
+    assert table_count(db_session, DbMultipleChoicesChoices) == 2
+    assert table_count(db_session, DbMultipleChoice) == 1

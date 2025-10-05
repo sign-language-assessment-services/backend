@@ -63,58 +63,57 @@ def multimedia_file_service(settings: Mock, storage_client: Mock) -> MultimediaF
 
 
 @pytest.fixture
-def choice_service(settings: Mock, multimedia_file_service: MultimediaFileService) -> ChoiceService:
-    return ChoiceService(settings, multimedia_file_service)
+def choice_service(multimedia_file_service: MultimediaFileService) -> ChoiceService:
+    return ChoiceService(multimedia_file_service)
 
 
 @pytest.fixture
-def multiple_choice_service(settings: Mock, choice_service: ChoiceService) -> MultipleChoiceService:
-    return MultipleChoiceService(settings, choice_service)
+def multiple_choice_service(choice_service: ChoiceService) -> MultipleChoiceService:
+    return MultipleChoiceService(choice_service)
 
 
 @pytest.fixture
-def primer_service(settings: Mock, multimedia_file_service: MultimediaFileService) -> PrimerService:
-    return PrimerService(settings, multimedia_file_service)
+def primer_service(multimedia_file_service: MultimediaFileService) -> PrimerService:
+    return PrimerService(multimedia_file_service)
 
 
 @pytest.fixture
-def exercise_service(settings: Mock) -> ExerciseService:
-    return ExerciseService(settings)
+def exercise_service() -> ExerciseService:
+    return ExerciseService()
 
 
 @pytest.fixture
-def task_service(settings: Mock) -> TaskService:
+def task_service() -> TaskService:
     return TaskService()
 
 
 @pytest.fixture
-def assessment_service(settings: Mock, task_service: TaskService) -> AssessmentService:
+def assessment_service(task_service: TaskService) -> AssessmentService:
     return AssessmentService(task_service)
 
 
 @pytest.fixture
-def scoring_service(settings: Mock) -> ScoringService:
+def scoring_service() -> ScoringService:
     return ScoringService()
 
 
 @pytest.fixture
-def exercise_submission_service(settings: Mock, exercise_service: ExerciseService) -> ExerciseSubmissionService:
-    return ExerciseSubmissionService(settings, ScoringService(), exercise_service)
+def exercise_submission_service(exercise_service: ExerciseService) -> ExerciseSubmissionService:
+    return ExerciseSubmissionService(ScoringService(), exercise_service)
 
 
 @pytest.fixture
-def assessment_submission_service(settings: Mock) -> AssessmentSubmissionService:
-    return AssessmentSubmissionService(settings)
+def assessment_submission_service() -> AssessmentSubmissionService:
+    return AssessmentSubmissionService()
 
 
 @pytest.fixture
 def assessment_service_multiple_choice_only(
         storage_client: Mock,
-        settings: Mock,
         storage_files: list[MultimediaFile]
 ) -> AssessmentService:
     storage_client.list_files.side_effect = storage_files[:1] * 2
-    assessment_service = AssessmentService(storage_client, settings)
+    assessment_service = AssessmentService(storage_client)
     return assessment_service
 
 

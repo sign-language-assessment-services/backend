@@ -31,7 +31,7 @@ async def get_submission(
         exercise_submission_id: UUID,
         submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -63,7 +63,7 @@ async def get_submission(
 async def list_submissions(
         submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -86,7 +86,7 @@ async def upsert_exercise_submission(
         data: UpsertExerciseSubmissionRequest,
         exercise_submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session),
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(

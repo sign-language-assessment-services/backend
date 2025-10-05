@@ -3,9 +3,10 @@ from collections.abc import Mapping
 from typing import Any, Iterator, Type, TypeAlias, TypeVar
 from uuid import UUID
 
-from sqlalchemy import delete, func, inspect, select, update
+from sqlalchemy import func, inspect, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import InstrumentedAttribute, Session
+from sqlalchemy.orm.exc import UnmappedInstanceError
 from sqlalchemy.sql.schema import ColumnCollectionConstraint, Index
 
 from app.database.exceptions import EntryNotFoundError
@@ -84,7 +85,7 @@ def upsert_entry(
         set_=
         {
             **fields_to_update,
-            db_class.modified_at: func.now()
+            db_class.modified_at: func.now()  # pylint: disable=not-callable
         }
     )
     session.execute(upsert_stmt)
@@ -97,11 +98,13 @@ def delete_entry(session: Session, _class: Type[T], _id: UUID, commit: bool = Tr
         "Using generic database request to delete %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": _id, "_class": _class, "session_id": id(session)}
     )
-    statement = delete(_class).where(_class.id == _id)
-    result = session.execute(statement)
-    if result.rowcount == 0:
+    statement = select(_class).where(_class.id == _id)
+    result = session.scalars(statement).one_or_none()
+    try:
+        session.delete(result)
+        if commit:
+            session.commit()
+    except UnmappedInstanceError as exc:
         raise EntryNotFoundError(
             f"Table '{_class.__tablename__}' has no entry with id '{_id}'."
-        )
-    if commit:
-        session.commit()
+        ) from exc

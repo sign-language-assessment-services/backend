@@ -31,7 +31,7 @@ class DbMultipleChoicesChoices(DbBase):
     # FOREIGN KEYS
     # ------------------------------------------------------------------------
     choice_id: Mapped[UUID] = mapped_column(
-        ForeignKey("choices.id", ondelete="CASCADE"),
+        ForeignKey("choices.id", ondelete="RESTRICT"),
         primary_key=True
     )
     multiple_choice_id: Mapped[UUID] = mapped_column(

@@ -28,7 +28,7 @@ async def create_multimedia_file(
         file: UploadFile,
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session),
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -52,7 +52,7 @@ async def get_multimedia_file(
         multimedia_file_id: UUID,
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -80,7 +80,7 @@ async def get_multimedia_file(
 async def list_multimedia_files(
         multimedia_file_service: Annotated[MultimediaFileService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(

@@ -29,7 +29,7 @@ async def create_multiple_choice(
         data: CreateMultipleChoiceRequest,
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -54,7 +54,7 @@ async def get_multiple_choice(
         multiple_choice_id: UUID,
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -82,7 +82,7 @@ async def get_multiple_choice(
 async def list_multiple_choices(
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(

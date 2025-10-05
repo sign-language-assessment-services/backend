@@ -5,16 +5,15 @@ from uuid import UUID
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic_settings import BaseSettings
 
-from app.config import Settings
 from app.core.models.user import User
-from app.external_services.keycloak.exceptions import SettingsNotAvailableError
 from app.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
 
-def decode_jwt(token: str, settings: Settings) -> dict[str, Any]:
+def decode_jwt(token: str, settings: BaseSettings) -> dict[str, Any]:
     jwks_client = jwt.PyJWKClient(settings.jwks_url)
     signing_key = jwks_client.get_signing_key_from_jwt(token).key
     logger.debug("Starting decoding JWT token.")
@@ -31,9 +30,9 @@ def decode_jwt(token: str, settings: Settings) -> dict[str, Any]:
 class JWTBearer:
     def __init__(self) -> None:
         self.http_bearer = HTTPBearer(auto_error=True)
-        self.settings: Settings | None = None
+        self.settings: BaseSettings | None = None
 
-    async def __call__(self, settings: Annotated[Settings, Depends(get_settings)], request: Request) -> User:
+    async def __call__(self, settings: Annotated[BaseSettings, Depends(get_settings)], request: Request) -> User:
         self.settings = settings
 
         if not self.settings.auth_enabled:
@@ -62,8 +61,6 @@ class JWTBearer:
         )
 
     def verify_jwt(self, jwtoken: str) -> dict[str, Any]:
-        if not self.settings:
-            raise SettingsNotAvailableError("Settings are not available.")
         try:
             return decode_jwt(jwtoken, self.settings)
         except Exception as exc:

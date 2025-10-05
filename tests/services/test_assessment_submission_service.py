@@ -78,10 +78,10 @@ def test_list_assessment_submissions(
 @patch.object(assessment_submission_service_module, get_assessment_submission.__name__)
 @patch.object(assessment_submission_service_module, update_assessment_submission.__name__)
 def test_update_assessment_submission_to_finished(
-        update_assessment_submission_mock: MagicMock, *args: MagicMock
+        update_assessment_submission_mock: MagicMock, *_: MagicMock
 ) -> None:
     mocked_session = Mock()
-    assessment_submission_service = AssessmentSubmissionService(mocked_session)
+    assessment_submission_service = AssessmentSubmissionService()
 
     assessment_submission_service.update_assessment_submission(
         session=mocked_session,

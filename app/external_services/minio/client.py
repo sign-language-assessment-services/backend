@@ -5,8 +5,8 @@ import requests
 from fastapi import Depends, HTTPException
 from minio import Minio
 from minio.credentials import WebIdentityProvider
+from pydantic_settings import BaseSettings
 
-from app.config import Settings
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class ObjectStorageClient:
-    def __init__(self, settings: Annotated[Settings, Depends(get_settings)]):
+    def __init__(self, settings: Annotated[BaseSettings, Depends(get_settings)]):
         self.settings = settings
         self.minio = Minio(
             endpoint=settings.data_endpoint,
@@ -29,7 +29,8 @@ class ObjectStorageClient:
 
     def get_presigned_url(self, location: MinioLocation) -> str:
         logger.debug(
-            f"Getting presigned URL for {location.bucket}/{location.key}"
+            "Getting presigned URL for %(bucket)s/%(key)s",
+            {"bucket": location.bucket, "key": location.key}
         )
         try:
             presigned_url = self.minio.get_presigned_url(
@@ -40,8 +41,8 @@ class ObjectStorageClient:
             return cast(str, presigned_url)
         except Exception as exc:
             logger.exception(
-                f"Failed to get presigned URL for "
-                f"{location.bucket}/{location.key}"
+                "Failed to get presigned URL for %(bucket)s/%(key)s",
+                {"bucket": location.bucket, "key": location.key}
             )
             raise HTTPException(
                 status_code=503, detail=f"Minio not reachable. {exc}"

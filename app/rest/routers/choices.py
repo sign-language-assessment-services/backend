@@ -27,7 +27,7 @@ async def create_choice(
         data: CreateChoiceRequest,
         choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -51,7 +51,7 @@ async def get_choice(
         choice_id: UUID,
         choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -79,7 +79,7 @@ async def get_choice(
 async def list_choices(
         choice_service: Annotated[ChoiceService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(

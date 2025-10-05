@@ -1,2 +1,0 @@
-class SettingsNotAvailableError(Exception):
-    pass

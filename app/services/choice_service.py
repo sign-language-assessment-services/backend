@@ -4,20 +4,13 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.config import Settings
 from app.core.models.choice import Choice
 from app.repositories.choices import add_choice, get_choice, list_choices
 from app.services.multimedia_file_service import MultimediaFileService
-from app.settings import get_settings
 
 
 class ChoiceService:
-    def __init__(
-            self,
-            settings: Annotated[Settings, Depends(get_settings)],
-            multimedia_file_service: Annotated[MultimediaFileService, Depends()]
-    ):
-        self.settings = settings
+    def __init__(self, multimedia_file_service: Annotated[MultimediaFileService, Depends()]) -> None:
         self.multimedia_file_service = multimedia_file_service
 
     def create_choice(self, session: Session, multimedia_file_id: UUID) -> Choice:

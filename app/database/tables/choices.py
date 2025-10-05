@@ -30,6 +30,7 @@ class DbChoice(DbBase):
     )
     associations: Mapped[list["DbMultipleChoicesChoices"]] = relationship(
         back_populates="choice",
+        cascade="all, delete-orphan",
         passive_deletes=True,
         lazy="selectin"
     )

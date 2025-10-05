@@ -1,15 +1,8 @@
-from unittest.mock import Mock
-
 import pytest
 
+from tests.settings_for_tests import TestSettings
 
-@pytest.fixture
-def settings() -> Mock:
-    settings = Mock()
-    settings.data_endpoint = "127.0.0.1:4242"
-    settings.data_bucket_name = "testbucket"
-    settings.data_secure = False
-    settings.db_user = "testuser"
-    settings.db_password = "testpassword"
-    settings.db_host = "localhost"
-    return settings
+
+@pytest.fixture(scope="session")
+def settings() -> TestSettings:
+    return TestSettings()

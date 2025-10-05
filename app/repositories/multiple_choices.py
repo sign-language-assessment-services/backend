@@ -2,10 +2,13 @@ import logging
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import Boolean, cast, func, select
 from sqlalchemy.orm import Session
 
 from app.core.models.multiple_choice import MultipleChoice
+from app.database.tables.choices import DbChoice
 from app.database.tables.multiple_choices import DbMultipleChoice
+from app.database.tables.multiple_choices_choices import DbMultipleChoicesChoices
 from app.mappers.multiple_choice_mapper import multiple_choice_to_db, multiple_choice_to_domain
 from app.repositories.utils import add_entry, delete_entry, get_all, get_by_id, update_entry
 
@@ -57,3 +60,22 @@ def delete_multiple_choice(session: Session, _id: UUID) -> None:
         {"_id": _id, "session_id": id(session)}
     )
     delete_entry(session, DbMultipleChoice, _id)
+    _delete_orphaned_choices(session=session)
+
+
+def _delete_orphaned_choices(session: Session):
+    orphaned_choices = session.scalars(
+        select(DbChoice)
+        .outerjoin(DbMultipleChoicesChoices)
+        .group_by(DbChoice.id)
+        .having(
+            cast(
+                func.count(  # pylint: disable=not-callable
+                    DbMultipleChoicesChoices.choice_id
+                ) == 0,
+                Boolean
+            )
+        )
+    ).all()
+    for choice in orphaned_choices:
+        session.delete(choice)

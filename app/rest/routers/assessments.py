@@ -31,7 +31,7 @@ async def create_assessment(
         data: CreateAssessmentRequest,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -56,7 +56,7 @@ async def get_assessment(
         assessment_id: UUID,
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -84,7 +84,7 @@ async def get_assessment(
 async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Session = Depends(get_db_session)
+        db_session: Annotated[Session, Depends(get_db_session)]
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(

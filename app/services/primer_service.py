@@ -4,20 +4,16 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.config import Settings
 from app.core.models.primer import Primer
 from app.repositories.primers import add_primer, get_primer, list_primers
 from app.services.multimedia_file_service import MultimediaFileService
-from app.settings import get_settings
 
 
 class PrimerService:
     def __init__(
             self,
-            settings: Annotated[Settings, Depends(get_settings)],
             multimedia_file_service: Annotated[MultimediaFileService, Depends()]
     ):
-        self.settings = settings
         self.multimedia_file_service = multimedia_file_service
 
     def create_primer(self, session: Session, multimedia_file_id: UUID) -> Primer:

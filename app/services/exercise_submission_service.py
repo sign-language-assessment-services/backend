@@ -5,7 +5,6 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.config import Settings
 from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.repositories.exercise_submissions import (
@@ -14,7 +13,6 @@ from app.repositories.exercise_submissions import (
 )
 from app.services.exercise_service import ExerciseService
 from app.services.scoring_service import ScoringService
-from app.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +20,9 @@ logger = logging.getLogger(__name__)
 class ExerciseSubmissionService:
     def __init__(
             self,
-            settings: Annotated[Settings, Depends(get_settings)],
             scoring_service: Annotated[ScoringService, Depends()],
             exercise_service: Annotated[ExerciseService, Depends()]
     ):
-        self.settings = settings
         self.exercise_service = exercise_service
         self.scoring_service = scoring_service
 

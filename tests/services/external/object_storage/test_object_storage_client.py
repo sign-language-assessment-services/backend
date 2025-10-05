@@ -1,11 +1,13 @@
 import io
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from fastapi import HTTPException
 from minio.datatypes import Object as MinioObject
 from minio.error import MinioException
+from pydantic_settings import BaseSettings
 
+import app.external_services.minio.client as minio_client_module
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
@@ -108,3 +110,24 @@ def test_list_files_returns_only_files(
     assert result[0].media_type == expected[0].media_type
     assert result[1].location == expected[1].location
     assert result[1].media_type == expected[1].media_type
+
+
+@patch(
+    f"{minio_client_module.__name__}.requests.post",
+    return_value=Mock(json=lambda: {"access_token": "abc", "expires_in": 3600})
+)
+def test_fetch_access_token_posts_correct_payload_and_returns_json(mocked_post: MagicMock, settings: BaseSettings) -> None:
+    client = ObjectStorageClient(settings)
+
+    result = client._fetch_access_token()
+
+    mocked_post.assert_called_once_with(
+        url=settings.token_endpoint,
+        data={
+            "grant_type": "client_credentials",
+            "client_id": settings.client_id,
+            "client_secret": settings.client_secret,
+        },
+        timeout=10.0,
+    )
+    assert result == {"access_token": "abc", "expires_in": 3600}

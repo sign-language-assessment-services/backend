@@ -1,26 +1,19 @@
 import logging
-from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.config import Settings
 from app.core.models.exercise import Exercise
 from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
 from app.repositories.exercises import add_exercise, get_exercise, list_exercises
 from app.repositories.multimedia_files import get_multimedia_file
 from app.repositories.multiple_choices import get_multiple_choice
-from app.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
 
 class ExerciseService:
-    def __init__(self, settings: Annotated[Settings, Depends(get_settings)]):
-        self.settings = settings
-
     @staticmethod
     def create_exercise(session: Session, points: int, multimedia_file_id: UUID, multiple_choice_id: UUID) -> Exercise:
         multimedia_file = get_multimedia_file(session=session, _id=multimedia_file_id)
