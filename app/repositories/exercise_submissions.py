@@ -45,12 +45,22 @@ def get_exercise_submissions_for_assessment_submission(
     return [exercise_submission_to_domain(r) for r in result]
 
 
-def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
+def list_exercise_submissions(
+        session: Session,
+        assessment_submission_id: UUID | None = None,
+        exercise_id: UUID | None = None
+) -> list[ExerciseSubmission]:
     logger.info(
         "Requesting all exercise submissions with session id %(session_id)s.",
         {"session_id": id(session)}
     )
-    result = get_all(session, DbExerciseSubmission)
+    filter_conditions = {}
+    if assessment_submission_id:
+        filter_conditions[DbExerciseSubmission.assessment_submission_id] = assessment_submission_id
+    if exercise_id:
+        filter_conditions[DbExerciseSubmission.exercise_id] = exercise_id
+
+    result = get_all(session, DbExerciseSubmission, filters=filter_conditions)
     return [exercise_submission_to_domain(r) for r in result]
 
 

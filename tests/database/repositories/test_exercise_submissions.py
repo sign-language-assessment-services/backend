@@ -171,6 +171,52 @@ def test_list_multiple_exercise_submissions(db_session: Session) -> None:
     assert table_count(db_session, DbExerciseSubmission) == 100
 
 
+def test_list_multiple_exercise_submissions_with_filter(db_session: Session) -> None:
+    video_id = insert_bucket_object(session=db_session).get("id")
+    multiple_choice_id = insert_multiple_choice(session=db_session).get("id")
+    assessment_id = insert_assessment(session=db_session).get("id")
+    assessment_submission_id = insert_assessment_submission(
+        session=db_session,
+        assessment_id=assessment_id
+    ).get("id")
+
+    exercise_id = insert_exercise(
+        session=db_session,
+        bucket_object_id=video_id,
+        multiple_choice_id=multiple_choice_id
+    ).get("id")
+    insert_exercise_submission(
+        session=db_session,
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id,
+        choices=[]
+    )
+
+    for i in range(99):
+        additonal_exercise_id = insert_exercise(
+            session=db_session,
+            bucket_object_id=video_id,
+            multiple_choice_id=multiple_choice_id
+        ).get("id")
+        insert_exercise_submission(
+            session=db_session,
+            assessment_submission_id=assessment_submission_id,
+            exercise_id=additonal_exercise_id,
+            choices=[]
+        )
+
+    result = list_exercise_submissions(
+        session=db_session,
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id
+    )
+
+    assert len(result) == 1
+    assert result[0].assessment_submission_id == assessment_submission_id
+    assert result[0].exercise_id == exercise_id
+    assert table_count(db_session, DbExerciseSubmission) == 100
+
+
 def test_update_exercise_submission(db_session: Session) -> None:
     video_id = insert_bucket_object(session=db_session).get("id")
     multiple_choice_id = insert_multiple_choice(session=db_session).get("id")

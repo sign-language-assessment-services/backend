@@ -64,8 +64,16 @@ class ExerciseSubmissionService:
         return get_exercise_submission(session=session, _id=submission_id)
 
     @staticmethod
-    def list_exercise_submissions(session: Session) -> list[ExerciseSubmission]:
-        return list_exercise_submissions(session=session)
+    def list_exercise_submissions(
+            session: Session,
+            assessment_submission_id: UUID | None,
+            exercise_id: UUID | None
+    ) -> list[ExerciseSubmission]:
+        return list_exercise_submissions(
+            session=session,
+            assessment_submission_id=assessment_submission_id,
+            exercise_id=exercise_id
+        )
 
     def upsert_exercise_submission(
             self,

@@ -63,7 +63,9 @@ async def get_submission(
 async def list_submissions(
         submission_service: Annotated[ExerciseSubmissionService, Depends()],
         current_user: Annotated[User, Depends(get_current_user)],
-        db_session: Annotated[Session, Depends(get_db_session)]
+        db_session: Annotated[Session, Depends(get_db_session)],
+        assessment_submission_id: UUID | None = None,
+        exercise_id: UUID | None = None
 ):
     if "slas-frontend-user" not in current_user.roles:
         raise HTTPException(
@@ -71,7 +73,11 @@ async def list_submissions(
             detail="The current user is not allowed to access this resource."
         )
 
-    submissions = submission_service.list_exercise_submissions(session=db_session)
+    submissions = submission_service.list_exercise_submissions(
+        session=db_session,
+        assessment_submission_id=assessment_submission_id,
+        exercise_id=exercise_id
+    )
     return submissions
 
 
