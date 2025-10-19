@@ -52,7 +52,7 @@ def upgrade() -> None:
 
         sa.PrimaryKeyConstraint("id")
     )
-    
+
     op.create_table(
         "bucket_objects",
 

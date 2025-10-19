@@ -14,7 +14,7 @@ class CreateMultipleChoiceRequest(BaseModel):
         if not correct_choices.issubset(choices):
             invalid_ids = [str(_id) for _id in sorted(correct_choices - choices)]
             raise ValueError(
-                f"The correct choices have to be a subset of choices. "
+                "The correct choices have to be a subset of choices. "
                 f"These ids are not valid: {", ".join(invalid_ids)}."
             )
         return self

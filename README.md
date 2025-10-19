@@ -1,7 +1,7 @@
+# Sign Language Assessment Services - Backend
+
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/eb0c22856be54da29d31f373e39dfa8a)](https://app.codacy.com/gh/sign-language-assessment-services/backend/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/eb0c22856be54da29d31f373e39dfa8a)](https://app.codacy.com/gh/sign-language-assessment-services/backend/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-
-# Sign Language Assessment Services - Backend
 
 This is a web application realized as REST-API using [Python][1] and the
 [FastAPI][2] framework. It provides the functionality necessary to provide
@@ -11,7 +11,7 @@ a portal where sign languages can be learned.
 
 The following software is required to use this app:
 
-  - [Python3.10][1] or a higher version
+- [Python3.10][1] or a higher version
 
 ## Build automation: `Makefile`
 
@@ -22,7 +22,7 @@ commands. Run `make help` to see a list of all available tasks.
 file is probably interesting for you, e.g. if you want to run the server on a
 different port or name the docker container differently.
 
-### install: Install all libraries via Poetry 
+### install: Install all libraries via Poetry
 
 `make install`
 
@@ -45,7 +45,7 @@ Checks if all Python files are written according to coding guidelines. This is
 done by using [Pylint][9]. Pylint configuration is done in the `pyproject.toml`
 file.
 
-### run: Run the Fastapi web application in development mode 
+### run: Run the Fastapi web application in development mode
 
 `make run`
 
@@ -68,13 +68,14 @@ the repository.
 Use this command if you have build your docker image via `make docker-build`.
 Then a container will be started using these additional command line arguments:
 
-  - `--rm`: Automatically remove the container when it exits
-  - `-ti`: Allocate a pseudo-TTY and keep STDIN open even if not
-           attached (then `CTRL`-`C` can be used to stop container)
-  - `-p 8000:8000`: Publish container's port 8000 to the port 8000 of
-                    the host machine
-  - `--name "$IMAGE_NAME"`: Name the container for better monitoring
-  - `"$IMAGE_TAG"`: Full qualified name of the docker image (`$IMAGE_NAME` + version information, e.g. "latest")
+- `--rm`: Automatically remove the container when it exits
+- `-ti`: Allocate a pseudo-TTY and keep STDIN open even if not
+         attached (then `CTRL`-`C` can be used to stop container)
+- `-p 8000:8000`: Publish container's port 8000 to the port 8000 of
+                  the host machine
+- `--name "$IMAGE_NAME"`: Name the container for better monitoring
+- `"$IMAGE_TAG"`: Full qualified name of the docker image (`$IMAGE_NAME` +
+                  version information, e.g. "latest")
 
 After that, you can access the backend the same way as mentioned before in the
 run section (search for `make run`). The difference is that your requests will
@@ -107,36 +108,31 @@ Shut down all services and networks configured in `docker-compose.yml`. This
 is necessary to avoid unwanted restarts of services, even after the host
 machine was restarted. This is only necessary if the Docker Compose file was
 started via `docker-compose -f docker-compose.yml` or via `make run-compose`,
-of course. 
+of course.
 
 ## Debug the app
 
 For running the app in debug mode, you can best integrate it in an IDE and
 simply run `application.py` in debug mode. It requires that the libraries are
-installed, i.e. `poetry` is working correctly. You can find out 
+installed, i.e. `poetry` is working correctly. You can find out
 [more about debugging FastAPI in the tutorial][10].
 
 ## Learn more
 
-  - [Python][1] is one of the most loved and wanted programming languages since
-    years (see https://insights.stackoverflow.com/survey). Python tries to be as
-    simple as possible for programmers. You can write really beautiful code with
-    Python.
-  - [FastAPI][2] has an excellent documentation and tries to keep things simple.
-    It will also be a pleasure for you to work with FastAPI. It is a modern, fast
-    (high-performance), web framework for building APIs with Python 3.6+ based on
-    standard Python type hints. It is also possible to use FastAPI as a kind of
-    interface, so that dependencies and risks are minimised (dependency
-    injection).
-
+- [Python][1] is one of the most loved and wanted programming languages since
+  years (see <https://insights.stackoverflow.com/survey>). Python tries to be as
+  simple as possible for programmers. You can write really beautiful code with
+  Python.
+- [FastAPI][2] has an excellent documentation and tries to keep things simple.
+  It will also be a pleasure for you to work with FastAPI. It is a modern, fast
+  (high-performance), web framework for building APIs with Python 3.6+ based on
+  standard Python type hints. It is also possible to use FastAPI as a kind of
+  interface, so that dependencies and risks are minimised (dependency
+  injection).
 
 [1]: https://python.org
 [2]: https://fastapi.tiangolo.com
 [3]: https://python-poetry.org/
-[4]: https://www.gnu.org/software/bash
-[5]: https://gitforwindows.org
-[6]: https://docs.microsoft.com/windows/wsl/install-win10
-[7]: https://www.cygwin.com
 [8]: https://docs.pytest.org
 [9]: https://www.pylint.org
 [10]: https://fastapi.tiangolo.com/tutorial/debugging
