@@ -8,7 +8,7 @@ package-mode=false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = {version = "^0.118", extras = ["all"]}
+fastapi = {version = "^0.119", extras = ["all"]}
 minio = "^7.2"
 sqlalchemy = "^2.0"
 psycopg2-binary = "^2.9"
@@ -36,7 +36,7 @@ testcontainers = "^4.9"
 exclude_dirs = ["tests", ".venv"]
 
 [tool.coverage.run]
-concurrency = ["thread", "gevent"]
+concurrency = ["thread"]
 omit = [
     "**/tests/**/*",
     "db_migrations/env.py",
