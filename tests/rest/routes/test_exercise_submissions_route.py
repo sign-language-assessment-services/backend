@@ -48,34 +48,38 @@ def test_list_exercise_submissions(test_client: TestClient) -> None:
         {
             "id": str(exercise_submission_1.id),
             "exercise_id": str(exercise_submission_1.exercise_id),
-            "assessment_submission_id": str(exercise_submission_1.assessment_submission_id)
+            "assessment_submission_id": str(exercise_submission_1.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_1.answer.choices]
         },
         {
             "id": str(exercise_submission_2.id),
             "exercise_id": str(exercise_submission_2.exercise_id),
-            "assessment_submission_id": str(exercise_submission_2.assessment_submission_id)
-
+            "assessment_submission_id": str(exercise_submission_2.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_2.answer.choices]
         },
         {
             "id": str(exercise_submission_3.id),
             "exercise_id": str(exercise_submission_3.exercise_id),
-            "assessment_submission_id": str(exercise_submission_3.assessment_submission_id)
+            "assessment_submission_id": str(exercise_submission_3.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_3.answer.choices]
         },
         {
             "id": str(exercise_submission_4.id),
             "exercise_id": str(exercise_submission_4.exercise_id),
-            "assessment_submission_id": str(exercise_submission_4.assessment_submission_id)
+            "assessment_submission_id": str(exercise_submission_4.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_4.answer.choices]
         },
         {
             "id": str(exercise_submission_5.id),
             "exercise_id": str(exercise_submission_5.exercise_id),
-            "assessment_submission_id": str(exercise_submission_5.assessment_submission_id)
-
+            "assessment_submission_id": str(exercise_submission_5.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_5.answer.choices]
         },
         {
             "id": str(exercise_submission_6.id),
             "exercise_id": str(exercise_submission_6.exercise_id),
-            "assessment_submission_id": str(exercise_submission_6.assessment_submission_id)
+            "assessment_submission_id": str(exercise_submission_6.assessment_submission_id),
+            "answers": [str(choice) for choice in exercise_submission_6.answer.choices]
         }
     ]
 
