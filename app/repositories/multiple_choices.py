@@ -19,7 +19,7 @@ def add_multiple_choice(session: Session, multiple_choice: MultipleChoice) -> No
     db_model = multiple_choice_to_db(multiple_choice)
     for association in db_model.associations:
         session.add(association)
-    logger.info(
+    logger.debug(
         "Requesting add multiple choice %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -27,7 +27,7 @@ def add_multiple_choice(session: Session, multiple_choice: MultipleChoice) -> No
 
 
 def get_multiple_choice(session: Session, _id: UUID) -> MultipleChoice | None:
-    logger.info(
+    logger.debug(
         "Requesting multiple choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -38,7 +38,7 @@ def get_multiple_choice(session: Session, _id: UUID) -> MultipleChoice | None:
 
 
 def list_multiple_choices(session: Session) -> list[MultipleChoice]:
-    logger.info(
+    logger.debug(
         "Requesting all multiple choices with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -47,7 +47,7 @@ def list_multiple_choices(session: Session) -> list[MultipleChoice]:
 
 
 def update_multiple_choice(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update multiple choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -55,7 +55,7 @@ def update_multiple_choice(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_multiple_choice(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete multiple choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

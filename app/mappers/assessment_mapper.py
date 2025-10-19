@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
-    logger.info(
+    logger.debug(
         "Transform assessment with id %(_id)s into domain model object.",
         {"_id": db_assessment.id}
     )
@@ -25,7 +25,7 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
             tasks.append(primer_to_domain(task))
         elif isinstance(task, DbExercise):
             tasks.append(exercise_to_domain(task))
-    logger.info(
+    logger.debug(
         "Added %(number)d tasks from database object to assessment.",
         {"number": number}
     )
@@ -42,7 +42,7 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
 
 
 def assessment_to_db(assessment: Assessment) -> DbAssessment:
-    logger.info("Transform assessment into database object.")
+    logger.debug("Transform assessment into database object.")
 
     number = 0
     tasks = []
@@ -51,7 +51,7 @@ def assessment_to_db(assessment: Assessment) -> DbAssessment:
             tasks.append(primer_to_db(task))
         elif isinstance(task, Exercise):
             tasks.append(exercise_to_db(task))
-    logger.info(
+    logger.debug(
         "Added %(number)d tasks from assessment to database object.",
         {"number": number}
     )
@@ -64,7 +64,7 @@ def assessment_to_db(assessment: Assessment) -> DbAssessment:
         max_attempts=assessment.max_attempts,
         tasks=tasks,
     )
-    logger.info(
+    logger.debug(
         "Assessment database object with id %(_id)s created.",
         {"_id": db_assessment.id}
     )

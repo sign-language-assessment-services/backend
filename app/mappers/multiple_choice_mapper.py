@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def multiple_choice_to_domain(db_multiple_choice: DbMultipleChoice) -> MultipleChoice:
-    logger.info("Transform DbMultipleChoice into domain model object.")
+    logger.debug("Transform DbMultipleChoice into domain model object.")
 
     choices = [
         AssociatedChoice(
@@ -21,7 +21,7 @@ def multiple_choice_to_domain(db_multiple_choice: DbMultipleChoice) -> MultipleC
         )
         for association in db_multiple_choice.associations
     ]
-    logger.info(
+    logger.debug(
         "Added %(number)d choices from database object to multiple choices.",
         {"number": len(choices)}
     )
@@ -35,7 +35,7 @@ def multiple_choice_to_domain(db_multiple_choice: DbMultipleChoice) -> MultipleC
 
 
 def multiple_choice_to_db(multiple_choice: MultipleChoice) -> DbMultipleChoice:
-    logger.info("Transform multiple choice into database object.")
+    logger.debug("Transform multiple choice into database object.")
 
     associations = [
         DbMultipleChoicesChoices(
@@ -46,7 +46,7 @@ def multiple_choice_to_db(multiple_choice: MultipleChoice) -> DbMultipleChoice:
         )
         for choice in multiple_choice.choices
     ]
-    logger.info(
+    logger.debug(
         "Added %(number)d choices from multiple choice to database object.",
         {"number": len(associations)}
     )
@@ -56,7 +56,7 @@ def multiple_choice_to_db(multiple_choice: MultipleChoice) -> DbMultipleChoice:
         created_at=multiple_choice.created_at,
         associations=associations
     )
-    logger.info(
+    logger.debug(
         "Multiple choice database object with id %(_id)s created.",
         {"_id": multiple_choice.id}
     )

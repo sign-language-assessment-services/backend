@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def choice_to_domain(db_choice: DbChoice) -> Choice:
-    logger.info("Transform DbChoice into domain model object.")
+    logger.debug("Transform DbChoice into domain model object.")
     choice = Choice(
         id=db_choice.id,
         created_at=db_choice.created_at,
@@ -19,13 +19,13 @@ def choice_to_domain(db_choice: DbChoice) -> Choice:
 
 
 def choice_to_db(choice: Choice | AssociatedChoice) -> DbChoice:
-    logger.info("Transform choice into domain model object.")
+    logger.debug("Transform choice into domain model object.")
     db_choice = DbChoice(
         id=choice.id,
         created_at=choice.created_at,
         bucket_object_id=choice.content.id,
     )
-    logger.info(
+    logger.debug(
         "Choice database object with id %(_id)s created.",
         {"_id": db_choice.id}
     )
@@ -42,7 +42,7 @@ def choice_to_db(choice: Choice | AssociatedChoice) -> DbChoice:
             )
             db_choice_associations.append(db_choice_association)
 
-    logger.info(
+    logger.debug(
         "Added %(number)d choice associations to database object.",
         {"number": number}
     )

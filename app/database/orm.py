@@ -52,7 +52,7 @@ def get_db_session(
         session_factory: Annotated[sessionmaker, Depends(get_sessionmaker)]
 ) -> Generator[Session, None, None]:
     session = session_factory(bind=get_db_engine())
-    logger.info(
+    logger.debug(
         "New database session %(session_id)s created for engine %(engine_id)s.",
         {"session_id": id(session), "engine_id": id(session.get_bind())},
     )
@@ -63,7 +63,7 @@ def get_db_session(
         session.rollback()
         raise
     finally:
-        logger.info("Closing database session %(_id)s.", {"_id": id(session)})
+        logger.debug("Closing database session %(_id)s.", {"_id": id(session)})
         session.close()
 
 

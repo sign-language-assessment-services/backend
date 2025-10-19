@@ -29,7 +29,8 @@ class ExerciseService:
 
     @staticmethod
     def get_exercise_by_id(session: Session, exercise_id: UUID) -> Exercise | None:
-        logger.info(
+        logger.info("Receive exercise %(_id)s", {"_id": exercise_id})
+        logger.debug(
             "Trying to receive exercise %(_id)s with session id %(session_id)s.",
             {"_id": exercise_id, "session_id": id(session)}
         )

@@ -19,7 +19,7 @@ OnUpdateConstraint: TypeAlias = str | ColumnCollectionConstraint | Index | None
 
 
 def add_entry(session: Session, db: T, commit: bool = True) -> None:
-    logger.info(
+    logger.debug(
         "Using generic database request to add %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": db.id, "_class": db.__class__.__name__, "session_id": id(session)}
     )
@@ -29,7 +29,7 @@ def add_entry(session: Session, db: T, commit: bool = True) -> None:
 
 
 def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
-    logger.info(
+    logger.debug(
         "Using generic database request to receive %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": _id, "_class": _class.__name__, "session_id": id(session)}
     )
@@ -39,13 +39,13 @@ def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
 def get_all(session: Session, _class: Type[T], filters: dict[InstrumentedAttribute, Any] = None) -> Iterator[T]:
     query = select(_class)
     if filters:
-        logger.info(
+        logger.debug(
             "Querying %(_class)s with filters: %(filters)r",
             {"_class": _class.__name__, "filters": filters}
         )
         for column, value in filters.items():
             query = query.where(column == value)
-    logger.info(
+    logger.debug(
         "Using generic database request to receive all from %(_class)s with session id %(session_id)s.",
         {"_class": _class.__name__, "session_id": id(session)}
     )
@@ -53,7 +53,7 @@ def get_all(session: Session, _class: Type[T], filters: dict[InstrumentedAttribu
 
 
 def update_entry(session: Session, _class: Type[T], _id: UUID, commit: bool = True, **kwargs) -> None:
-    logger.info(
+    logger.debug(
         "Using generic database request to update %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": _id, "_class": _class.__name__, "session_id": id(session)}
     )
@@ -70,7 +70,7 @@ def upsert_entry(
         commit: bool = True
 ) -> None:
     db_class: Type[T] = type(db)
-    logger.info(
+    logger.debug(
         "Using generic database request to upsert %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": db.id, "_class": db.__class__.__name__, "session_id": id(session)}
     )
@@ -94,7 +94,7 @@ def upsert_entry(
 
 
 def delete_entry(session: Session, _class: Type[T], _id: UUID, commit: bool = True) -> None:
-    logger.info(
+    logger.debug(
         "Using generic database request to delete %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": _id, "_class": _class, "session_id": id(session)}
     )

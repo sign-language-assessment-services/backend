@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def add_choice(session: Session, choice: Choice) -> None:
     db_model = choice_to_db(choice)
-    logger.info(
+    logger.debug(
         "Requesting add choice %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -22,7 +22,7 @@ def add_choice(session: Session, choice: Choice) -> None:
 
 
 def get_choice(session: Session, _id: UUID) -> Choice | None:
-    logger.info(
+    logger.debug(
         "Requesting choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -33,7 +33,7 @@ def get_choice(session: Session, _id: UUID) -> Choice | None:
 
 
 def list_choices(session: Session) -> list[Choice]:
-    logger.info(
+    logger.debug(
         "Requesting all choices with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -42,7 +42,7 @@ def list_choices(session: Session) -> list[Choice]:
 
 
 def update_choice(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -50,7 +50,7 @@ def update_choice(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_choice(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete choice %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

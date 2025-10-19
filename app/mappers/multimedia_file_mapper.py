@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def bucket_object_to_domain(db_bucket_object: DbBucketObjects) -> MultimediaFile:
-    logger.info("Transform DbBucketObject into domain model object.")
+    logger.debug("Transform DbBucketObject into domain model object.")
     multimedia_file = MultimediaFile(
         id=db_bucket_object.id,
         created_at=db_bucket_object.created_at,
@@ -23,7 +23,7 @@ def bucket_object_to_domain(db_bucket_object: DbBucketObjects) -> MultimediaFile
 
 
 def multimedia_file_to_db(multimedia_file: MultimediaFile) -> DbBucketObjects:
-    logger.info("Transform multimedia file into database object.")
+    logger.debug("Transform multimedia file into database object.")
     db_bucket_object = DbBucketObjects(
         id=multimedia_file.id,
         created_at=multimedia_file.created_at,
@@ -31,7 +31,7 @@ def multimedia_file_to_db(multimedia_file: MultimediaFile) -> DbBucketObjects:
         key=multimedia_file.location.key,
         media_type=multimedia_file.media_type.value
     )
-    logger.info(
+    logger.debug(
         "Bucket object database object with id %(_id)s created.",
         {"_id": db_bucket_object.id}
     )

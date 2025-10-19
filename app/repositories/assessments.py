@@ -17,7 +17,7 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
     # TODO: see if it can be simplified like in multiple choice
     assessment_without_tasks = assessment.model_dump(exclude={"tasks"})
     db_model = assessment_to_db(Assessment(**assessment_without_tasks))
-    logger.info(
+    logger.debug(
         "Requesting add assessment %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -33,21 +33,21 @@ def add_assessment(session: Session, assessment: Assessment) -> None:
             )
             for i, task in enumerate(assessment.tasks, start=1)
         ]
-        logger.info(
+        logger.debug(
             "Requesting adding %(n)d tasks for assessment %(_id)s with session id %(session_id)s.",
             {"n": len(tasks_links), "_id": db_model.id, "session_id": id(session)}
         )
         session.add_all(tasks_links)
         session.flush()
 
-    logger.info(
+    logger.debug(
         "Requesting add full assessment %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
     add_entry(session, db_model)
 
 def get_assessment(session: Session, _id: UUID) -> Assessment | None:
-    logger.info(
+    logger.debug(
         "Requesting assessment %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -58,7 +58,7 @@ def get_assessment(session: Session, _id: UUID) -> Assessment | None:
 
 
 def list_assessments(session: Session) -> list[Assessment]:
-    logger.info(
+    logger.debug(
         "Requesting all assessments with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -67,7 +67,7 @@ def list_assessments(session: Session) -> list[Assessment]:
 
 
 def update_assessment(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update assessment %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -75,7 +75,7 @@ def update_assessment(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_assessment(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete assessment %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

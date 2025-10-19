@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def add_primer(session: Session, primer: Primer) -> None:
     db_model = primer_to_db(primer)
-    logger.info(
+    logger.debug(
         "Requesting add primer %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -22,7 +22,7 @@ def add_primer(session: Session, primer: Primer) -> None:
 
 
 def get_primer(session: Session, _id: UUID) -> Primer | None:
-    logger.info(
+    logger.debug(
         "Requesting primer %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -33,7 +33,7 @@ def get_primer(session: Session, _id: UUID) -> Primer | None:
 
 
 def list_primers(session: Session) -> list[Primer]:
-    logger.info(
+    logger.debug(
         "Requesting all primers with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -42,7 +42,7 @@ def list_primers(session: Session) -> list[Primer]:
 
 
 def update_primer(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update primer %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -50,7 +50,7 @@ def update_primer(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_primer(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete primer %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

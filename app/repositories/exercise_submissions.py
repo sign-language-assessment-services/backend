@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def add_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
     db_model = exercise_submission_to_db(submission)
-    logger.info(
+    logger.debug(
         "Requesting add exercise submission %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -26,7 +26,7 @@ def add_exercise_submission(session: Session, submission: ExerciseSubmission) ->
 
 
 def get_exercise_submission(session: Session, _id: UUID) -> ExerciseSubmission | None:
-    logger.info(
+    logger.debug(
         "Requesting exercise submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -50,7 +50,7 @@ def list_exercise_submissions(
         assessment_submission_id: UUID | None = None,
         exercise_id: UUID | None = None
 ) -> list[ExerciseSubmission]:
-    logger.info(
+    logger.debug(
         "Requesting all exercise submissions with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -65,7 +65,7 @@ def list_exercise_submissions(
 
 
 def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update exercise submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -74,7 +74,7 @@ def update_exercise_submission(session: Session, _id: UUID, **kwargs: Any) -> No
 
 def upsert_exercise_submission(session: Session, submission: ExerciseSubmission) -> None:
     db_model = exercise_submission_to_db(submission)
-    logger.info(
+    logger.debug(
         "Requesting upsert exercise submission %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -90,7 +90,7 @@ def upsert_exercise_submission(session: Session, submission: ExerciseSubmission)
 
 
 def delete_exercise_submission(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete exercise submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

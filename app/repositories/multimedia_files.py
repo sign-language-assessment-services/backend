@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def add_multimedia_file(session: Session, multimedia_file: MultimediaFile) -> None:
     db_model = multimedia_file_to_db(multimedia_file)
-    logger.info(
+    logger.debug(
         "Requesting add bucket object %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -22,7 +22,7 @@ def add_multimedia_file(session: Session, multimedia_file: MultimediaFile) -> No
 
 
 def get_multimedia_file(session: Session, _id: UUID) -> MultimediaFile | None:
-    logger.info(
+    logger.debug(
         "Requesting bucket object %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -33,7 +33,7 @@ def get_multimedia_file(session: Session, _id: UUID) -> MultimediaFile | None:
 
 
 def list_multimedia_files(session: Session) -> list[MultimediaFile]:
-    logger.info(
+    logger.debug(
         "Requesting all bucket objects with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -42,7 +42,7 @@ def list_multimedia_files(session: Session) -> list[MultimediaFile]:
 
 
 def update_multimedia_file(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update bucket object %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -50,7 +50,7 @@ def update_multimedia_file(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_multimedia_file(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete bucket object %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

@@ -57,7 +57,8 @@ class ExerciseSubmissionService:
 
     @staticmethod
     def get_exercise_submission_by_id(session: Session, submission_id: UUID) -> ExerciseSubmission | None:
-        logger.info(
+        logger.info("Receive exercise submission %(_id)s", {"_id": submission_id})
+        logger.debug(
             "Trying to receive exercise submission %(_id)s with session id %(session_id)s.",
             {"_id": submission_id, "session_id": id(session)}
         )

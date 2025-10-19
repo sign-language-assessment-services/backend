@@ -64,7 +64,8 @@ async def get_exercise(
             detail="The current user is not allowed to access this resource."
         )
 
-    logger.info(
+    logger.info("Get exercise requested.")
+    logger.debug(
         "Get exercise requested with session id %(session_id)s.",
         {"session_id": id(db_session)}
     )

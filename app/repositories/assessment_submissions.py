@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def add_assessment_submission(session: Session, submission: AssessmentSubmission) -> None:
     db_model = assessment_submission_to_db(submission)
-    logger.info(
+    logger.debug(
         "Requesting add assessment submission %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -24,7 +24,7 @@ def add_assessment_submission(session: Session, submission: AssessmentSubmission
 
 
 def get_assessment_submission(session: Session, _id: UUID) -> AssessmentSubmission | None:
-    logger.info(
+    logger.debug(
         "Requesting assessment submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -35,7 +35,7 @@ def get_assessment_submission(session: Session, _id: UUID) -> AssessmentSubmissi
 
 
 def list_assessment_submissions(session: Session) -> list[AssessmentSubmission]:
-    logger.info(
+    logger.debug(
         "Requesting all assessment submissions with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -44,7 +44,7 @@ def list_assessment_submissions(session: Session) -> list[AssessmentSubmission]:
 
 
 def update_assessment_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update assessment submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -52,7 +52,7 @@ def update_assessment_submission(session: Session, _id: UUID, **kwargs: Any) -> 
 
 
 def delete_assessment_submission(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete assessment submission %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

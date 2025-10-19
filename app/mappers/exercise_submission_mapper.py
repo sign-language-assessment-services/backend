@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def exercise_submission_to_domain(db_submission: DbExerciseSubmission) -> ExerciseSubmission:
-    logger.info("Transform DbExerciseSubmission into domain model object.")
+    logger.debug("Transform DbExerciseSubmission into domain model object.")
     exercise_submission = ExerciseSubmission(
         id=db_submission.id,
         created_at=db_submission.created_at,
@@ -21,7 +21,7 @@ def exercise_submission_to_domain(db_submission: DbExerciseSubmission) -> Exerci
 
 
 def exercise_submission_to_db(submission: ExerciseSubmission) -> DbExerciseSubmission:
-    logger.info("Transform exercise submission into database object.")
+    logger.debug("Transform exercise submission into database object.")
     db_exercise_submission = DbExerciseSubmission(
         id=submission.id,
         created_at=submission.created_at,
@@ -30,7 +30,7 @@ def exercise_submission_to_db(submission: ExerciseSubmission) -> DbExerciseSubmi
         assessment_submission_id=submission.assessment_submission_id,
         exercise_id=submission.exercise_id
     )
-    logger.info(
+    logger.debug(
         "Exercise submission database object with id %(_id)s created.",
         {"_id": db_exercise_submission.id}
     )

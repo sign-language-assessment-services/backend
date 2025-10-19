@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def add_exercise(session: Session, exercise: Exercise) -> None:
     db_model = exercise_to_db(exercise)
-    logger.info(
+    logger.debug(
         "Requesting add exercise %(_id)s with session id %(session_id)s.",
         {"_id": db_model.id, "session_id": id(session)}
     )
@@ -22,7 +22,7 @@ def add_exercise(session: Session, exercise: Exercise) -> None:
 
 
 def get_exercise(session: Session, _id: UUID) -> Exercise | None:
-    logger.info(
+    logger.debug(
         "Requesting exercise %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -33,7 +33,7 @@ def get_exercise(session: Session, _id: UUID) -> Exercise | None:
 
 
 def list_exercises(session: Session) -> list[Exercise]:
-    logger.info(
+    logger.debug(
         "Requesting all exercises with session id %(session_id)s.",
         {"session_id": id(session)}
     )
@@ -42,7 +42,7 @@ def list_exercises(session: Session) -> list[Exercise]:
 
 
 def update_exercise(session: Session, _id: UUID, **kwargs: Any) -> None:
-    logger.info(
+    logger.debug(
         "Requesting update exercise %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )
@@ -50,7 +50,7 @@ def update_exercise(session: Session, _id: UUID, **kwargs: Any) -> None:
 
 
 def delete_exercise(session: Session, _id: UUID) -> None:
-    logger.info(
+    logger.debug(
         "Requesting delete exercise %(_id)s with session id %(session_id)s.",
         {"_id": _id, "session_id": id(session)}
     )

@@ -38,8 +38,8 @@ async def get_submission(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
         )
-
-    logger.info(
+    logger.info("Get exercise submission requested.")
+    logger.debug(
         "Get exercise submission requested with session id %(session_id)s.",
         {"session_id": id(db_session)}
     )

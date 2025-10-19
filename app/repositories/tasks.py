@@ -19,14 +19,14 @@ def get_task(session: Session, _id: UUID) -> Primer | Exercise | None:
     result = get_by_id(session, DbTask, _id)
     if result:
         if result.task_type == "primer":
-            logger.info(
+            logger.debug(
                 "Requesting task 'primer' %(_id)s with session id %(session_id)s.",
                 {"_id": _id, "session_id": id(session)}
             )
             db_primer = get_by_id(session, DbPrimer, _id)
             return primer_to_domain(db_primer)
         if result.task_type == "exercise":
-            logger.info(
+            logger.debug(
                 "Requesting task 'exercise' %(_id)s with session id %(session_id)s.",
                 {"_id": _id, "session_id": id(session)}
             )

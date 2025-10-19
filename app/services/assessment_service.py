@@ -33,5 +33,5 @@ class AssessmentService:
 
     @staticmethod
     def list_assessments(session: Session) -> list[Assessment]:
-        logger.info("Trying to receive all assessments.")
+        logger.info("Receive all assessments.")
         return list_assessments(session=session)
