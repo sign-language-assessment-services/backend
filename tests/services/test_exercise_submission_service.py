@@ -95,7 +95,11 @@ def test_list_exercise_submissions(
     assert len(submissions) == len(mocked_list_submission.return_value)
     for result, expected in zip(submissions, mocked_list_submission.return_value):
         assert result == expected
-    mocked_list_submission.assert_called_once_with(session=mocked_session)
+    mocked_list_submission.assert_called_once_with(
+        session=mocked_session,
+        assessment_submission_id=None,
+        exercise_id=None
+    )
 
 
 @patch.object(exercise_submission_service_module, upsert_exercise_submission.__name__)

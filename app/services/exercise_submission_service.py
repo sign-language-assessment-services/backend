@@ -66,8 +66,8 @@ class ExerciseSubmissionService:
     @staticmethod
     def list_exercise_submissions(
             session: Session,
-            assessment_submission_id: UUID | None,
-            exercise_id: UUID | None
+            assessment_submission_id: UUID | None = None,
+            exercise_id: UUID | None = None
     ) -> list[ExerciseSubmission]:
         return list_exercise_submissions(
             session=session,
