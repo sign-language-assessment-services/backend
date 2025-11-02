@@ -1,13 +1,11 @@
 import logging
 
 from app.core.models.assessment import Assessment
-from app.core.models.exercise import Exercise
-from app.core.models.primer import Primer
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.exercises import DbExercise
 from app.database.tables.primers import DbPrimer
-from app.mappers.exercise_mapper import exercise_to_db, exercise_to_domain
-from app.mappers.primer_mapper import primer_to_db, primer_to_domain
+from app.mappers.exercise_mapper import exercise_to_domain
+from app.mappers.primer_mapper import primer_to_domain
 
 logger = logging.getLogger(__name__)
 
@@ -44,25 +42,12 @@ def assessment_to_domain(db_assessment: DbAssessment) -> Assessment:
 def assessment_to_db(assessment: Assessment) -> DbAssessment:
     logger.debug("Transform assessment into database object.")
 
-    number = 0
-    tasks = []
-    for number, task in enumerate(assessment.tasks, start=1):
-        if isinstance(task, Primer):
-            tasks.append(primer_to_db(task))
-        elif isinstance(task, Exercise):
-            tasks.append(exercise_to_db(task))
-    logger.debug(
-        "Added %(number)d tasks from assessment to database object.",
-        {"number": number}
-    )
-
     db_assessment = DbAssessment(
         id=assessment.id,
         created_at=assessment.created_at,
         name=assessment.name,
         deadline=assessment.deadline,
-        max_attempts=assessment.max_attempts,
-        tasks=tasks,
+        max_attempts=assessment.max_attempts
     )
     logger.debug(
         "Assessment database object with id %(_id)s created.",

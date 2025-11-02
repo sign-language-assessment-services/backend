@@ -1,5 +1,6 @@
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
 
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
@@ -63,6 +64,23 @@ def test_get_multimedia_file_by_id(
     assert multimedia_file.location == mocked_get_multimedia_file.return_value.location
     assert multimedia_file.media_type == mocked_get_multimedia_file.return_value.media_type
     mocked_get_multimedia_file.assert_called_once_with(session=mocked_session, _id=multimedia_file_id)
+
+
+@patch.object(
+    multimedia_file_service_module, get_multimedia_file.__name__,
+    return_value=None
+)
+def test_get_non_existing_multimedia_file_by_id(
+        mocked_get_multimedia_file: MagicMock,
+        multimedia_file_service: MultimediaFileService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    result = multimedia_file_service.get_multimedia_file_by_id(mocked_session, non_existing_id)
+
+    assert result is None
+    mocked_get_multimedia_file.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(
