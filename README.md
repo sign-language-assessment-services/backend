@@ -11,11 +11,14 @@ a portal where sign languages can be learned.
 
 The following software is required to use this app:
 
-- [Python3.10][1] or a higher version
+- [Python3.12][1] or a higher version
+- [Poetry 2.2.x][3] (might also work with older versions)
+- [Docker][11] (not a hard requirement, but recommended)
+- [Docker Compose][12] (not a hard requirement, but recommended)
 
 ## Build automation: `Makefile`
 
-All tasks related to building, testing, and running can be invoked with make
+All tasks related to building, testing, and running can be invoked via
 commands. Run `make help` to see a list of all available tasks.
 
 **NOTE**: If you prefer to perform certain tasks manually, the content of the
