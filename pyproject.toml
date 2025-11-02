@@ -8,11 +8,11 @@ package-mode=false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = {version = "^0.119", extras = ["all"]}
+fastapi = {version = "^0.120", extras = ["all"]}
 minio = "^7.2"
 sqlalchemy = "^2.0"
 psycopg2-binary = "^2.9"
-alembic = "^1.15, !=1.15.0"
+alembic = "^1.17"
 pydantic-settings = "^2.11"
 pyjwt = {version = "^2.10", extras = ["crypto"]}
 python-multipart = "^0.0"
