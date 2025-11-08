@@ -59,6 +59,9 @@ def list_exercise_submissions(
         filter_conditions[DbExerciseSubmission.assessment_submission_id] = assessment_submission_id
     if exercise_id:
         filter_conditions[DbExerciseSubmission.exercise_id] = exercise_id
+    logger.debug(
+        "Used filter conditions: %(filter_conditions)s", {"filter_conditions": filter_conditions}
+    )
 
     result = get_all(session, DbExerciseSubmission, filters=filter_conditions)
     return [exercise_submission_to_domain(r) for r in result]

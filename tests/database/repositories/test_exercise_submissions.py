@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.database.exceptions import EntryNotFoundError
+from app.database.tables.assessment_submissions import DbAssessmentSubmission
 from app.database.tables.exercise_submissions import DbExerciseSubmission
 from app.repositories.exercise_submissions import (
     add_exercise_submission, delete_exercise_submission, get_exercise_submission,
@@ -137,6 +138,58 @@ def test_get_exercise_submissions_for_assessment_submission(db_session: Session)
     assert exercise_submissions[0].id == exercise_submission_1.get("id")
     assert exercise_submissions[1].id == exercise_submission_2.get("id")
     assert not any(exercise_submission_3.get("id") == s.id for s in exercise_submissions)
+
+
+def test_get_exercise_submissions_filtered_by_assessment_submission_and_exercise_id(db_session: Session) -> None:
+    video = insert_bucket_object(session=db_session)
+    multiple_choice = insert_multiple_choice(session=db_session)
+    exercise_1 = insert_exercise(
+        session=db_session,
+        bucket_object_id=video.get("id"),
+        multiple_choice_id=multiple_choice.get("id")
+    )
+    exercise_2 = insert_exercise(
+        session=db_session,
+        bucket_object_id=video.get("id"),
+        multiple_choice_id=multiple_choice.get("id")
+    )
+    exercise_3 = insert_exercise(
+        session=db_session,
+        bucket_object_id=video.get("id"),
+        multiple_choice_id=multiple_choice.get("id")
+    )
+    assessment_1 = insert_assessment(session=db_session).get("id")
+    assessment_2 = insert_assessment(session=db_session).get("id")
+    assessment_submission_1 = insert_assessment_submission(session=db_session, assessment_id=assessment_1)
+    assessment_submission_2 = insert_assessment_submission(session=db_session, assessment_id=assessment_2)
+    wanted_exercise_submission = insert_exercise_submission(
+        session=db_session,
+        assessment_submission_id=assessment_submission_1.get("id"),
+        exercise_id=exercise_2.get("id"),
+        choices=[]
+    )
+    insert_exercise_submission(
+        session=db_session,
+        assessment_submission_id=assessment_submission_1.get("id"),
+        exercise_id=exercise_1.get("id"),
+        choices=[]
+    )
+    insert_exercise_submission(
+        session=db_session,
+        assessment_submission_id=assessment_submission_2.get("id"),
+        exercise_id=exercise_3.get("id"),
+        choices=[]
+    )
+
+    found_exercise_submissions = list_exercise_submissions(
+        session=db_session,
+        assessment_submission_id=assessment_submission_1.get("id"),
+        exercise_id=exercise_2.get("id")
+    )
+
+    assert wanted_exercise_submission.get("id") == found_exercise_submissions[0].id
+    assert table_count(db_session, DbAssessmentSubmission) == 2
+    assert table_count(db_session, DbExerciseSubmission) == 3
 
 
 def test_list_no_exercise_submissions(db_session: Session) -> None:
