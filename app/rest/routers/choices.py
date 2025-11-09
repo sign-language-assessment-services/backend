@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.models.role import UserRole
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
@@ -29,7 +30,7 @@ async def create_choice(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if "slas-frontend-user" not in current_user.roles:
+    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
@@ -53,7 +54,7 @@ async def get_choice(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if "slas-frontend-user" not in current_user.roles:
+    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
@@ -81,7 +82,7 @@ async def list_choices(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if "slas-frontend-user" not in current_user.roles:
+    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The current user is not allowed to access this resource."
