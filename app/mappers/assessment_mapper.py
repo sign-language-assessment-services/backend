@@ -1,7 +1,6 @@
 import logging
 
 from app.core.models.assessment import Assessment
-from app.core.models.exercise import Exercise
 from app.core.models.primer import Primer
 from app.database.tables.assessments import DbAssessment
 from app.database.tables.assessments_tasks import DbAssessmentsTasks
@@ -49,12 +48,9 @@ def assessment_to_db(assessment: Assessment) -> DbAssessment:
         if isinstance(task, Primer):
             db_task = primer_to_db(task)
             num_primers += 1
-        elif isinstance(task, Exercise):
+        else:  # only Primer or Exercise are possible (validated by Pydantic)
             db_task = exercise_to_db(task)
             num_exercises += 1
-        else:
-            logger.error("Invalid task detected: %(task)r.", {"task": task})
-            continue
         assessment_tasks.append(
             DbAssessmentsTasks(position=position, task=db_task)
         )
