@@ -6,6 +6,7 @@ import pytest
 from fastapi import HTTPException, status
 
 import app.external_services.keycloak.auth_bearer as auth_bearer_module
+from app.core.models.role import UserRole
 from app.core.models.user import User
 from app.external_services.keycloak.auth_bearer import JWTBearer, decode_jwt
 from tests.data.models.users import test_taker_1
@@ -53,7 +54,7 @@ async def test_jwt_bearer_auth_disabled_returns_user(settings: TestSettings) -> 
     result = await bearer(settings=settings, request=mock.ANY)
 
     fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
-    assert result == User(id=fake_user_id, roles=["slas-frontend-user", "test-taker"])
+    assert result == User(id=fake_user_id, roles=[UserRole.FRONTEND_ACCESS, UserRole.TEST_TAKER])
 
 
 @pytest.mark.asyncio

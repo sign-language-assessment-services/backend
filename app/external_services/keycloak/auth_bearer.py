@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic_settings import BaseSettings
 
+from app.core.models.role import UserRole
 from app.core.models.user import User
 from app.settings import get_settings
 
@@ -37,7 +38,7 @@ class JWTBearer:
 
         if not self.settings.auth_enabled:
             fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
-            return User(id=fake_user_id, roles=["slas-frontend-user", "test-taker"])
+            return User(id=fake_user_id, roles=[UserRole.FRONTEND_ACCESS, UserRole.TEST_TAKER])
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:
