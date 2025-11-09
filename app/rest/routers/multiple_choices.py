@@ -5,10 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
-from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
+from app.rest.dependencies import require_roles
 from app.rest.requests.multiple_choices import CreateMultipleChoiceRequest
 from app.rest.responses.multiple_choices import (
     CreateMultipleChoiceResponse, GetMultipleChoiceResponse, ListMultipleChoiceResponse
@@ -16,7 +15,10 @@ from app.rest.responses.multiple_choices import (
 from app.services.multiple_choice_service import MultipleChoiceService
 
 router = APIRouter(
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(JWTBearer()),
+        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+    ],
     tags=["Multiple Choices"]
 )
 
@@ -29,15 +31,8 @@ router = APIRouter(
 async def create_multiple_choice(
         data: CreateMultipleChoiceRequest,
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     multiple_choice = multiple_choice_service.create_multiple_choice(
         session=db_session,
         choice_ids=data.choice_ids,
@@ -54,15 +49,8 @@ async def create_multiple_choice(
 async def get_multiple_choice(
         multiple_choice_id: UUID,
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     multiple_choice = multiple_choice_service.get_multiple_choice_by_id(
         session=db_session,
         multiple_choice_id=multiple_choice_id
@@ -82,14 +70,7 @@ async def get_multiple_choice(
 )
 async def list_multiple_choices(
         multiple_choice_service: Annotated[MultipleChoiceService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     multiple_choices = multiple_choice_service.list_multiple_choices(session=db_session)
     return multiple_choices

@@ -9,7 +9,7 @@ from app.core.models.role import UserRole
 from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
+from app.rest.dependencies import get_current_user, require_roles
 from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionToFinishedRequest
 from app.rest.responses.assessment_submissions import (
     CreateAssessmentSubmissionResponse, GetAssessmentSubmissionResponse,
@@ -19,7 +19,10 @@ from app.services.assessment_submission_service import AssessmentSubmissionServi
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(JWTBearer()),
+        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+    ],
     tags=["Assessment Submissions"]
 )
 
@@ -35,12 +38,6 @@ async def create_assessment_submission(
         current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     assessment_submission = submission_service.create_assessment_submission(
         session=db_session,
         user_id=current_user.id,
@@ -57,15 +54,8 @@ async def create_assessment_submission(
 async def get_assessment_submission(
         submission_id: UUID,
         submission_service: Annotated[AssessmentSubmissionService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     logger.info("Get assessment submission requested.")
     submission = submission_service.get_assessment_submission_by_id(
         session=db_session,
@@ -86,15 +76,8 @@ async def get_assessment_submission(
 )
 async def list_submissions(
         assessment_submission_service: Annotated[AssessmentSubmissionService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     submissions = assessment_submission_service.list_assessment_submissions(session=db_session)
     return submissions
 
@@ -111,15 +94,8 @@ async def update_assessment_submission(
         assessment_submission_id: UUID,
         data: UpdateAssessmentSubmissionToFinishedRequest,
         submission_service: Annotated[AssessmentSubmissionService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     submission = submission_service.get_assessment_submission_by_id(
         session=db_session,
         submission_id=assessment_submission_id

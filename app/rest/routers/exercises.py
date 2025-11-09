@@ -6,10 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
-from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
+from app.rest.dependencies import require_roles
 from app.rest.requests.exercises import CreateExerciseRequest
 from app.rest.responses.exercises import (
     CreateExerciseResponse, GetExerciseResponse, ListExerciseResponse
@@ -18,7 +17,10 @@ from app.services.exercise_service import ExerciseService
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(JWTBearer()),
+        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+    ],
     tags=["Exercises"]
 )
 
@@ -31,15 +33,8 @@ router = APIRouter(
 async def create_exercise(
         exercise_data: CreateExerciseRequest,
         exercise_service: Annotated[ExerciseService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Session = Depends(get_db_session)
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     return exercise_service.create_exercise(
         session=db_session,
         points=1,  # currently each exercise has only one point
@@ -56,15 +51,8 @@ async def create_exercise(
 async def get_exercise(
         exercise_id: UUID,
         exercise_service: Annotated[ExerciseService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     logger.info("Get exercise requested.")
     logger.debug(
         "Get exercise requested with session id %(session_id)s.",
@@ -89,14 +77,7 @@ async def get_exercise(
 )
 async def list_exercises(
         exercise_service: Annotated[ExerciseService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     exercises = exercise_service.list_exercises(db_session)
     return exercises

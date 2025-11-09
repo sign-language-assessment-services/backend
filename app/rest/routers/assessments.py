@@ -6,10 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
-from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
-from app.rest.dependencies import get_current_user
+from app.rest.dependencies import require_roles
 from app.rest.requests.assessments import CreateAssessmentRequest
 from app.rest.responses.assessments import (
     CreateAssessmentResponse, GetAssessmentResponse, ListAssessmentResponse
@@ -18,7 +17,10 @@ from app.services.assessment_service import AssessmentService
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[
+        Depends(JWTBearer()),
+        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+    ],
     tags=["Assessments"]
 )
 
@@ -31,15 +33,8 @@ router = APIRouter(
 async def create_assessment(
         data: CreateAssessmentRequest,
         assessment_service: Annotated[AssessmentService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     assessment = assessment_service.create_assessment(
         session=db_session,
         name=data.name,
@@ -56,15 +51,8 @@ async def create_assessment(
 async def get_assessment(
         assessment_id: UUID,
         assessment_service: Annotated[AssessmentService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     assessment = assessment_service.get_assessment_by_id(
         session=db_session,
         assessment_id=assessment_id
@@ -84,15 +72,8 @@ async def get_assessment(
 )
 async def list_assessments(
         assessment_service: Annotated[AssessmentService, Depends()],
-        current_user: Annotated[User, Depends(get_current_user)],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    if UserRole.FRONTEND_ACCESS.value not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The current user is not allowed to access this resource."
-        )
-
     logger.info("List assessments requested.")
     assessments = assessment_service.list_assessments(session=db_session)
     return assessments
