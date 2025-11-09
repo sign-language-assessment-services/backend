@@ -1,5 +1,8 @@
 from datetime import datetime
 from unittest.mock import ANY, MagicMock, Mock, patch
+from uuid import UUID
+
+import pytest
 
 from app.services import assessment_submission_service as assessment_submission_service_module
 from app.services.assessment_submission_service import (
@@ -11,6 +14,7 @@ from tests.data.models.assessment_submissions import (
     assessment_submission_1, assessment_submission_2
 )
 from tests.data.models.exercise_submissions import exercise_submission_5, exercise_submission_6
+from tests.data.models.users import test_taker_1
 
 
 @patch.object(assessment_submission_service_module, add_assessment_submission.__name__)
@@ -53,22 +57,24 @@ def test_get_assessment_submission_by_id(
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
 
 
+@pytest.mark.parametrize("user_id", [None, test_taker_1.id])
 @patch.object(
     assessment_submission_service_module, list_assessment_submissions.__name__,
     return_value=[assessment_submission_1, assessment_submission_2]
 )
 def test_list_assessment_submissions(
         mocked_list_submission: MagicMock,
-        assessment_submission_service: AssessmentSubmissionService
+        assessment_submission_service: AssessmentSubmissionService,
+        user_id: UUID | None
 ) -> None:
     mocked_session = Mock()
 
-    submissions = assessment_submission_service.list_assessment_submissions(mocked_session)
+    submissions = assessment_submission_service.list_assessment_submissions(mocked_session, user_id=user_id)
 
     assert len(submissions) == len(mocked_list_submission.return_value)
     for result, expected in zip(submissions, mocked_list_submission.return_value):
         assert result == expected
-    mocked_list_submission.assert_called_once_with(session=mocked_session)
+    mocked_list_submission.assert_called_once_with(session=mocked_session, user_id=user_id)
 
 
 @patch.object(

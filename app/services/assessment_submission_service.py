@@ -24,8 +24,8 @@ class AssessmentSubmissionService:
         return get_assessment_submission(session=session, _id=submission_id)
 
     @staticmethod
-    def list_assessment_submissions(session: Session) -> list[AssessmentSubmission]:
-        return list_assessment_submissions(session=session)
+    def list_assessment_submissions(session: Session, user_id: UUID | None = None) -> list[AssessmentSubmission]:
+        return list_assessment_submissions(session=session, user_id=user_id)
 
     @staticmethod
     def update_assessment_submission(session: Session, submission_id: UUID, **kwargs: Any) -> AssessmentSubmission:

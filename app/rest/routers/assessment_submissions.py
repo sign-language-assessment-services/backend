@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -10,7 +10,9 @@ from app.core.models.user import User
 from app.database.orm import get_db_session
 from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user, require_roles
-from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionToFinishedRequest
+from app.rest.requests.assessment_submissions import (
+    AssessmentSubmissionScope, UpdateAssessmentSubmissionToFinishedRequest
+)
 from app.rest.responses.assessment_submissions import (
     CreateAssessmentSubmissionResponse, GetAssessmentSubmissionResponse,
     ListAssessmentSubmissionResponse, UpdateAssessmentSubmissionToFinishedResponse
@@ -76,9 +78,47 @@ async def get_assessment_submission(
 )
 async def list_submissions(
         assessment_submission_service: Annotated[AssessmentSubmissionService, Depends()],
-        db_session: Annotated[Session, Depends(get_db_session)]
+        db_session: Annotated[Session, Depends(get_db_session)],
+        current_user: Annotated[User, Depends(get_current_user)],
+        scope: AssessmentSubmissionScope = Query(
+            default=AssessmentSubmissionScope.MINE,
+            description=(
+                    "Set the scope of listing assessments: mine - Get only the "
+                    "assessments matching the current user_id [default]; all - "
+                    "Get all assessments (only allowed for test scorers)."
+            )
+        ),
+        user_id: UUID | None = Query(
+            default=None,
+            description=(
+                    "Filter assessments by user_id. Using another user_id as the "
+                    "own user_id is only allowed if scope is set to 'all'."
+            )
+        )
 ):
-    submissions = assessment_submission_service.list_assessment_submissions(session=db_session)
+    filtered_user_id = current_user.id
+    if scope == AssessmentSubmissionScope.ALL.value:
+        if not {UserRole.TEST_SCORER.value}.issubset(set(r.value for r in current_user.roles)):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="The current user is not allowed to use this scope."
+            )
+        filtered_user_id = None
+    if user_id:
+        if scope != AssessmentSubmissionScope.ALL.value:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    "The user_id filter is only allowed if scope is set "
+                    "to 'all'."
+                )
+            )
+        filtered_user_id = user_id
+
+    submissions = assessment_submission_service.list_assessment_submissions(
+        session=db_session,
+        user_id=filtered_user_id
+    )
     return submissions
 
 

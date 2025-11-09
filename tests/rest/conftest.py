@@ -43,7 +43,7 @@ from tests.data.models.exercises import exercise_1, exercise_2
 from tests.data.models.multimedia_files import multimedia_file_choice_1, multimedia_file_choice_2
 from tests.data.models.multiple_choices import multiple_choice_1, multiple_choice_2
 from tests.data.models.primers import primer_1, primer_2
-from tests.data.models.users import test_taker_1
+from tests.data.models.users import test_scorer_1, test_taker_1
 from tests.settings_for_tests import TestSettings
 
 
@@ -123,6 +123,12 @@ def app_dependency_overrides_no_data(app_dependency_overrides_data: FastAPI) -> 
 
 @pytest.fixture
 def test_client(app_dependency_overrides_data: FastAPI) -> TestClient:
+    return TestClient(app)
+
+
+@pytest.fixture
+def test_client_with_scorer_role(app_dependency_overrides_data: FastAPI) -> TestClient:
+    app.dependency_overrides[get_current_user] = _get_override_current_user(test_scorer_1)
     return TestClient(app)
 
 

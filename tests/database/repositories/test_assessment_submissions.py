@@ -12,6 +12,7 @@ from app.repositories.assessment_submissions import (
     add_assessment_submission, delete_assessment_submission, get_assessment_submission,
     list_assessment_submissions, update_assessment_submission
 )
+from tests.data.models.users import test_taker_1
 from tests.database.data_inserts import insert_assessment, insert_assessment_submission
 from tests.database.utils import table_count
 
@@ -78,6 +79,27 @@ def test_list_multiple_assessment_submissions(db_session: Session) -> None:
 
     assert len(result) == 100
     assert table_count(db_session, DbAssessmentSubmission) == 100
+
+
+def test_list_assessment_submissions_with_filter(db_session: Session) -> None:
+    assessment_id = insert_assessment(session=db_session).get("id")
+    for _ in range(10):
+        insert_assessment_submission(
+            session=db_session,
+            assessment_id=assessment_id,
+            user_id=test_taker_1.id
+        ).get("id")
+    for _ in range(100):
+        insert_assessment_submission(
+            session=db_session,
+            assessment_id=assessment_id
+        )
+
+    result = list_assessment_submissions(session=db_session, user_id=test_taker_1.id)
+
+    assert len(result) == 10
+    assert table_count(db_session, DbAssessmentSubmission) == 110
+    assert all(submission.user_id == test_taker_1.id for submission in result)
 
 
 def test_update_assessment_submission(db_session: Session) -> None:

@@ -34,12 +34,19 @@ def get_assessment_submission(session: Session, _id: UUID) -> AssessmentSubmissi
     return None
 
 
-def list_assessment_submissions(session: Session) -> list[AssessmentSubmission]:
+def list_assessment_submissions(session: Session, user_id: UUID | None = None) -> list[AssessmentSubmission]:
     logger.debug(
         "Requesting all assessment submissions with session id %(session_id)s.",
         {"session_id": id(session)}
     )
-    result = get_all(session, DbAssessmentSubmission)
+    filter_conditions = {}
+    if user_id:
+        filter_conditions[DbAssessmentSubmission.user_id] = user_id
+    logger.debug(
+        "Used filter conditions: %(filter_conditions)s", {"filter_conditions": filter_conditions}
+    )
+
+    result = get_all(session, DbAssessmentSubmission, filters=filter_conditions)
     return [assessment_submission_to_domain(r) for r in result]
 
 
