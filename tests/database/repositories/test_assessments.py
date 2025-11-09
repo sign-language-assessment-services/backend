@@ -15,6 +15,7 @@ from app.core.models.question import Question
 from app.core.models.question_type import QuestionType
 from app.database.exceptions import EntryNotFoundError
 from app.database.tables.assessments import DbAssessment
+from app.database.tables.assessments_tasks import DbAssessmentsTasks
 from app.database.tables.exercises import DbExercise
 from app.database.tables.primers import DbPrimer
 from app.database.tables.tasks import DbTask
@@ -32,7 +33,7 @@ def test_add_assessment(db_session: Session) -> None:
     assessment = Assessment(name="Test Assessment")
 
     add_assessment(session=db_session, assessment=assessment)
-    
+
     result = db_session.get(DbAssessment, assessment.id)
     assert result.id == assessment.id
     assert result.created_at == assessment.created_at
@@ -43,15 +44,10 @@ def test_add_assessment(db_session: Session) -> None:
 
 
 def test_add_assessment_with_tasks(db_session: Session) -> None:
+    primer_id, exercise_id = uuid4(), uuid4()
     bucket_object = insert_bucket_object(session=db_session, filename="testfile.mpg")
     choice_object = insert_choice(session=db_session, bucket_object_id=bucket_object.get("id"))
     multiple_choice_object = insert_multiple_choice(session=db_session)
-    primer = insert_primer(session=db_session, bucket_object_id=bucket_object.get("id"))
-    exercise = insert_exercise(
-        session=db_session,
-        bucket_object_id=bucket_object.get("id"),
-        multiple_choice_id=multiple_choice_object.get("id")
-    )
     multimedia_file = MultimediaFile(
         id=bucket_object.get("id"),
         location=MinioLocation(
@@ -64,11 +60,11 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
         name="Test Assessment",
         tasks=[
             Primer(
-                id=primer.get("id"),
+                id=primer_id,
                 content=multimedia_file
             ),
             Exercise(
-                id=exercise.get("id"),
+                id=exercise_id,
                 points=1,
                 question=Question(content=multimedia_file),
                 question_type=QuestionType(
@@ -102,14 +98,15 @@ def test_add_assessment_with_tasks(db_session: Session) -> None:
     assert result.name == assessment.name
     assert result.deadline == assessment.deadline
     assert result.max_attempts == assessment.max_attempts
-    assert table_count(db_session, DbAssessment) == 1
     assert result.tasks[0].id == assessment.tasks[0].id
     assert result.tasks[0].task_type == "primer"
     assert result.tasks[1].id == assessment.tasks[1].id
     assert result.tasks[1].task_type == "exercise"
+    assert table_count(db_session, DbAssessment) == 1
     assert table_count(db_session, DbTask) == 2
     assert table_count(db_session, DbPrimer) == 1
     assert table_count(db_session, DbExercise) == 1
+    assert table_count(db_session, DbAssessmentsTasks) == 2
 
 
 def test_get_assessment_by_id(db_session: Session) -> None:
