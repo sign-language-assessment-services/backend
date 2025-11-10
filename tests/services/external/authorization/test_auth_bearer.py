@@ -54,7 +54,7 @@ async def test_jwt_bearer_auth_disabled_returns_user(settings: TestSettings) -> 
     result = await bearer(settings=settings, request=mock.ANY)
 
     fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
-    assert result == User(id=fake_user_id, roles=[UserRole.FRONTEND_ACCESS, UserRole.TEST_TAKER])
+    assert result == User(id=fake_user_id, roles=[UserRole.FRONTEND, UserRole.TEST_TAKER])
 
 
 @pytest.mark.asyncio

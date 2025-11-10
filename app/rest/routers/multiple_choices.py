@@ -17,7 +17,7 @@ from app.services.multiple_choice_service import MultipleChoiceService
 router = APIRouter(
     dependencies=[
         Depends(JWTBearer()),
-        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+        Depends(require_roles([UserRole.FRONTEND]))
     ],
     tags=["Multiple Choices"]
 )

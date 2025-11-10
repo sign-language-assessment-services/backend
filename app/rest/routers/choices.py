@@ -15,7 +15,7 @@ from app.services.choice_service import ChoiceService
 router = APIRouter(
     dependencies=[
         Depends(JWTBearer()),
-        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+        Depends(require_roles([UserRole.FRONTEND]))
     ],
     tags=["Choices"]
 )

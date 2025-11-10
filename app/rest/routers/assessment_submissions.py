@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[
         Depends(JWTBearer()),
-        Depends(require_roles([UserRole.FRONTEND_ACCESS]))
+        Depends(require_roles([UserRole.FRONTEND]))
     ],
     tags=["Assessment Submissions"]
 )

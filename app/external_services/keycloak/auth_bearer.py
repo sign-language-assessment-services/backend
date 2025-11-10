@@ -38,7 +38,7 @@ class JWTBearer:
 
         if not self.settings.auth_enabled:
             fake_user_id = UUID("00000000-0000-0000-0000-000000000000")
-            return User(id=fake_user_id, roles=[UserRole.FRONTEND_ACCESS, UserRole.TEST_TAKER])
+            return User(id=fake_user_id, roles=[UserRole.FRONTEND, UserRole.TEST_TAKER])
 
         credentials: HTTPAuthorizationCredentials | None = await self.http_bearer(request)
         if credentials:
