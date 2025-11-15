@@ -57,7 +57,16 @@ def test_get_assessment_submission_by_id(
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
 
 
-@pytest.mark.parametrize("user_id", [None, test_taker_1.id])
+@pytest.mark.parametrize(
+    "user_id, pick_strategy", [
+        (None, None),
+        (None, "best"),
+        (None, "latest"),
+        (test_taker_1.id, None),
+        (test_taker_1.id, "best"),
+        (test_taker_1.id, "latest"),
+    ]
+)
 @patch.object(
     assessment_submission_service_module, list_assessment_submissions.__name__,
     return_value=[assessment_submission_1, assessment_submission_2]
@@ -65,16 +74,25 @@ def test_get_assessment_submission_by_id(
 def test_list_assessment_submissions(
         mocked_list_submission: MagicMock,
         assessment_submission_service: AssessmentSubmissionService,
-        user_id: UUID | None
+        user_id: UUID | None,
+        pick_strategy: str | None
 ) -> None:
     mocked_session = Mock()
 
-    submissions = assessment_submission_service.list_assessment_submissions(mocked_session, user_id=user_id)
+    submissions = assessment_submission_service.list_assessment_submissions(
+        session=mocked_session,
+        user_id=user_id,
+        pick_strategy=pick_strategy
+    )
 
     assert len(submissions) == len(mocked_list_submission.return_value)
     for result, expected in zip(submissions, mocked_list_submission.return_value):
         assert result == expected
-    mocked_list_submission.assert_called_once_with(session=mocked_session, user_id=user_id)
+    mocked_list_submission.assert_called_once_with(
+        session=mocked_session,
+        user_id=user_id,
+        pick_strategy=pick_strategy
+    )
 
 
 @patch.object(

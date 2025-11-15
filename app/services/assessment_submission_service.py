@@ -10,6 +10,7 @@ from app.repositories.assessment_submissions import (
     update_assessment_submission
 )
 from app.repositories.exercise_submissions import get_exercise_submissions_for_assessment_submission
+from app.rest.filters.assessment_submissions import AssessmentSubmissionPick
 
 
 class AssessmentSubmissionService:
@@ -24,8 +25,16 @@ class AssessmentSubmissionService:
         return get_assessment_submission(session=session, _id=submission_id)
 
     @staticmethod
-    def list_assessment_submissions(session: Session, user_id: UUID | None = None) -> list[AssessmentSubmission]:
-        return list_assessment_submissions(session=session, user_id=user_id)
+    def list_assessment_submissions(
+            session: Session,
+            user_id: UUID | None = None,
+            pick_strategy: AssessmentSubmissionPick | None = None
+    ) -> list[AssessmentSubmission]:
+        return list_assessment_submissions(
+            session=session,
+            user_id=user_id,
+            pick_strategy=pick_strategy
+        )
 
     @staticmethod
     def update_assessment_submission(session: Session, submission_id: UUID, **kwargs: Any) -> AssessmentSubmission:

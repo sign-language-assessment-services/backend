@@ -208,14 +208,15 @@ def insert_assessment_submission(
         user_id: UUID = uuid4(),
         created_at: datetime = datetime(2000, 1, 1, 12, tzinfo=UTC),
         finished: bool = False,
-        finished_at: datetime | None = None
+        finished_at: datetime | None = None,
+        score: float | None = None,
 ) -> DbData:
     """Insert an assessment submission into database"""
     assessment_submission = {
         "id": uuid4(),
         "created_at": created_at,
         "user_id": user_id,
-        "score": None,
+        "score": score,
         "finished": finished,
         "finished_at": finished_at,
         "assessment_id": assessment_id,

@@ -1,9 +1,9 @@
 import logging
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any, Iterator, Type, TypeAlias, TypeVar
 from uuid import UUID
 
-from sqlalchemy import func, inspect, select, update
+from sqlalchemy import ColumnElement, func, inspect, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import InstrumentedAttribute, Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -36,7 +36,13 @@ def get_by_id(session: Session, _class: Type[T], _id: UUID) -> T | None:
     return session.get(_class, _id)
 
 
-def get_all(session: Session, _class: Type[T], filters: dict[InstrumentedAttribute, Any] = None) -> Iterator[T]:
+def get_all(
+        session: Session,
+        _class: Type[T],
+        filters: dict[InstrumentedAttribute, Any] = None,
+        order_by: Sequence[ColumnElement[Any]] | None = None,
+        limit: int | None = None
+) -> Iterator[T]:
     query = select(_class)
     if filters:
         logger.debug(
@@ -45,6 +51,21 @@ def get_all(session: Session, _class: Type[T], filters: dict[InstrumentedAttribu
         )
         for column, value in filters.items():
             query = query.where(column == value)
+
+    if order_by:
+        logger.debug(
+            "Querying %(_class)s with order by: %(order_by)r",
+            {"_class": _class.__name__, "order_by": order_by}
+        )
+        query = query.order_by(*order_by)
+
+    if limit:
+        logger.debug(
+            "Querying %(_class)s with limit: %(limit)r",
+            {"_class": _class.__name__, "limit": limit}
+        )
+        query = query.limit(limit)
+
     logger.debug(
         "Using generic database request to receive all from %(_class)s with session id %(session_id)s.",
         {"_class": _class.__name__, "session_id": id(session)}
