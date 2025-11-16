@@ -1,6 +1,10 @@
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
+
+import pytest
 
 from app.services import exercise_service as exercise_service_module
+from app.services.exceptions.not_found import ExerciseNotFoundException
 from app.services.exercise_service import (
     ExerciseService, add_exercise, get_exercise, get_multimedia_file, get_multiple_choice,
     list_exercises
@@ -52,6 +56,23 @@ def test_get_exercise_by_id(
     assert exercise.question == mocked_get_exercise.return_value.question
     assert exercise.question_type == mocked_get_exercise.return_value.question_type
     mocked_get_exercise.assert_called_once_with(session=mocked_session, _id=exercise_id)
+
+
+@patch.object(
+    exercise_service_module, get_exercise.__name__,
+    return_value=None
+)
+def test_get_non_existing_exercise_by_id(
+        mocked_get_exercise: MagicMock,
+        exercise_service: ExerciseService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    with pytest.raises(ExerciseNotFoundException):
+        exercise_service.get_exercise_by_id(mocked_session, non_existing_id)
+
+    mocked_get_exercise.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(

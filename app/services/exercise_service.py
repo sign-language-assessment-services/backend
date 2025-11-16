@@ -9,6 +9,7 @@ from app.core.models.question_type import QuestionType
 from app.repositories.exercises import add_exercise, get_exercise, list_exercises
 from app.repositories.multimedia_files import get_multimedia_file
 from app.repositories.multiple_choices import get_multiple_choice
+from app.services.exceptions.not_found import ExerciseNotFoundException
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,9 @@ class ExerciseService:
             "Trying to receive exercise %(_id)s with session id %(session_id)s.",
             {"_id": exercise_id, "session_id": id(session)}
         )
-        return get_exercise(session=session, _id=exercise_id)
+        if result := get_exercise(session=session, _id=exercise_id):
+            return result
+        raise ExerciseNotFoundException(f"Exercise with id '{exercise_id}' not found.")
 
     @staticmethod
     def list_exercises(session: Session) -> list[Exercise]:

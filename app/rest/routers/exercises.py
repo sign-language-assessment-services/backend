@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -62,11 +62,6 @@ async def get_exercise(
         session=db_session,
         exercise_id=exercise_id
     )
-    if not exercise:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The exercise id '{exercise_id}' was not found."
-        )
     return exercise
 
 

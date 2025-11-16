@@ -1,6 +1,10 @@
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
+
+import pytest
 
 from app.services import primer_service as primer_service_module
+from app.services.exceptions.not_found import PrimerNotFoundException
 from app.services.primer_service import PrimerService, add_primer, get_primer, list_primers
 from tests.data.models.multimedia_files import multimedia_file_choice_1
 from tests.data.models.primers import primer_1, primer_2
@@ -43,6 +47,23 @@ def test_get_primer_by_id(
     assert primer.id == primer_id
     assert primer.content == mocked_get_primer.return_value.content
     mocked_get_primer.assert_called_once_with(session=mocked_session, _id=primer_id)
+
+
+@patch.object(
+    primer_service_module, get_primer.__name__,
+    return_value=None
+)
+def test_get_non_existing_primer_by_id(
+        mocked_get_primer: MagicMock,
+        primer_service: PrimerService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    with pytest.raises(PrimerNotFoundException):
+        primer_service.get_primer_by_id(mocked_session, non_existing_id)
+
+    mocked_get_primer.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(

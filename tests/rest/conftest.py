@@ -23,6 +23,11 @@ from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionT
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.choice_service import ChoiceService
+from app.services.exceptions.not_found import (
+    AssessmentNotFoundException, AssessmentSubmissionNotFoundException, ChoiceNotFoundException,
+    ExerciseNotFoundException, ExerciseSubmissionNotFoundException, MultimediaFileNotFoundException,
+    MultipleChoiceNotFoundException, PrimerNotFoundException, TaskNotFoundException
+)
 from app.services.exercise_service import ExerciseService
 from app.services.exercise_submission_service import ExerciseSubmissionService
 from app.services.multimedia_file_service import MultimediaFileService
@@ -138,7 +143,7 @@ def test_client_not_found(app_dependency_overrides_no_data: FastAPI) -> TestClie
 
 
 @pytest.fixture
-def test_client_no_roles(app_dependency_overrides_no_data: FastAPI) -> TestClient:
+def test_client_no_roles(app_dependency_overrides_data: FastAPI) -> TestClient:
     app.dependency_overrides[get_current_user] = _get_override_current_user(User(id=test_taker_1.id, roles=[]))
     return TestClient(app)
 
@@ -176,6 +181,8 @@ def _get_override_assessment_service(
         assessment_service.create_assessment.return_value = create_return
         assessment_service.get_assessment_by_id.return_value = get_by_id_return
         assessment_service.list_assessments.return_value = list_return
+        if get_by_id_return is None:
+            assessment_service.get_assessment_by_id.side_effect = AssessmentNotFoundException()
         return assessment_service
 
     return override_assessment_service
@@ -193,6 +200,9 @@ def _get_override_assessment_submission_service(
         assessment_submission_service.get_assessment_submission_by_id.return_value = get_by_id_return
         assessment_submission_service.list_assessment_submissions.return_value = list_return
         assessment_submission_service.update_assessment_submission.return_value = update_submission
+        if get_by_id_return is None:
+            assessment_submission_service.get_assessment_submission_by_id.side_effect = \
+                AssessmentSubmissionNotFoundException()
         return assessment_submission_service
 
     return override_assessment_submission_service
@@ -208,6 +218,8 @@ def _get_override_choice_service(
         choice_service.create_choice.return_value = create_return
         choice_service.get_choice_by_id.return_value = get_by_id_return
         choice_service.list_choices.return_value = list_return
+        if get_by_id_return is None:
+            choice_service.get_choice_by_id.side_effect = ChoiceNotFoundException()
         return choice_service
 
     return override_choice_service
@@ -223,6 +235,8 @@ def _get_override_multiple_choice_service(
         multiple_choice_service.create_multiple_choice.return_value = create_return
         multiple_choice_service.get_multiple_choice_by_id.return_value = get_by_id_return
         multiple_choice_service.list_multiple_choices.return_value = list_return
+        if get_by_id_return is None:
+            multiple_choice_service.get_multiple_choice_by_id.side_effect = MultipleChoiceNotFoundException()
         return multiple_choice_service
 
     return override_choice_service
@@ -238,6 +252,8 @@ def _get_override_exercise_service(
         exercise_service.create_exercise.return_value = create_return
         exercise_service.get_exercise_by_id.return_value = get_by_id_return
         exercise_service.list_exercises.return_value = list_return
+        if get_by_id_return is None:
+            exercise_service.get_exercise_by_id.side_effect = ExerciseNotFoundException()
         return exercise_service
 
     return override_exercise_service
@@ -253,6 +269,8 @@ def _get_override_multimedia_file_service(
         multimedia_file_service.create_multimedia_file.return_value = create_return
         multimedia_file_service.get_multimedia_file_by_id.return_value = get_by_id_return
         multimedia_file_service.list_multimedia_files.return_value = list_return
+        if get_by_id_return is None:
+            multimedia_file_service.get_multimedia_file_by_id.side_effect = MultimediaFileNotFoundException()
         return multimedia_file_service
 
     return override_multimedia_file_service
@@ -279,6 +297,8 @@ def _get_override_primer_service(
         primer_service.create_primer.return_value = create_return
         primer_service.get_primer_by_id.return_value = get_by_id_return
         primer_service.list_primers.return_value = list_return
+        if get_by_id_return is None:
+            primer_service.get_primer_by_id.side_effect = PrimerNotFoundException()
         return primer_service
 
     return override_primer_service
@@ -290,6 +310,8 @@ def _get_override_task_service(
     async def override_task_service() -> Mock:
         task_service = Mock()
         task_service.get_task_by_id.side_effect = get_by_id_return
+        if get_by_id_return is None:
+            task_service.get_task_by_id.side_effect = TaskNotFoundException()
         return task_service
 
     return override_task_service
@@ -307,6 +329,8 @@ def _get_override_exercise_submission_service(
         submission_service.get_exercise_submission_by_id.return_value = get_by_id_return
         submission_service.list_exercise_submissions.return_value = list_return
         submission_service.upsert_exercise_submission.return_value = post_return
+        if get_by_id_return is None:
+            submission_service.get_exercise_submission_by_id.side_effect = ExerciseSubmissionNotFoundException()
         return submission_service
 
     return override_exercise_submission_service

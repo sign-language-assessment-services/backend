@@ -62,11 +62,6 @@ async def get_assessment_submission(
         session=db_session,
         submission_id=submission_id
     )
-    if not submission:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The assessment submission id '{submission_id}' was not found."
-        )
     return submission
 
 
@@ -119,15 +114,23 @@ async def update_assessment_submission(
         submission_service: Annotated[AssessmentSubmissionService, Depends()],
         db_session: Annotated[Session, Depends(get_db_session)]
 ):
-    submission = submission_service.get_assessment_submission_by_id(
+    logger.info("Update assessment submission requested.")
+    # TODO: The call to get the assessment submission beforehand checks
+    #       if a submission for this id exists and an exception is raised if
+    #       the assessment submission does not exist. This is not necessary.
+    #       Another way is to drill down to the database call and let an error
+    #       be raised if the assessment submission does not exist in the db.
+    #       (maybe there is already an error raised, but which error exactly?)
+    #       This can be reraised as AssessmentSubmissionNotFoundException in
+    #       the service layer, so that the global exception handler will
+    #       respond with 404. There is also the case that after the update the
+    #       assessment submission is requested again with the same id in the
+    #       underlying service layer. This should be replaced by the database
+    #       respond to the SQLAlchemy update execution.
+    submission_service.get_assessment_submission_by_id(
         session=db_session,
         submission_id=assessment_submission_id
-    )
-    if not submission:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The assessment submission id '{assessment_submission_id}' was not found."
-        )
+    )  # raises exception if assessment submission does not exist (replace me)
 
     update_dict = data.model_dump(exclude_unset=True, exclude_none=True)
     updated_submission = submission_service.update_assessment_submission(

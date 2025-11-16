@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -44,11 +44,6 @@ async def get_submission(
         session=db_session,
         submission_id=exercise_submission_id
     )
-    if not submission:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The exercise submission id '{exercise_submission_id}' was not found."
-        )
     return submission
 
 

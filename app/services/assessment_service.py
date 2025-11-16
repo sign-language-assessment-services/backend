@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.models.assessment import Assessment
 from app.repositories.assessments import add_assessment, get_assessment, list_assessments
+from app.services.exceptions.not_found import AssessmentNotFoundException
 from app.services.task_service import TaskService
 
 logger = logging.getLogger(__name__)
@@ -29,7 +30,9 @@ class AssessmentService:
 
     @staticmethod
     def get_assessment_by_id(session: Session, assessment_id: UUID) -> Assessment | None:
-        return get_assessment(session=session, _id=assessment_id)
+        if result := get_assessment(session=session, _id=assessment_id):
+            return result
+        raise AssessmentNotFoundException(f"Assessment with id '{assessment_id}' not found.")
 
     @staticmethod
     def list_assessments(session: Session) -> list[Assessment]:

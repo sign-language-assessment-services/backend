@@ -12,6 +12,7 @@ from app.external_services.minio.client import ObjectStorageClient
 from app.repositories.multimedia_files import (
     add_multimedia_file, get_multimedia_file, list_multimedia_files
 )
+from app.services.exceptions.not_found import MultimediaFileNotFoundException
 from app.settings import get_settings
 
 
@@ -47,11 +48,10 @@ class MultimediaFileService:
         return multimedia_file
 
     def get_multimedia_file_by_id(self, session: Session, multimedia_file_id: UUID) -> MultimediaFile | None:
-        multimedia_file = get_multimedia_file(session=session, _id=multimedia_file_id)
-        if multimedia_file is None:
-            return None
-        multimedia_file.url = self._get_multimedia_file_url(multimedia_file.location)
-        return multimedia_file
+        if result := get_multimedia_file(session=session, _id=multimedia_file_id):
+            result.url = self._get_multimedia_file_url(result.location)
+            return result
+        raise MultimediaFileNotFoundException(f"Multimedia file with id '{multimedia_file_id}' not found.")
 
     def list_multimedia_files(self, session: Session) -> list[MultimediaFile]:
         multimedia_files = list_multimedia_files(session=session)

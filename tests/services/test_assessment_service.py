@@ -1,9 +1,13 @@
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
+
+import pytest
 
 from app.services import assessment_service as assessment_service_module
 from app.services.assessment_service import (
     AssessmentService, add_assessment, get_assessment, list_assessments
 )
+from app.services.exceptions.not_found import AssessmentNotFoundException
 from app.services.task_service import TaskService
 from tests.data.models.assessments import assessment_1, assessment_2
 from tests.data.models.exercises import exercise_1
@@ -51,7 +55,6 @@ def test_create_assessment_with_tasks(
     )
 
 
-
 @patch.object(
     assessment_service_module, get_assessment.__name__,
     return_value=assessment_1
@@ -68,6 +71,23 @@ def test_get_assessment_by_id(
     assert assessment.id == assessment_id
     assert assessment.name == mocked_get_assessment.return_value.name
     mocked_get_assessment.assert_called_once_with(session=mocked_session, _id=assessment_id)
+
+
+@patch.object(
+    assessment_service_module, get_assessment.__name__,
+    return_value=None
+)
+def test_get_non_existing_assessment_by_id(
+        mocked_get_assessment: MagicMock,
+        assessment_service: AssessmentService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    with pytest.raises(AssessmentNotFoundException):
+        assessment_service.get_assessment_by_id(mocked_session, non_existing_id)
+
+    mocked_get_assessment.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(

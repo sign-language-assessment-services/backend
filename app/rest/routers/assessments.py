@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -57,11 +57,6 @@ async def get_assessment(
         session=db_session,
         assessment_id=assessment_id
     )
-    if not assessment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The assessment id '{assessment_id}' was not found."
-        )
     return assessment
 
 

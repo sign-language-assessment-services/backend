@@ -11,6 +11,7 @@ from app.repositories.exercise_submissions import (
     add_exercise_submission, get_exercise_submission, list_exercise_submissions,
     upsert_exercise_submission
 )
+from app.services.exceptions.not_found import ExerciseSubmissionNotFoundException
 from app.services.exercise_service import ExerciseService
 from app.services.scoring_service import ScoringService
 
@@ -62,7 +63,9 @@ class ExerciseSubmissionService:
             "Trying to receive exercise submission %(_id)s with session id %(session_id)s.",
             {"_id": submission_id, "session_id": id(session)}
         )
-        return get_exercise_submission(session=session, _id=submission_id)
+        if result := get_exercise_submission(session=session, _id=submission_id):
+            return result
+        raise ExerciseSubmissionNotFoundException(f"Exercise submission with id '{submission_id}' not found.")
 
     @staticmethod
     def list_exercise_submissions(

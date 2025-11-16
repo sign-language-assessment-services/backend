@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -52,11 +52,6 @@ async def get_primer(
         session=db_session,
         primer_id=primer_id
     )
-    if not primer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The primer id '{primer_id}' was not found."
-        )
     return primer
 
 

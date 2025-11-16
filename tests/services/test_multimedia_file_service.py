@@ -2,9 +2,12 @@ from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 from uuid import uuid4
 
+import pytest
+
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.services import multimedia_file_service as multimedia_file_service_module
+from app.services.exceptions.not_found import MultimediaFileNotFoundException
 from app.services.multimedia_file_service import (
     MultimediaFileService, add_multimedia_file, get_multimedia_file, list_multimedia_files
 )
@@ -77,9 +80,9 @@ def test_get_non_existing_multimedia_file_by_id(
     mocked_session = Mock()
     non_existing_id = uuid4()
 
-    result = multimedia_file_service.get_multimedia_file_by_id(mocked_session, non_existing_id)
+    with pytest.raises(MultimediaFileNotFoundException):
+        multimedia_file_service.get_multimedia_file_by_id(mocked_session, non_existing_id)
 
-    assert result is None
     mocked_get_multimedia_file.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.models.primer import Primer
 from app.repositories.primers import add_primer, get_primer, list_primers
+from app.services.exceptions.not_found import PrimerNotFoundException
 from app.services.multimedia_file_service import MultimediaFileService
 
 
@@ -27,7 +28,9 @@ class PrimerService:
 
     @staticmethod
     def get_primer_by_id(session: Session, primer_id: UUID) -> Primer | None:
-        return get_primer(session=session, _id=primer_id)
+        if result := get_primer(session=session, _id=primer_id):
+            return result
+        raise PrimerNotFoundException(f"Primer with id '{primer_id}' not found.")
 
     @staticmethod
     def list_primers(session: Session) -> list[Primer]:

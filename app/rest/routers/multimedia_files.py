@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -54,11 +54,6 @@ async def get_multimedia_file(
         session=db_session,
         multimedia_file_id=multimedia_file_id
     )
-    if not multimedia_file:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The multimedia file id '{multimedia_file_id}' was not found."
-        )
     return multimedia_file
 
 

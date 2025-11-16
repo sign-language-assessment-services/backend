@@ -1,7 +1,11 @@
 from copy import deepcopy
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
+
+import pytest
 
 from app.services import exercise_submission_service as exercise_submission_service_module
+from app.services.exceptions.not_found import ExerciseSubmissionNotFoundException
 from app.services.exercise_submission_service import (
     ExerciseSubmissionService, add_exercise_submission, get_exercise_submission,
     list_exercise_submissions, upsert_exercise_submission
@@ -75,6 +79,23 @@ def test_get_exercise_submission_by_id(
 
     assert submission == mocked_get_submission.return_value
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
+
+
+@patch.object(
+    exercise_submission_service_module, get_exercise_submission.__name__,
+    return_value=None
+)
+def test_get_non_existing_exercise_submission_by_id(
+        mocked_get_exercise_submission: MagicMock,
+        exercise_submission_service: ExerciseSubmissionService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    with pytest.raises(ExerciseSubmissionNotFoundException):
+        exercise_submission_service.get_exercise_submission_by_id(mocked_session, non_existing_id)
+
+    mocked_get_exercise_submission.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(

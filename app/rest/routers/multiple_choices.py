@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.models.role import UserRole
@@ -55,11 +55,6 @@ async def get_multiple_choice(
         session=db_session,
         multiple_choice_id=multiple_choice_id
     )
-    if not multiple_choice:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The multiple_choice id '{multiple_choice_id}' was not found."
-        )
     return multiple_choice
 
 

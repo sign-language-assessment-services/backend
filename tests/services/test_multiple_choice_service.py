@@ -1,6 +1,10 @@
 from unittest.mock import MagicMock, Mock, patch
+from uuid import uuid4
+
+import pytest
 
 from app.services import multiple_choice_service as multiple_choice_service_module
+from app.services.exceptions.not_found import MultipleChoiceNotFoundException
 from app.services.multiple_choice_service import (
     MultipleChoiceService, add_multiple_choice, get_multiple_choice, list_multiple_choices
 )
@@ -64,6 +68,23 @@ def test_get_multiple_choice_by_id(
     mocked_get_multiple_choice.assert_called_once_with(session=mocked_session, _id=multiple_choice_id)
     assert multiple_choice.id == multiple_choice_id
     assert multiple_choice.choices == mocked_get_multiple_choice.return_value.choices
+
+
+@patch.object(
+    multiple_choice_service_module, get_multiple_choice.__name__,
+    return_value=None
+)
+def test_get_non_existing_multiple_choice_by_id(
+        mocked_get_multiple_choice: MagicMock,
+        multiple_choice_service: MultipleChoiceService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    with pytest.raises(MultipleChoiceNotFoundException):
+        multiple_choice_service.get_multiple_choice_by_id(mocked_session, non_existing_id)
+
+    mocked_get_multiple_choice.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @patch.object(

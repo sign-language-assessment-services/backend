@@ -1,6 +1,6 @@
 from datetime import datetime
 from unittest.mock import ANY, MagicMock, Mock, patch
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -55,6 +55,26 @@ def test_get_assessment_submission_by_id(
 
     assert submission == mocked_get_submission.return_value
     mocked_get_submission.assert_called_once_with(session=mocked_session, _id=submission_id)
+
+
+@patch.object(
+    assessment_submission_service_module, get_assessment_submission.__name__,
+    return_value=None
+)
+def test_get_non_existing_assessment_submission_by_id(
+        mocked_get_assessment_submission: MagicMock,
+        assessment_submission_service: AssessmentSubmissionService
+) -> None:
+    mocked_session = Mock()
+    non_existing_id = uuid4()
+
+    from app.services.exceptions.not_found import AssessmentSubmissionNotFoundException
+    with pytest.raises(AssessmentSubmissionNotFoundException):
+        assessment_submission_service.get_assessment_submission_by_id(
+            session=mocked_session, submission_id=non_existing_id
+        )
+
+    mocked_get_assessment_submission.assert_called_once_with(session=mocked_session, _id=non_existing_id)
 
 
 @pytest.mark.parametrize(

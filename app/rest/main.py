@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.responses import ORJSONResponse
 
 from app.database.orm import import_tables
@@ -11,6 +11,7 @@ from app.rest.routers import (
     assessment_submissions, assessments, choices, exercise_submissions, exercises, multimedia_files,
     multiple_choices, primers, root
 )
+from app.services.exceptions.not_found import NotFoundException
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -47,5 +48,18 @@ def create_app() -> FastAPI:
     app.include_router(multimedia_files.router)
     app.include_router(assessment_submissions.router)
     app.include_router(exercise_submissions.router)
-    logger.info("Finished adding routers.")
+
+    logger.info("Register global exception handler.")
+    app.add_exception_handler(NotFoundException, not_found_exception_handler)
+
+    logger.info("FastAPI app successfully created.")
     return app
+
+
+async def not_found_exception_handler(_, exc: NotFoundException):
+    detail = str(exc) if str(exc) else "Resource not found."
+
+    return ORJSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": detail},
+    )

@@ -10,6 +10,7 @@ from app.repositories.multiple_choices import (
     add_multiple_choice, get_multiple_choice, list_multiple_choices
 )
 from app.services.choice_service import ChoiceService
+from app.services.exceptions.not_found import MultipleChoiceNotFoundException
 
 
 class MultipleChoiceService:
@@ -44,7 +45,9 @@ class MultipleChoiceService:
 
     @staticmethod
     def get_multiple_choice_by_id(session: Session, multiple_choice_id: UUID) -> MultipleChoice | None:
-        return get_multiple_choice(session=session, _id=multiple_choice_id)
+        if result := get_multiple_choice(session=session, _id=multiple_choice_id):
+            return result
+        raise MultipleChoiceNotFoundException(f"Multiple choice with id '{multiple_choice_id}' not found.")
 
     @staticmethod
     def list_multiple_choices(session: Session) -> list[MultipleChoice]:

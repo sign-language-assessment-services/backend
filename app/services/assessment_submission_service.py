@@ -11,6 +11,7 @@ from app.repositories.assessment_submissions import (
 )
 from app.repositories.exercise_submissions import get_exercise_submissions_for_assessment_submission
 from app.rest.filters.assessment_submissions import AssessmentSubmissionPick
+from app.services.exceptions.not_found import AssessmentSubmissionNotFoundException
 
 
 class AssessmentSubmissionService:
@@ -22,7 +23,9 @@ class AssessmentSubmissionService:
 
     @staticmethod
     def get_assessment_submission_by_id(session: Session, submission_id: UUID) -> AssessmentSubmission:
-        return get_assessment_submission(session=session, _id=submission_id)
+        if result := get_assessment_submission(session=session, _id=submission_id):
+            return result
+        raise AssessmentSubmissionNotFoundException(f"Assessment submission with id '{submission_id}' not found.")
 
     @staticmethod
     def list_assessment_submissions(
