@@ -17,7 +17,10 @@ from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
 from app.services.scoring_service import ScoringService
 from app.services.task_service import TaskService
+from tests.database.conftest import db_engine, db_session
 
+# used for checking that assessment can be created with real linked tasks in database
+_ = db_session, db_engine
 
 @pytest.fixture
 def storage_files() -> list[MultimediaFile]:
