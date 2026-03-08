@@ -3,6 +3,8 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
+from app.core.models.exercise_submission import ExerciseSubmission
+
 
 class AssessmentSubmission(BaseModel):
     id: UUID = Field(default_factory=uuid4)
@@ -14,3 +16,5 @@ class AssessmentSubmission(BaseModel):
     score: float | None = None
     finished: bool = Field(default=False)
     finished_at: datetime | None = None
+
+    exercise_submissions: list[ExerciseSubmission] = Field(default_factory=list)

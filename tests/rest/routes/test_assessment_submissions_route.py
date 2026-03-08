@@ -3,9 +3,11 @@ from unittest.mock import ANY
 from fastapi import status
 from fastapi.testclient import TestClient
 
+from tests.data.models.assessment_results import exercise_score_1, exercise_score_2
 from tests.data.models.assessment_submissions import (
     assessment_submission_1, assessment_submission_2
 )
+from tests.data.models.assessments import assessment_1
 from tests.data.models.users import test_scorer_1, test_taker_1, test_taker_2
 
 
@@ -27,11 +29,53 @@ def test_get_assessment_submission(test_client: TestClient) -> None:
         "id": str(submission_id),
         "user_id": str(test_taker_1.id),
         "assessment_id": str(assessment_submission_1.assessment_id),
-        "score": None,
-        "finished": False,
-        "finished_at": None
+        "score": 1.0,
+        "finished": True,
+        "finished_at": ANY,
     }
 
+
+def test_get_assessment_result(test_client_with_scorer_role: TestClient) -> None:
+    assessment_id = assessment_1.id
+
+    response = test_client_with_scorer_role.get(f"/assessments/{assessment_id}/results",).json()
+
+    assert response == {
+        "submissions": [
+            {
+                "assessment_submission_id": str(assessment_submission_1.id),
+                "exercise_scores": [
+                    {
+                        "exercise_id": str(exercise_score_1.exercise_id),
+                        "score": exercise_score_1.score
+                    },
+                    {
+                        "exercise_id": str(exercise_score_2.exercise_id),
+                        "score": exercise_score_2.score
+                    }
+                ],
+                "finished_at": assessment_submission_1.finished_at.isoformat().replace("+00:00", "Z"),
+                "total_score": 1.0,
+                "user_id": str(test_taker_1.id)
+            },
+            {
+                "assessment_submission_id": str(assessment_submission_2.id),
+                "exercise_scores": [
+                    {
+                        "exercise_id": str(exercise_score_1.exercise_id),
+                        "score": exercise_score_1.score
+                    },
+                    {
+                        "exercise_id": str(exercise_score_2.exercise_id),
+                        "score": exercise_score_2.score
+                    }
+                ],
+                "finished_at": assessment_submission_2.finished_at.isoformat().replace("+00:00", "Z"),
+                "total_score": 1.0,
+                "user_id": str(test_taker_1.id)
+            }
+        ]
+    }
 
 def test_list_assessment_submissions(test_client: TestClient) -> None:
     response = test_client.get("/assessment_submissions/").json()

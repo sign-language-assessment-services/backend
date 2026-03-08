@@ -2,6 +2,7 @@ import logging
 
 from app.core.models.assessment_submission import AssessmentSubmission
 from app.database.tables.assessment_submissions import DbAssessmentSubmission
+from app.mappers.exercise_submission_mapper import exercise_submission_to_domain
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +13,14 @@ def assessment_submission_to_domain(db_submission: DbAssessmentSubmission) -> As
         id=db_submission.id,
         created_at=db_submission.created_at,
         user_id=db_submission.user_id,
+        assessment_id=db_submission.assessment_id,
         score=db_submission.score,
         finished=db_submission.finished,
         finished_at=db_submission.finished_at,
-        assessment_id=db_submission.assessment_id
+        exercise_submissions=[
+            exercise_submission_to_domain(r)
+            for r in db_submission.exercise_submissions
+        ]
     )
     return assessment_submission
 

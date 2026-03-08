@@ -12,10 +12,12 @@ from app.external_services.keycloak.auth_bearer import JWTBearer
 from app.rest.dependencies import get_current_user, require_roles
 from app.rest.filters.assessment_submissions import AssessmentSubmissionFilter
 from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionToFinishedRequest
+from app.rest.responses.assessment_results import AssessmentResultResponse
 from app.rest.responses.assessment_submissions import (
     CreateAssessmentSubmissionResponse, GetAssessmentSubmissionResponse,
     ListAssessmentSubmissionResponse, UpdateAssessmentSubmissionToFinishedResponse
 )
+from app.services.assessment_result_service import AssessmentResultService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 
 logger = logging.getLogger(__name__)
@@ -63,6 +65,25 @@ async def get_assessment_submission(
         submission_id=submission_id
     )
     return submission
+
+
+@router.get(
+    "/assessments/{assessment_id}/results",
+    response_model=AssessmentResultResponse,
+    status_code=status.HTTP_200_OK,
+    dependencies=[
+        Depends(require_roles([UserRole.TEST_SCORER]))
+    ],
+)
+async def get_assessment_results(
+        assessment_id: UUID,
+        assessment_result_service: Annotated[AssessmentResultService, Depends()],
+        db_session: Annotated[Session, Depends(get_db_session)]
+):
+    return assessment_result_service.get_assessment_result(
+        session=db_session,
+        assessment_id=assessment_id
+    )
 
 
 @router.get(
