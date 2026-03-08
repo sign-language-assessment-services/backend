@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from pydantic_settings import BaseSettings
 
 from app.core.models.assessment import Assessment
+from app.core.models.assessment_result import AssessmentResult
 from app.core.models.assessment_submission import AssessmentSubmission
 from app.core.models.choice import Choice
 from app.core.models.exercise import Exercise
@@ -20,6 +21,7 @@ from app.external_services.minio.client import ObjectStorageClient
 from app.main import app
 from app.rest.dependencies import get_current_user
 from app.rest.requests.assessment_submissions import UpdateAssessmentSubmissionToFinishedRequest
+from app.services.assessment_result_service import AssessmentResultService
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.choice_service import ChoiceService
@@ -35,6 +37,7 @@ from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
 from app.services.task_service import TaskService
 from app.settings import get_settings
+from tests.data.models.assessment_results import assessment_result_1
 from tests.data.models.assessment_submissions import (
     assessment_submission_1, assessment_submission_1_updated, assessment_submission_2
 )
@@ -68,6 +71,9 @@ def app_dependency_overrides_data() -> FastAPI:
         get_by_id_return=assessment_submission_1,
         update_submission=assessment_submission_1_updated,
         list_return=[assessment_submission_1, assessment_submission_2]
+    )
+    app.dependency_overrides[AssessmentResultService] = _get_override_assessment_result_service(
+        get_by_id_return=assessment_result_1
     )
     app.dependency_overrides[ChoiceService] = _get_override_choice_service(
         create_return=choice_1,
@@ -206,6 +212,17 @@ def _get_override_assessment_submission_service(
         return assessment_submission_service
 
     return override_assessment_submission_service
+
+
+def _get_override_assessment_result_service(
+        get_by_id_return: AssessmentResult | None = None,
+) -> Callable:
+    async def override_assessment_result_service() -> Mock:
+        assessment_result_service = Mock()
+        assessment_result_service.get_assessment_result.return_value = get_by_id_return
+        return assessment_result_service
+
+    return override_assessment_result_service
 
 
 def _get_override_choice_service(

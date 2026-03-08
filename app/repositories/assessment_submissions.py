@@ -73,6 +73,34 @@ def list_assessment_submissions(
     return [assessment_submission_to_domain(r) for r in result]
 
 
+def list_finished_assessment_submissions_for_assessment(
+        session: Session,
+        assessment_id: UUID,
+) -> list[AssessmentSubmission]:
+    logger.debug(
+        "Requesting assessment submissions for assessment %(assessment_id)s with session id %(session_id)s.",
+        {"assessment_id": assessment_id, "session_id": id(session)}
+    )
+
+    filter_conditions = {
+        DbAssessmentSubmission.assessment_id: assessment_id,
+        DbAssessmentSubmission.finished: True,
+    }
+
+    logger.debug(
+        "Used filter conditions: %(filter_conditions)s",
+        {"filter_conditions": filter_conditions}
+    )
+
+    result = get_all(
+        session=session,
+        _class=DbAssessmentSubmission,
+        filters=filter_conditions,
+        order_by=[DbAssessmentSubmission.created_at.desc()]
+    )
+    return [assessment_submission_to_domain(r) for r in result]
+
+
 def update_assessment_submission(session: Session, _id: UUID, **kwargs: Any) -> None:
     logger.debug(
         "Requesting update assessment submission %(_id)s with session id %(session_id)s.",

@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multiple_choice_answer import MultipleChoiceAnswer
 from app.database.exceptions import EntryNotFoundError
-from app.database.tables.assessment_submissions import DbAssessmentSubmission
 from app.database.tables.exercise_submissions import DbExerciseSubmission
 from app.repositories.exercise_submissions import (
     add_exercise_submission, delete_exercise_submission, get_exercise_submission,

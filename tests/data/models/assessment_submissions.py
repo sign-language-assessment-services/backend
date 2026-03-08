@@ -9,14 +9,18 @@ assessment_submission_1 = AssessmentSubmission(
     id=uuid4(),
     assessment_id=assessment_1.id,
     user_id=test_taker_1.id,
-    score=None
+    score=1,
+    finished=True,
+    finished_at=assessment_1.created_at + timedelta(minutes=20)
 )
 
 assessment_submission_2 = AssessmentSubmission(
     id=uuid4(),
     assessment_id=assessment_2.id,
     user_id=test_taker_1.id,
-    score=None
+    score=0,
+    finished=True,
+    finished_at=assessment_2.created_at + timedelta(minutes=30)
 )
 
 assessment_submission_1_updated = AssessmentSubmission(

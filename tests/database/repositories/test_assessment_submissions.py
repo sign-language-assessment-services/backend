@@ -10,7 +10,8 @@ from app.database.exceptions import EntryNotFoundError
 from app.database.tables.assessment_submissions import DbAssessmentSubmission
 from app.repositories.assessment_submissions import (
     add_assessment_submission, delete_assessment_submission, get_assessment_submission,
-    list_assessment_submissions, update_assessment_submission
+    list_assessment_submissions, list_finished_assessment_submissions_for_assessment,
+    update_assessment_submission
 )
 from tests.data.models.users import test_taker_1, test_taker_2
 from tests.database.data_inserts import insert_assessment, insert_assessment_submission
@@ -79,6 +80,22 @@ def test_list_multiple_assessment_submissions(db_session: Session) -> None:
 
     assert len(result) == 100
     assert table_count(db_session, DbAssessmentSubmission) == 100
+
+
+def test_list_finished_assessment_submissions_for_assessment(db_session: Session) -> None:
+    assessment_id = insert_assessment(session=db_session).get("id")
+    for n in range(10):
+        insert_assessment_submission(
+            session=db_session,
+            assessment_id=assessment_id,
+            finished_at=datetime(2000, 1, 1, 12, tzinfo=UTC) + timedelta(hours=n),
+            finished=True if n % 2 == 0 else False
+        )
+
+    result = list_finished_assessment_submissions_for_assessment(session=db_session, assessment_id=assessment_id)
+
+    assert len(result) == 5
+    assert table_count(db_session, DbAssessmentSubmission) == 10
 
 
 def test_list_assessment_submissions_with_filter(db_session: Session) -> None:

@@ -7,6 +7,7 @@ from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
 from app.external_services.minio.client import ObjectStorageClient
+from app.services.assessment_result_service import AssessmentResultService
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.choice_service import ChoiceService
@@ -108,6 +109,11 @@ def exercise_submission_service(exercise_service: ExerciseService) -> ExerciseSu
 @pytest.fixture
 def assessment_submission_service() -> AssessmentSubmissionService:
     return AssessmentSubmissionService()
+
+
+@pytest.fixture
+def assessment_result_service() -> AssessmentResultService:
+    return AssessmentResultService()
 
 
 @pytest.fixture
