@@ -3,7 +3,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Iterator, Type, TypeAlias, TypeVar
 from uuid import UUID
 
-from sqlalchemy import ColumnElement, func, inspect, select, update
+from sqlalchemy import ColumnElement, func, inspect, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import InstrumentedAttribute, Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -73,14 +73,23 @@ def get_all(
     return session.execute(query).scalars()
 
 
-def update_entry(session: Session, _class: Type[T], _id: UUID, commit: bool = True, **kwargs) -> None:
+def update_entry(session: Session, _class: Type[T], _id: UUID, commit: bool = True, **kwargs) -> T:
     logger.debug(
         "Using generic database request to update %(_id)s from %(_class)s with session id %(session_id)s.",
         {"_id": _id, "_class": _class.__name__, "session_id": id(session)}
     )
-    session.execute(update(_class).where(_class.id == _id).values(**kwargs))
+    db_obj = get_by_id(session, _class, _id)
+    if db_obj is None:
+        raise EntryNotFoundError(
+            f"Table '{_class.__tablename__}' has no entry with id '{_id}'."
+        )
+    for key, value in kwargs.items():
+        setattr(db_obj, key, value)
+
     if commit:
         session.commit()
+        session.refresh(db_obj)
+    return db_obj
 
 
 def upsert_entry(
