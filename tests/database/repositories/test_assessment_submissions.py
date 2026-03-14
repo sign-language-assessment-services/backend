@@ -216,6 +216,13 @@ def test_update_assessment_submission(db_session: Session) -> None:
     assert table_count(db_session, DbAssessmentSubmission) == 1
 
 
+def test_update_non_existing_assessment_submission(db_session: Session) -> None:
+    with pytest.raises(EntryNotFoundError, match=r"has no entry with id"):
+        update_assessment_submission(session=db_session, _id=uuid4(), **{"score": 1})
+
+    assert table_count(db_session, DbAssessmentSubmission) == 0
+
+
 def test_delete_assessment_submission(db_session: Session) -> None:
     assessment = insert_assessment(session=db_session)
     assessment_submission = insert_assessment_submission(
