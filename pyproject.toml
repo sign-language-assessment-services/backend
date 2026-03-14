@@ -14,7 +14,7 @@ sqlalchemy = "^2.0"
 psycopg2-binary = "^2.9"
 alembic = "^1.17"
 pydantic-settings = "^2.12"
-pyjwt = {version = "^2.10", extras = ["crypto"]}
+pyjwt = {version = "^2.12", extras = ["crypto"]}
 python-multipart = "^0.0"
 requests = "^2.32"
 slowapi = "^0.1"
