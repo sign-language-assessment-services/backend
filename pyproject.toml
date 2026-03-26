@@ -16,7 +16,7 @@ alembic = "^1.17"
 pydantic-settings = "^2.12"
 pyjwt = {version = "^2.10", extras = ["crypto"]}
 python-multipart = "^0.0"
-requests = "^2.32"
+requests = "^2.33"
 slowapi = "^0.1"
 
 [tool.poetry.group.dev.dependencies]
