@@ -1,7 +1,7 @@
 import logging
 
 from fastapi import FastAPI, status
-from fastapi.responses import ORJSONResponse
+from fastapi.responses import JSONResponse
 
 from app.database.orm import import_tables
 from app.docs.openapi_description import DESCRIPTION
@@ -33,7 +33,7 @@ def create_app() -> FastAPI:
             "name": "Sign Language Assessment Services GmbH",
             "email": "tbd@not-yet-available.zzz"
         },
-        default_response_class=ORJSONResponse
+        default_response_class=JSONResponse
     )
     logger.info("Importing tables.")
     import_tables()
@@ -59,7 +59,7 @@ def create_app() -> FastAPI:
 async def not_found_exception_handler(_, exc: NotFoundException):
     detail = str(exc) if str(exc) else "Resource not found."
 
-    return ORJSONResponse(
+    return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
         content={"detail": detail},
     )
