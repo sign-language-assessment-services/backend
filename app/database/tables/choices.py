@@ -32,5 +32,5 @@ class DbChoice(DbBase):
         back_populates="choice",
         cascade="all, delete-orphan",
         passive_deletes=True,
-        lazy="select"
+        lazy="selectin"
     )
