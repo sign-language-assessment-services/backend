@@ -39,7 +39,7 @@ class DbAssessmentSubmission(DbBase):
     # ------------------------------------------------------------------------
     assessment: Mapped["DbAssessment"] = relationship(
         back_populates="assessment_submissions",
-        lazy="selectin"
+        lazy="select"
     )
     exercise_submissions: Mapped[list["DbExerciseSubmission"]] = relationship(
         back_populates="assessment_submission",

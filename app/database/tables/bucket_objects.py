@@ -27,15 +27,15 @@ class DbBucketObjects(DbBase):
     # ------------------------------------------------------------------------
     choices: Mapped[list["DbChoice"]] = relationship(
         back_populates="bucket_object",
-        lazy="selectin"
+        lazy="select"
     )
     exercises: Mapped[list["DbExercise"]] = relationship(
         back_populates="bucket_object",
-        lazy="selectin"
+        lazy="select"
     )
     primers: Mapped[list["DbPrimer"]] = relationship(
         back_populates="bucket_object",
-        lazy="selectin"
+        lazy="select"
     )
 
     # CONSTRAINTS

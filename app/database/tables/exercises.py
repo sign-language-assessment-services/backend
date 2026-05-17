@@ -43,7 +43,7 @@ class DbExercise(DbTask):
     )
     exercise_submissions: Mapped[list["DbExerciseSubmission"]] = relationship(
         back_populates="exercise",
-        lazy="selectin"
+        lazy="select"
     )
 
     # CONFIGURATION

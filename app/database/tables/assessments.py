@@ -29,7 +29,7 @@ class DbAssessment(DbBase):
     # ------------------------------------------------------------------------
     assessment_submissions: Mapped[list["DbAssessmentSubmission"]] = relationship(
         back_populates="assessment",
-        lazy="selectin"
+        lazy="select"
     )
     tasks: Mapped[list["DbTask"]] = relationship(
         secondary="assessments_tasks",
@@ -39,5 +39,5 @@ class DbAssessment(DbBase):
     tasks_link: Mapped[list["DbAssessmentsTasks"]] = relationship(
         back_populates="assessment",
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="select"
     )
