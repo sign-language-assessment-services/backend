@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+TESTENV_PATH = str(Path(__file__).parent.parent / ".testenv")
 
 
 class TestSettings(BaseSettings):
@@ -13,6 +17,8 @@ class TestSettings(BaseSettings):
     api_audience: str = "backend"
     issuer: str = "http://localhost:9000/auth/realms/slas"
     jwks_url: str = "http://localhost:9000/auth/realms/slas/protocol/openid-connect/certs"
+    keycloak_server_url: str = "http://localhost:9000/auth/"
+    keycloak_realm: str = "slas"
     token_endpoint: str = "http://localhost:9000/auth/realms/slas/protocol/openid-connect/token"
 
     # Keycloak credentials
@@ -48,4 +54,4 @@ class TestSettings(BaseSettings):
     db_autoflush: bool = False
 
     # Overwrite test settings with .testenv file in root folder
-    model_config = SettingsConfigDict(env_file=".testenv")
+    model_config = SettingsConfigDict(env_file=TESTENV_PATH)

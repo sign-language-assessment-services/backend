@@ -9,8 +9,9 @@ from app.docs.openapi_summary import SUMMARY
 from app.log.config.setup_logging import setup_logging
 from app.rest.routers import (
     assessment_submissions, assessments, choices, exercise_submissions, exercises, multimedia_files,
-    multiple_choices, primers, root
+    multiple_choices, primers, root, users
 )
+from app.services.exceptions.external_service import ExternalServiceException
 from app.services.exceptions.not_found import NotFoundException
 
 setup_logging()
@@ -48,18 +49,29 @@ def create_app() -> FastAPI:
     app.include_router(multimedia_files.router)
     app.include_router(assessment_submissions.router)
     app.include_router(exercise_submissions.router)
+    app.include_router(users.router)
 
-    logger.info("Register global exception handler.")
+    logger.info("Register global exception handlers.")
     app.add_exception_handler(NotFoundException, not_found_exception_handler)
+    app.add_exception_handler(ExternalServiceException, external_service_exception_handler)
 
     logger.info("FastAPI app successfully created.")
     return app
 
 
-async def not_found_exception_handler(_, exc: NotFoundException):
+async def not_found_exception_handler(_, exc: NotFoundException) -> JSONResponse:
     detail = str(exc) if str(exc) else "Resource not found."
 
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": detail},
+    )
+
+
+async def external_service_exception_handler(_, exc: ExternalServiceException) -> JSONResponse:
+    detail = str(exc) if str(exc) else "External service error."
+
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={"detail": detail},
     )

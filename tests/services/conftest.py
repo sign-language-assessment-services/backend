@@ -1,4 +1,5 @@
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock, create_autospec
+from uuid import UUID
 
 import pytest
 from minio.datatypes import Object as MinioObject
@@ -6,6 +7,7 @@ from minio.datatypes import Object as MinioObject
 from app.core.models.media_types import MediaType
 from app.core.models.minio_location import MinioLocation
 from app.core.models.multimedia_file import MultimediaFile
+from app.external_services.keycloak.client import IdentityProviderClient
 from app.external_services.minio.client import ObjectStorageClient
 from app.services.assessment_result_service import AssessmentResultService
 from app.services.assessment_service import AssessmentService
@@ -18,6 +20,7 @@ from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
 from app.services.scoring_service import ScoringService
 from app.services.task_service import TaskService
+from app.services.user_service import UserService
 from tests.database.conftest import db_engine, db_session
 
 # used for checking that assessment can be created with real linked tasks in database
@@ -142,3 +145,18 @@ def minio_data() -> list[MinioObject]:
             metadata={"content-type": "VIDEO"}
         )
     ]
+
+
+@pytest.fixture
+def mock_identity_provider_client() -> AsyncMock:
+    return create_autospec(IdentityProviderClient, instance=True)
+
+
+@pytest.fixture
+def user_service(mock_identity_provider_client: AsyncMock) -> UserService:
+    return UserService(identity_provider_client=mock_identity_provider_client)
+
+
+@pytest.fixture
+def test_user_id() -> UUID:
+    return UUID("12345678-1234-5678-1234-567812345678")

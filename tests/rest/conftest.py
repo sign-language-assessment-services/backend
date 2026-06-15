@@ -1,5 +1,5 @@
 from typing import Callable
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from fastapi import FastAPI
@@ -15,7 +15,7 @@ from app.core.models.exercise_submission import ExerciseSubmission
 from app.core.models.multimedia_file import MultimediaFile
 from app.core.models.multiple_choice import MultipleChoice
 from app.core.models.primer import Primer
-from app.core.models.user import User
+from app.core.models.user import User, UserInfo
 from app.database.orm import get_db_session
 from app.external_services.minio.client import ObjectStorageClient
 from app.main import app
@@ -25,6 +25,7 @@ from app.services.assessment_result_service import AssessmentResultService
 from app.services.assessment_service import AssessmentService
 from app.services.assessment_submission_service import AssessmentSubmissionService
 from app.services.choice_service import ChoiceService
+from app.services.exceptions.external_service import IdentityProviderUnavailableException
 from app.services.exceptions.not_found import (
     AssessmentNotFoundException, AssessmentSubmissionNotFoundException, ChoiceNotFoundException,
     ExerciseNotFoundException, ExerciseSubmissionNotFoundException, MultimediaFileNotFoundException,
@@ -36,6 +37,7 @@ from app.services.multimedia_file_service import MultimediaFileService
 from app.services.multiple_choice_service import MultipleChoiceService
 from app.services.primer_service import PrimerService
 from app.services.task_service import TaskService
+from app.services.user_service import UserService
 from app.settings import get_settings
 from tests.data.models.assessment_results import assessment_result_1
 from tests.data.models.assessment_submissions import (
@@ -115,6 +117,10 @@ def app_dependency_overrides_data() -> FastAPI:
     app.dependency_overrides[TaskService] = _get_override_task_service(
         get_by_id_return=[primer_1, exercise_1]
     )
+    app.dependency_overrides[UserService] = _get_override_user_service(
+        get_user_info_return=UserInfo(first_name="John", last_name="Doe"),
+        list_users_return=[test_scorer_1, test_taker_1]
+    )
     return app
 
 
@@ -129,6 +135,7 @@ def app_dependency_overrides_no_data(app_dependency_overrides_data: FastAPI) -> 
     app.dependency_overrides[ObjectStorageClient] = _get_override_object_storage_client()
     app.dependency_overrides[PrimerService] = _get_override_primer_service()
     app.dependency_overrides[ExerciseSubmissionService] = _get_override_exercise_submission_service()
+    app.dependency_overrides[UserService] = _get_override_user_service()
     return app
 
 
@@ -151,6 +158,15 @@ def test_client_not_found(app_dependency_overrides_no_data: FastAPI) -> TestClie
 @pytest.fixture
 def test_client_no_roles(app_dependency_overrides_data: FastAPI) -> TestClient:
     app.dependency_overrides[get_current_user] = _get_override_current_user(User(id=test_taker_1.id, roles=[]))
+    return TestClient(app)
+
+
+@pytest.fixture
+def test_client_with_user_service_unavailable(app_dependency_overrides_data: FastAPI) -> TestClient:
+    app.dependency_overrides[get_current_user] = _get_override_current_user(test_scorer_1)
+    app.dependency_overrides[UserService] = _get_override_user_service(
+        side_effect=IdentityProviderUnavailableException("Identity provider is currently unavailable.")
+    )
     return TestClient(app)
 
 
@@ -351,3 +367,20 @@ def _get_override_exercise_submission_service(
         return submission_service
 
     return override_exercise_submission_service
+
+
+def _get_override_user_service(
+        get_user_info_return: UserInfo | None = None,
+        list_users_return: list[User] | None = None,
+        side_effect: Exception | None = None,
+) -> Callable:
+    async def override_user_service() -> AsyncMock:
+        user_service = AsyncMock()
+        if side_effect:
+            user_service.get_user_info_by_id.side_effect = side_effect
+            user_service.list_users.side_effect = side_effect
+        else:
+            user_service.get_user_info_by_id.return_value = get_user_info_return
+            user_service.list_users.return_value = list_users_return or []
+        return user_service
+    return override_user_service

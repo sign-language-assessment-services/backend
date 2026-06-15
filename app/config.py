@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ENV_PATH = str(Path(__file__).parent.parent / ".env")
 
 
 class Settings(BaseSettings):
@@ -7,11 +11,15 @@ class Settings(BaseSettings):
     auth_enabled: bool = True
 
     # Keycloak config
+    keycloak_server_url: str = "http://localhost:9000/auth/"
+    keycloak_realm: str = "slas"
     algorithms: list[str] = Field(default_factory=lambda: ["RS256"])
     api_audience: str = "backend"
-    issuer: str = "http://localhost:9000/auth/realms/slas"
-    jwks_url: str = "http://localhost:9000/auth/realms/slas/protocol/openid-connect/certs"
-    token_endpoint: str = "http://localhost:9000/auth/realms/slas/protocol/openid-connect/token"
+    keycloak_realm_url: str = f"{keycloak_server_url}{keycloak_realm}"
+    issuer: str = f"{keycloak_realm_url}"
+    keycloak_open_connect_url: str = f"{keycloak_realm_url}/protocol/openid-connect"
+    jwks_url: str = f"{keycloak_open_connect_url}/certs"
+    token_endpoint: str = f"{keycloak_open_connect_url}/token"
 
     # Keycloak credentials
     client_id: str
@@ -46,4 +54,4 @@ class Settings(BaseSettings):
     db_autoflush: bool = False
 
     # Environment variables from .env file in root folder
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=ENV_PATH)

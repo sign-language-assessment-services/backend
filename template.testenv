@@ -1,0 +1,7 @@
+# This is a template file for all required environment variables
+# which are used by tests (most can be hardcoded, but not for
+# integration tests, which requires real external instances)
+
+# Keycloak credentials
+CLIENT_ID=
+CLIENT_SECRET=

@@ -38,3 +38,7 @@ class PrimerNotFoundException(NotFoundException):
 
 class TaskNotFoundException(NotFoundException):
     pass
+
+
+class UserNotFoundException(NotFoundException):
+    pass
