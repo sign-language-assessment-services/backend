@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI, status
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from app.database.orm import import_tables
@@ -55,8 +56,45 @@ def create_app() -> FastAPI:
     app.add_exception_handler(NotFoundException, not_found_exception_handler)
     app.add_exception_handler(ExternalServiceException, external_service_exception_handler)
 
+    logger.info("Setting up OpenAPI security scheme.")
+    setup_openapi_security_scheme(app)
+
     logger.info("FastAPI app successfully created.")
     return app
+
+
+def setup_openapi_security_scheme(app: FastAPI) -> None:
+    """Configure OpenAPI security scheme to enable authenticating in /docs"""
+    def custom_openapi():
+        if app.openapi_schema:
+            return app.openapi_schema
+
+        openapi_schema = get_openapi(
+            title=app.title,
+            version=app.version,
+            description=app.description,
+            routes=app.routes,
+        )
+
+        if "components" not in openapi_schema:
+            openapi_schema["components"] = {}
+        if "securitySchemes" not in openapi_schema["components"]:
+            openapi_schema["components"]["securitySchemes"] = {}
+
+        openapi_schema["components"]["securitySchemes"]["Bearer"] = {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "Enter your Bearer token (JWT token from Keycloak)"
+        }
+
+        # Apply Bearer security to all routes that require authentication
+        openapi_schema["security"] = [{"Bearer": []}]
+
+        app.openapi_schema = openapi_schema
+        return app.openapi_schema
+
+    app.openapi = custom_openapi
 
 
 async def not_found_exception_handler(_, exc: NotFoundException) -> JSONResponse:
