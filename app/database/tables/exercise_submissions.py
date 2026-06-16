@@ -37,11 +37,11 @@ class DbExerciseSubmission(DbBase):
     # ------------------------------------------------------------------------
     assessment_submission: Mapped["DbAssessmentSubmission"] = relationship(
         back_populates="exercise_submissions",
-        lazy="selectin"
+        lazy="select"
     )
     exercise: Mapped["DbExercise"] = relationship(
         back_populates="exercise_submissions",
-        lazy="selectin"
+        lazy="select"
     )
 
     # CONSTRAINTS

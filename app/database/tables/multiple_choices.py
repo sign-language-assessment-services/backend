@@ -10,13 +10,13 @@ class DbMultipleChoice(DbBase):
     # ------------------------------------------------------------------------
     exercises: Mapped[list["DbExercise"]] = relationship(
         back_populates="multiple_choice",
-        lazy="selectin"
+        lazy="select"
     )
     choices: Mapped[list["DbChoice"]] = relationship(
         secondary="multiple_choices_choices",
         back_populates="multiple_choices",
         viewonly=True,
-        lazy="selectin"
+        lazy="select"
     )
     associations: Mapped[list["DbMultipleChoicesChoices"]] = relationship(
         back_populates="multiple_choice",
