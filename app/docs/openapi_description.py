@@ -1,30 +1,79 @@
 DESCRIPTION = """
-## Description
-This is the [OpenAPI][1] documentation for the backend [API of the Sign
-Language Portal (SLPortal)][2]. The documentation is used to be able to
-view the full functionality of the API and to understand the use of the
-endpoints, which can also be tried out through this interface.
+## Domain Language
 
-### Domain language
-A domain specific language is used for the endpoints and parameters. We
-want to explain the most important words for you to help you understand
-what each endpoint is trying to achieve.
+This API uses a domain-specific language for sign language assessments.
 
-#### Assessment
-An assessment is basically a series of questions and possible answers
-to them. It is used to present to a learner as an exam or for learning
-purposes. An assessment does not have to consist exclusively of
-question-choices pairs. It can also include other elements such as a
-video that tells a story before questions. The format of the questions
-and answers (text, images, videos, etc.) is not important for the
-assessment itself.
+### Core Entities
 
-#### ExerciseSubmission
-A submission is the result of an assessment after the learner or person
-being assessed has gone through an assessment and given the choice of
-possible answers. ExerciseSubmission therefore contains the answers to a
-particular assessment in a structured form so that it can then be
-scored or evaluated.
+**Assessment**
+A structured collection of tasks presented to learners. Contains an ordered sequence of tasks (primers and exercises), optional deadline, and max_attempts limit.
+
+**Task**
+An item within an assessment. Can be either a Primer or Exercise.
+
+**Primer**
+Non-questioning content in an assessment. Used for instructions, stories, technical explanations, or conclusion videos. Contains multimedia (video/image).
+
+**Exercise**
+A question requiring answer selection. Contains a Question and Multiple Choice with 2-4 choices.
+
+**Question**
+The question content of an exercise (multimedia file).
+
+**Multiple Choice**
+Container for answer choices (2-4). Each choice has position and correctness flag.
+
+**Choice**
+One answer option with multimedia content.
+
+**Multimedia File**
+Media content (image or video). Stored in MinIO with presigned URLs. Future versions may add other content types.
+
+### Submission Entities
+
+**Assessment Submission**
+One learner attempt at an assessment. Contains exercise submissions, finished flag, and calculated score.
+
+**Exercise Submission**
+Learner's answer to one exercise. Contains selected choice IDs and correctness flag. Immutable after creation.
+
+**Assessment Result**
+Aggregated statistics for all submissions of an assessment. Requires TEST_SCORER role.
+
+### Roles
+
+- **FRONTEND** - Learner (create submissions, answer exercises, view own submissions)
+- **TEST_SCORER** - Teacher (all FRONTEND permissions + view all submissions/results)
+- **ADMIN** - Full system access
+
+### Entity Relationships
+
+```
+Assessment
+  └─ Tasks (ordered)
+      ├─ Primer (content)
+      └─ Exercise
+          ├─ Question (multimedia)
+          └─ Multiple Choice
+              └─ Choices (2-4, positioned)
+
+Assessment Submission (per attempt)
+  └─ Exercise Submissions (one per exercise)
+      └─ answer (selected choice IDs)
+```
+
+### Technical
+
+**Authentication:** JWT Bearer token (Keycloak)
+**IDs:** UUID v4
+**Timestamps:** ISO 8601 (UTC)
+**Media URLs:** Presigned (1 hour expiry)
+
+**Constraints:**
+- Choices: 2-4 per multiple choice
+- Exercise submissions: Immutable
+
+[OpenAPI Specification][1] | [Source Code][2]
 
 [1]: https://swagger.io/resources/open-api/
 [2]: ../
