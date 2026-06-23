@@ -13,7 +13,7 @@ minio = "^7.2"
 sqlalchemy = "^2.0"
 psycopg2-binary = "^2.9"
 alembic = "^1.17"
-pydantic-settings = "^2.12"
+pydantic-settings = "^2.14"
 pyjwt = {version = "^2.10", extras = ["crypto"]}
 python-multipart = "^0.0"
 requests = "^2.32"
